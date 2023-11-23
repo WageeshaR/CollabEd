@@ -1,17 +1,20 @@
-package com.collabed.core.models;
+package com.collabed.core.data.model;
 
 import lombok.Data;
+import org.springframework.data.annotation.Id;
+
+import java.util.UUID;
 
 @Data
 public class User {
-    private long id;
-    private String uuid;
+    @Id
+    private String id;
     private String first_name;
     private String last_name;
     private String email;
     private String phone;
-    private InstitutionType institutionType;
     private Role role;
+    private InstitutionType institution_type;
     private boolean has_consent_for_data_sharing;
     private boolean has_agreed_terms;
 }

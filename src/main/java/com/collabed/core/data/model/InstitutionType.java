@@ -1,4 +1,4 @@
-package com.collabed.core.models;
+package com.collabed.core.data.model;
 
 public enum InstitutionType {
     SCHOOL,
