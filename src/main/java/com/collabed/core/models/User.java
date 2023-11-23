@@ -1,5 +1,8 @@
 package com.collabed.core.models;
 
+import lombok.Data;
+
+@Data
 public class User {
     private long id;
     private String uuid;
