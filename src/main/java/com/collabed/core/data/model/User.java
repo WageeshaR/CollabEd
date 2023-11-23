@@ -2,6 +2,7 @@ package com.collabed.core.data.model;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ public class User {
     private String id;
     private String first_name;
     private String last_name;
+    @Indexed(unique = true)
     private String email;
     private String phone;
     private Role role;

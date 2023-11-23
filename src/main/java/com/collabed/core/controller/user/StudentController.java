@@ -15,9 +15,4 @@ import java.util.List;
 @AllArgsConstructor
 public class StudentController {
     private final UserService userService;
-
-    @GetMapping
-    public List<User> getAll() {
-        return userService.getAll(Role.STUDENT);
-    }
 }
