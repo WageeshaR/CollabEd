@@ -1,14 +1,13 @@
-package com.collabed.core.controller.auth;
+package com.collabed.core.api.controller.auth;
 
 import com.collabed.core.data.model.User;
-import com.collabed.core.runtime.exception.OperationNotAllowedException;
 import com.collabed.core.service.UserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,8 +18,12 @@ public class RegistrationController {
     private BCryptPasswordEncoder passwordEncoder;
 
     @PostMapping
-    public ResponseEntity<User> register(@RequestBody User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(user));
+    public ResponseEntity<?> register(@Valid @RequestBody User user, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errors.getAllErrors());
+        } else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(user));
+        }
     }
 }

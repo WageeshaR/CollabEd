@@ -1,4 +1,4 @@
-package com.collabed.core.controller.auth;
+package com.collabed.core.api.controller.auth;
 
 import com.collabed.core.data.model.User;
 import org.springframework.http.HttpStatus;

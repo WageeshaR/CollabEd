@@ -1,4 +1,4 @@
-package com.collabed.core.controller.user;
+package com.collabed.core.api.controller.user;
 
 import com.collabed.core.data.model.Role;
 import com.collabed.core.data.model.User;

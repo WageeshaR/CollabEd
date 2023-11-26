@@ -1,4 +1,4 @@
-package com.collabed.core.controller;
+package com.collabed.core.api;
 
 import com.collabed.core.runtime.exception.OperationNotAllowedException;
 import org.springframework.core.Ordered;

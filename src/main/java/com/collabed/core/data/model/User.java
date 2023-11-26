@@ -1,5 +1,7 @@
 package com.collabed.core.data.model;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -12,13 +14,19 @@ import java.util.Collection;
 public class User implements UserDetails {
     @Id
     private String id;
+    @NotNull(message = "username must not be empty")
+    @Size(min = 6, message = "username must be at least 6 characters long")
     private String username;
+    @NotNull
     private String password;
+    @NotNull
     private String first_name;
+    @NotNull
     private String last_name;
     @Indexed(unique = true)
     private String email;
     private String phone;
+    @NotNull
     private Role role;
     private InstitutionType institution_type;
     private boolean has_consent_for_data_sharing;
