@@ -24,6 +24,13 @@ public class User implements UserDetails {
     private boolean has_consent_for_data_sharing;
     private boolean has_agreed_terms;
 
+    public User() {
+        super();
+    }
+    public User(String username, Role role) {
+        this.username = username;
+        this.role = role;
+    }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
