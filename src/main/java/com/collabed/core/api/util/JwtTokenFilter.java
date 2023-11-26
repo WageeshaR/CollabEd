@@ -19,10 +19,10 @@ import java.io.IOException;
 
 @AllArgsConstructor
 @Component
-public class JwtTokenFilter {
+public class JwtTokenFilter extends OncePerRequestFilter {
     private final JwtTokenUtil jwtTokenUtil;
     private final UserService userService;
-
+    @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (!header.startsWith("Bearer ")) {

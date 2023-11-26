@@ -55,10 +55,10 @@ public class SecurityConfig {
                                 (request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK)
                         )
                 )
-//                .addFilterBefore(
-//                        jwtTokenFilter,
-//                        UsernamePasswordAuthenticationFilter.class
-//                )
+                .addFilterBefore(
+                        jwtTokenFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )
         ;
 
         return http.build();
