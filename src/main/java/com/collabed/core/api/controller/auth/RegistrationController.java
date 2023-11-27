@@ -23,7 +23,17 @@ public class RegistrationController {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errors.getAllErrors());
         } else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.register(user));
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerStudent(user));
+        }
+    }
+
+    @PostMapping("/facilitator")
+    public ResponseEntity<?> registerFacilitator(@Valid @RequestBody User user, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(errors.getAllErrors());
+        } else {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerFacilitator(user));
         }
     }
 }

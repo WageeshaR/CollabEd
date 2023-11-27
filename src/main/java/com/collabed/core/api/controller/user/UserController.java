@@ -24,16 +24,16 @@ public class UserController {
 
     @GetMapping("/admins")
     public List<User> getAllAdmins() {
-        return userService.getAll(Role.ADMIN);
+        return userService.getAll("ADMIN");
     }
 
     @GetMapping("/students")
     public List<User> getAllStudents() {
-        return userService.getAll(Role.STUDENT);
+        return userService.getAll("STUDENT");
     }
 
     @GetMapping("/facilitators")
     public List<User> getAllFacilitators() {
-        return userService.getAll(Role.FACILITATOR);
+        return userService.getAll("FACILITATOR");
     }
 }

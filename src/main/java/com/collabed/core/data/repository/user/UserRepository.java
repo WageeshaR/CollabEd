@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository
         extends MongoRepository<User, Long> {
-    Optional<List<User>> findAllByRole(Role role);
+    Optional<List<User>> findAllByRoles_Authority(String authority);
     Optional<User> findByUsername(String username);
 }

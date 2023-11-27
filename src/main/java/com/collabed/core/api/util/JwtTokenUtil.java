@@ -5,6 +5,7 @@ import com.collabed.core.data.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -45,13 +46,13 @@ public class JwtTokenUtil implements Serializable {
     }
 
     public String generateToken(User user) {
-        return doGenerateToken(user.getUsername(), user.getRole());
+        return doGenerateToken(user.getUsername(), user.getRoles());
     }
 
-    private String doGenerateToken(String subject, Role role) {
+    private String doGenerateToken(String subject, List<Role> roles) {
 
         Claims claims = Jwts.claims().setSubject(subject);
-        claims.put("scopes", List.of(new SimpleGrantedAuthority(role.toString())));
+        claims.put("scopes", roles);
 
         return Jwts.builder()
                 .setClaims(claims)

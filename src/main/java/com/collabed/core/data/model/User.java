@@ -8,7 +8,10 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 @Data
 public class User implements UserDetails {
@@ -26,22 +29,31 @@ public class User implements UserDetails {
     @Indexed(unique = true)
     private String email;
     private String phone;
-    @NotNull
-    private Role role;
+    private List<Role> roles;
     private InstitutionType institution_type;
     private boolean has_consent_for_data_sharing;
     private boolean has_agreed_terms;
 
     public User() {
         super();
+        this.roles = new ArrayList<>();
     }
-    public User(String username, Role role) {
+    public User(String username, String role) {
         this.username = username;
-        this.role = role;
+        this.roles = new ArrayList<>();
+        this.addRole(role);
+    }
+
+    public void addRole(String role) {
+        if (roles != null) {
+            roles.add(new Role(role));
+        } else {
+            throw new UnsupportedOperationException();
+        }
     }
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return this.roles;
     }
 
     @Override

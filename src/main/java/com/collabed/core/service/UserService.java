@@ -3,7 +3,6 @@ package com.collabed.core.service;
 import com.collabed.core.data.model.Role;
 import com.collabed.core.data.model.User;
 import com.collabed.core.data.repository.user.UserRepository;
-import com.collabed.core.runtime.exception.OperationNotAllowedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,16 +31,17 @@ public class UserService implements UserDetailsService {
 
     public List<User> getAll() { return userRepository.findAll(); }
 
-    public List<User> getAll(Role role) {
-        return userRepository.findAllByRole(role).orElseGet(List::of);
+    public List<User> getAll(String role) {
+        return userRepository.findAllByRoles_Authority(role).orElseGet(List::of);
     }
 
-    public User register(User user) {
-        Role role = user.getRole();
-        return switch (role) {
-            case SUPER_ADMIN ->
-                    throw new OperationNotAllowedException("Not allowed to create more than one SUPER_ADMIN roles");
-            case ADMIN, FACILITATOR, STUDENT -> userRepository.insert(user);
-        };
+    public User registerStudent(User user) {
+        user.addRole("STUDENT");
+        return userRepository.insert(user);
+    }
+
+    public User registerFacilitator(User user) {
+        user.addRole("FACILITATOR");
+        return userRepository.insert(user);
     }
 }
