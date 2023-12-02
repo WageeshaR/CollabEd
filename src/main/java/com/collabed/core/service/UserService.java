@@ -1,7 +1,8 @@
 package com.collabed.core.service;
 
-import com.collabed.core.data.model.Role;
 import com.collabed.core.data.model.User;
+import com.collabed.core.data.model.UserGroup;
+import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,13 +17,15 @@ import java.util.Optional;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final UserGroupRepository userGroupRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, UserGroupRepository userGroupRepository) {
         this.userRepository = userRepository;
+        this.userGroupRepository = userGroupRepository;
     }
 
-
+    // users
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Optional<User> user = userRepository.findByUsername(username);
@@ -36,12 +39,32 @@ public class UserService implements UserDetailsService {
     }
 
     public User registerStudent(User user) {
-        user.addRole("STUDENT");
+        user.addRole("ROLE_STUDENT");
         return userRepository.insert(user);
     }
 
     public User registerFacilitator(User user) {
-        user.addRole("FACILITATOR");
+        user.addRole("ROLE_FACILITATOR");
         return userRepository.insert(user);
+    }
+
+    public User registerAdmin(User user) {
+        user.addRole("ROLE_ADMIN");
+        return userRepository.insert(user);
+    }
+
+    // user groups
+    public UserGroup createUserGroup(UserGroup group) {
+        return userGroupRepository.insert(group);
+    }
+
+    public UserGroup addToGroup(String userId, String groupId) {
+        if (userRepository.findById(userId).isEmpty()) throw new RuntimeException();
+        UserGroup userGroup = userGroupRepository.findById(groupId).orElseThrow();
+        return userGroup.addToGroup(userId);
+    }
+
+    public Optional<UserGroup> get(String id) {
+        return userGroupRepository.findById(id);
     }
 }

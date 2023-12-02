@@ -1,7 +1,7 @@
 package com.collabed.core.service;
 
-import com.collabed.core.data.model.Role;
 import com.collabed.core.data.model.User;
+import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,8 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceTest {
 
     UserRepository userRepository = Mockito.mock(UserRepository.class);
-    UserService userService = new UserService(userRepository);
+    UserGroupRepository userGroupRepository = Mockito.mock(UserGroupRepository.class);
+    UserService userService = new UserService(userRepository, userGroupRepository);
     private User user;
 
     @BeforeEach

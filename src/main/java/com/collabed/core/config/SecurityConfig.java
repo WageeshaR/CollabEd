@@ -22,7 +22,10 @@ import org.springframework.web.filter.CorsFilter;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity(
+    securedEnabled = true,
+    jsr250Enabled = true
+)
 @AllArgsConstructor
 public class SecurityConfig {
     private final UserService userDetailsService;
