@@ -1,5 +1,6 @@
 package com.collabed.core.service;
 
+import com.collabed.core.data.dto.UserResponseDto;
 import com.collabed.core.data.model.User;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
@@ -56,7 +57,7 @@ public class UserServiceTest {
 
     @Test
     public void userServiceRegisterTest() {
-        User user = userService.registerStudent(this.user);
+        UserResponseDto user = userService.saveUser(this.user, "STUDENT");
         assertNotNull(user);
         assertEquals(user.getUsername(), "testUser");
     }

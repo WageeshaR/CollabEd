@@ -1,6 +1,7 @@
 package com.collabed.core.service;
 
 import com.collabed.core.data.dto.UserGroupResponseDTO;
+import com.collabed.core.data.dto.UserResponseDto;
 import com.collabed.core.data.model.User;
 import com.collabed.core.data.model.UserGroup;
 import com.collabed.core.data.repository.user.UserGroupRepository;
@@ -40,23 +41,13 @@ public class UserService implements UserDetailsService {
         return userRepository.findAllByRoles_Authority(role).orElseGet(List::of);
     }
 
-    public User registerStudent(User user) {
-        user.addRole("ROLE_STUDENT");
-        return userRepository.insert(user);
-    }
-
-    public User registerFacilitator(User user) {
-        user.addRole("ROLE_FACILITATOR");
-        return userRepository.insert(user);
-    }
-
-    public User registerAdmin(User user) {
-        user.addRole("ROLE_ADMIN");
-        return userRepository.insert(user);
+    public UserResponseDto saveUser(User user, String role) {
+        user.addRole("ROLE_" + role);
+        return new UserResponseDto(userRepository.insert(user));
     }
 
     // user groups
-    public UserGroup createUserGroup(UserGroup group) {
+    public UserGroup saveUserGroup(UserGroup group) {
         return userGroupRepository.insert(group);
     }
 
@@ -68,9 +59,9 @@ public class UserService implements UserDetailsService {
 
     public UserGroupResponseDTO loadGroupById(String id) {
         UserGroup group = userGroupRepository.findById(id).orElseThrow();
-        List<User> usersOfGroup = new ArrayList<>();
+        List<UserResponseDto> usersOfGroup = new ArrayList<>();
         for (String userId : group.getUserIds()) {
-            usersOfGroup.add(userRepository.findById(userId).orElseThrow());
+            usersOfGroup.add(new UserResponseDto(userRepository.findById(userId).orElseThrow()));
         }
         return new UserGroupResponseDTO(group.getId(), group.getName(), usersOfGroup);
     }

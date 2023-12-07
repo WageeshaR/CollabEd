@@ -55,7 +55,7 @@ public class UserController {
                     )
             );
         } else {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUserGroup(group));
+            return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUserGroup(group));
         }
     }
 

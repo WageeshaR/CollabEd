@@ -33,8 +33,8 @@ public class User implements UserDetails {
     private String email;
     private String phone;
     private List<Role> roles;
-    @JsonProperty("institution_type")
-    private InstitutionType institutionType;
+    @JsonProperty("institution")
+    private Institution institution;
     @JsonProperty("has_consent_for_data_sharing")
     private boolean hasConsentForDataSharing;
     @JsonProperty("has_agreed_terms")

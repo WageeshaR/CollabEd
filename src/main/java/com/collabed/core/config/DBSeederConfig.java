@@ -1,7 +1,7 @@
 package com.collabed.core.config;
 
 import com.collabed.core.data.model.location.Country;
-import com.collabed.core.data.repository.user.CountryRepository;
+import com.collabed.core.data.repository.CountryRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import jakarta.annotation.PostConstruct;
@@ -30,6 +30,6 @@ public class DBSeederConfig {
         List<Country> countries = objectMapper.readValue(inputStream, countryCollectionType);
         try {
             countryRepository.saveAll(countries);
-        } catch (DuplicateKeyException ignored) {}
+        } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException ignored) {}
     }
 }
