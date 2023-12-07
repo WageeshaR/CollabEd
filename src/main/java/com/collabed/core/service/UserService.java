@@ -1,6 +1,6 @@
 package com.collabed.core.service;
 
-import com.collabed.core.data.dto.UserGroupResponseDTO;
+import com.collabed.core.data.dto.UserGroupResponseDto;
 import com.collabed.core.data.dto.UserResponseDto;
 import com.collabed.core.data.model.User;
 import com.collabed.core.data.model.UserGroup;
@@ -57,12 +57,12 @@ public class UserService implements UserDetailsService {
         return userGroup.addToGroup(userId);
     }
 
-    public UserGroupResponseDTO loadGroupById(String id) {
+    public UserGroupResponseDto loadGroupById(String id) {
         UserGroup group = userGroupRepository.findById(id).orElseThrow();
         List<UserResponseDto> usersOfGroup = new ArrayList<>();
         for (String userId : group.getUserIds()) {
             usersOfGroup.add(new UserResponseDto(userRepository.findById(userId).orElseThrow()));
         }
-        return new UserGroupResponseDTO(group.getId(), group.getName(), usersOfGroup);
+        return new UserGroupResponseDto(group.getId(), group.getName(), usersOfGroup);
     }
 }
