@@ -5,12 +5,11 @@ import com.collabed.core.data.model.User;
 import com.collabed.core.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.Errors;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,7 +25,12 @@ public class RegistrationController {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HTTPResponseErrorFormatter.format(errors));
         } else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerStudent(user));
+            try {
+                User regUser = userService.registerStudent(user);
+                return ResponseEntity.status(HttpStatus.CREATED).body(regUser);
+            } catch (DuplicateKeyException exception) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.toString());
+            }
         }
     }
 

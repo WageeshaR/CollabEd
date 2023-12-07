@@ -2,8 +2,10 @@ package com.collabed.core.data.model;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
+@Document
 public class Institution {
     @Id
     private String id;

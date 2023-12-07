@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
@@ -23,13 +24,12 @@ public class DBSeederConfig {
 
     @PostConstruct
     public void populateCountries() throws IOException {
-        CollectionType collectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, Country.class);
-        File file = ResourceUtils.getFile("classpath:seeder/countries.json");
-        try (InputStream inputStream = new FileInputStream(file)) {
-            List<Country> countries = objectMapper.readValue(inputStream, collectionType);
-            for (Country country: countries) {
-                countryRepository.insert(country);
-            }
-        }
+        CollectionType countryCollectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, Country.class);
+        File countriesJsonFile = ResourceUtils.getFile("classpath:seeder/countries.json");
+        InputStream inputStream = new FileInputStream(countriesJsonFile);
+        List<Country> countries = objectMapper.readValue(inputStream, countryCollectionType);
+        try {
+            countryRepository.saveAll(countries);
+        } catch (DuplicateKeyException ignored) {}
     }
 }
