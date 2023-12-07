@@ -8,5 +8,4 @@ public class Institution {
     @Id
     private String id;
     private String name;
-//    private
 }
