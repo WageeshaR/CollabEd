@@ -1,7 +1,9 @@
 package com.collabed.core.service;
 
 import com.collabed.core.data.dto.UserResponseDto;
+import com.collabed.core.data.model.Institution;
 import com.collabed.core.data.model.User;
+import com.collabed.core.data.repository.InstitutionRepository;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,7 +36,9 @@ public class UserServiceTest {
         Mockito.when(userRepository.findAll()).thenReturn(
                 Stream.of(students, facilitators, admins).flatMap(Collection::stream).collect(Collectors.toList())
         );
+        Institution mockInstitution = Mockito.mock(Institution.class);
         user = new User("testUser", "STUDENT");
+        user.setInstitution(mockInstitution);
         Mockito.when(userRepository.insert(user)).thenReturn(user);
     }
 
