@@ -9,6 +9,4 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserGroupRepository extends MongoRepository<UserGroup, String> {
-    Optional<List<UserGroup>> findAllByUserIdsContains(List<String> userIds);
-}
+public interface UserGroupRepository extends MongoRepository<UserGroup, String> {}

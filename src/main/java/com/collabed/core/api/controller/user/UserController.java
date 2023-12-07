@@ -73,4 +73,13 @@ public class UserController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @GetMapping("/groups/{id}")
+    public ResponseEntity<?> groupDetails(@PathVariable String id) {
+        try {
+            return ResponseEntity.ok().body(userService.loadGroupById(id));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }

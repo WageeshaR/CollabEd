@@ -1,5 +1,6 @@
 package com.collabed.core.api.controller.auth;
 
+import com.collabed.core.api.util.HTTPResponseErrorFormatter;
 import com.collabed.core.data.model.User;
 import com.collabed.core.service.UserService;
 import jakarta.validation.Valid;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,11 +23,7 @@ public class RegistrationController {
     @PostMapping("/student")
     public ResponseEntity<?> register(@Valid @RequestBody User user, Errors errors) {
         if (errors.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
-                    errors.getAllErrors().stream().map(
-                            ObjectError::getDefaultMessage
-                    )
-            );
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HTTPResponseErrorFormatter.format(errors));
         } else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerStudent(user));
@@ -35,11 +33,7 @@ public class RegistrationController {
     @PostMapping("/facilitator")
     public ResponseEntity<?> registerFacilitator(@Valid @RequestBody User user, Errors errors) {
         if (errors.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
-                    errors.getAllErrors().stream().map(
-                            ObjectError::getDefaultMessage
-                    )
-            );
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HTTPResponseErrorFormatter.format(errors));
         } else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerFacilitator(user));
@@ -49,11 +43,7 @@ public class RegistrationController {
     @PostMapping("/admin")
     public ResponseEntity<?> registerAdmin(@Valid @RequestBody User user, Errors errors) {
         if (errors.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
-                    errors.getAllErrors().stream().map(
-                            ObjectError::getDefaultMessage
-                    )
-            );
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HTTPResponseErrorFormatter.format(errors));
         } else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             return ResponseEntity.status(HttpStatus.CREATED).body(userService.registerAdmin(user));

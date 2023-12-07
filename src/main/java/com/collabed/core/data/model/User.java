@@ -1,5 +1,6 @@
 package com.collabed.core.data.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -19,19 +20,23 @@ public class User implements UserDetails {
     @NotNull(message = "username must not be empty")
     @Size(min = 6, message = "username must be at least 6 characters long")
     private String username;
-    @NotNull
     private String password;
     @NotNull
-    private String first_name;
+    @JsonProperty("first_name")
+    private String firstName;
     @NotNull
-    private String last_name;
+    @JsonProperty("last_name")
+    private String lastName;
     @Indexed(unique = true)
     private String email;
     private String phone;
     private List<Role> roles;
-    private InstitutionType institution_type;
-    private boolean has_consent_for_data_sharing;
-    private boolean has_agreed_terms;
+    @JsonProperty("institution_type")
+    private InstitutionType institutionType;
+    @JsonProperty("has_consent_for_data_sharing")
+    private boolean hasConsentForDataSharing;
+    @JsonProperty("has_agreed_terms")
+    private boolean hasAgreedTerms;
 
     public User() {
         super();

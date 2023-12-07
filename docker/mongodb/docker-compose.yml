@@ -5,6 +5,11 @@ services:
     container_name: mongodb
     ports:
       - "27017:27017"
+    healthcheck:
+      test: echo 'Health OK'
+      interval: 10s
+      timeout: 10s
+      retries: 5
     volumes:
       - data:/data
     environment:
@@ -23,6 +28,9 @@ services:
       ME_CONFIG_MONGODB_SERVER: mongodb
       ME_CONFIG_BASICAUTH_USERNAME: ${MONGOEXPRESS_LOGIN}
       ME_CONFIG_BASICAUTH_PASSWORD: ${MONGOEXPRESS_PASS}
+    depends_on:
+      mongodb:
+        condition: service_healthy
 
 volumes:
   data: {}

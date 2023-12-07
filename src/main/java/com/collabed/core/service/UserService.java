@@ -1,5 +1,6 @@
 package com.collabed.core.service;
 
+import com.collabed.core.data.dto.UserGroupResponseDTO;
 import com.collabed.core.data.model.User;
 import com.collabed.core.data.model.UserGroup;
 import com.collabed.core.data.repository.user.UserGroupRepository;
@@ -10,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,7 +66,12 @@ public class UserService implements UserDetailsService {
         return userGroup.addToGroup(userId);
     }
 
-    public Optional<UserGroup> get(String id) {
-        return userGroupRepository.findById(id);
+    public UserGroupResponseDTO loadGroupById(String id) {
+        UserGroup group = userGroupRepository.findById(id).orElseThrow();
+        List<User> usersOfGroup = new ArrayList<>();
+        for (String userId : group.getUserIds()) {
+            usersOfGroup.add(userRepository.findById(userId).orElseThrow());
+        }
+        return new UserGroupResponseDTO(group.getId(), group.getName(), usersOfGroup);
     }
 }
