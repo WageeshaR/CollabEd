@@ -39,3 +39,11 @@ buildNumber.properties
 hs_err_pid*
 replay_pid*
 /docker/mongodb/.env
+/.idea/.gitignore
+/.idea/compiler.xml
+/.idea/encodings.xml
+/.idea/google-java-format.xml
+/.idea/jarRepositories.xml
+/.idea/misc.xml
+/.idea/uiDesigner.xml
+/.idea/vcs.xml
