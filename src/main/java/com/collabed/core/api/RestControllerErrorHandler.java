@@ -1,6 +1,6 @@
 package com.collabed.core.api;
 
-import com.collabed.core.runtime.exception.OperationNotAllowedException;
+import com.collabed.core.runtime.exception.CEOperationNotAllowedError;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -11,8 +11,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @org.springframework.web.bind.annotation.ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class RestControllerErrorHandler extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(OperationNotAllowedException.class)
-    protected ResponseEntity<Object> handleOperationNotAllowed(OperationNotAllowedException ex) {
+    @ExceptionHandler(CEOperationNotAllowedError.class)
+    protected ResponseEntity<Object> handleOperationNotAllowed(CEOperationNotAllowedError ex) {
         ApiError error = new ApiError(HttpStatus.NOT_ACCEPTABLE);
         error.setMessage(ex.getMessage());
         return buildResponseEntity(error);

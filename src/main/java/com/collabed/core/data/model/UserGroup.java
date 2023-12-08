@@ -1,6 +1,8 @@
 package com.collabed.core.data.model;
 
 import com.collabed.core.data.repository.user.UserRepository;
+import com.collabed.core.runtime.exception.CEErrorMessage;
+import com.collabed.core.runtime.exception.CEUserServiceError;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -8,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,10 +34,10 @@ public class UserGroup {
         if (this.userIds == null) {
             this.userIds = new ArrayList<>();
         }
-        if (userRepository.findById(userId).get().getRoles().stream().map(Role::getAuthority).anyMatch(a -> Objects.equals(a, this.role))) {
+        if (userRepository.findById(userId).get().getAuthorities().stream().map(GrantedAuthority::getAuthority).anyMatch(a -> Objects.equals(a, this.role))) {
             this.userIds.add(userId);
             return this;
         }
-        throw new RuntimeException();
+        throw new CEUserServiceError(CEErrorMessage.GROUP_ROLE_NOT_MATCHED_WITH_USER);
     }
 }

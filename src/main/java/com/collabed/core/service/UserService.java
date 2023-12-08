@@ -6,7 +6,10 @@ import com.collabed.core.data.model.User;
 import com.collabed.core.data.model.UserGroup;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
+import com.collabed.core.runtime.exception.CEUserServiceError;
+import com.collabed.core.runtime.exception.CEErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -31,8 +34,7 @@ public class UserService implements UserDetailsService {
     // users
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findByUsername(username);
-        return user.orElseThrow();
+        return userRepository.findByUsername(username).orElseThrow();
     }
 
     public List<User> getAll() { return userRepository.findAll(); }
@@ -42,8 +44,13 @@ public class UserService implements UserDetailsService {
     }
 
     public UserResponseDto saveUser(User user, String role) {
-        user.addRole("ROLE_" + role);
-        return new UserResponseDto(userRepository.insert(user));
+        if (user.getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .noneMatch(r -> Objects.equals(r, role))) {
+            return new UserResponseDto(userRepository.insert(user));
+        } else {
+            throw new CEUserServiceError(CEErrorMessage.ROLE_ALREADY_EXISTS);
+        }
     }
 
     // user groups
@@ -52,7 +59,7 @@ public class UserService implements UserDetailsService {
     }
 
     public UserGroup addToGroup(String userId, String groupId) {
-        if (userRepository.findById(userId).isEmpty()) throw new RuntimeException();
+        if (userRepository.findById(userId).isEmpty()) throw new CEUserServiceError(CEErrorMessage.USER_NOT_EXIST);
         UserGroup userGroup = userGroupRepository.findById(groupId).orElseThrow();
         return userGroup.addToGroup(userId);
     }

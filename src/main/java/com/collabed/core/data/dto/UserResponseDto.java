@@ -3,6 +3,7 @@ package com.collabed.core.data.dto;
 import com.collabed.core.data.model.Role;
 import com.collabed.core.data.model.User;
 import lombok.Data;
+import org.springframework.security.core.GrantedAuthority;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class UserResponseDto {
         this.lastName = user.getLastName();
         this.email = user.getEmail();
         this.phone = user.getPhone();
-        this.roles = user.getRoles().stream().map(Role::getAuthority).toList();
+        this.roles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
         this.institution = new InstitutionResponseDto(user.getInstitution());
     }
 }

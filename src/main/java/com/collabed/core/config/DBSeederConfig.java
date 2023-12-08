@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.type.CollectionType;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.util.ResourceUtils;
 
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Configuration
 @AllArgsConstructor
+@Profile({"develop", "uat", "staging", "production"})
 public class DBSeederConfig {
     private CountryRepository countryRepository;
     private ObjectMapper objectMapper;

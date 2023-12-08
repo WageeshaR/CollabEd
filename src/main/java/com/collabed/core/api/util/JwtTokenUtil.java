@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Function;
@@ -46,10 +47,10 @@ public class JwtTokenUtil implements Serializable {
     }
 
     public String generateToken(User user) {
-        return doGenerateToken(user.getUsername(), user.getRoles());
+        return doGenerateToken(user.getUsername(), user.getAuthorities());
     }
 
-    private String doGenerateToken(String subject, List<Role> roles) {
+    private String doGenerateToken(String subject, Collection<? extends GrantedAuthority> roles) {
 
         Claims claims = Jwts.claims().setSubject(subject);
         claims.put("scopes", roles);
