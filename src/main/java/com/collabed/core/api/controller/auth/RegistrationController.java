@@ -26,7 +26,7 @@ public class RegistrationController {
 
     // users
     @PostMapping("/student")
-    public ResponseEntity<?> register(@Valid @RequestBody User student, Errors errors) {
+    public ResponseEntity<?> registerStudent(@RequestBody User student, Errors errors) {
         if (errors.hasErrors()) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HTTPResponseErrorFormatter.format(errors));
         } else {

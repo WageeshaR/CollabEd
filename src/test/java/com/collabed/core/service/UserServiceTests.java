@@ -9,7 +9,6 @@ import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
 import com.collabed.core.runtime.exception.CEUserServiceError;
 import com.collabed.core.runtime.exception.CEErrorMessage;
-import org.apache.zookeeper.Op;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Profile({"test"})
-public class UserServiceTest {
+public class UserServiceTests {
 
     UserRepository userRepository = Mockito.mock(UserRepository.class);
     UserGroupRepository userGroupRepository = Mockito.mock(UserGroupRepository.class);
