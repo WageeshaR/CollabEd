@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -14,6 +15,7 @@ public class Institution {
     @Id
     private String id;
     @NotNull
+    @Indexed(unique = true)
     private String name;
     @JsonProperty("address_id")
     private String addressId;

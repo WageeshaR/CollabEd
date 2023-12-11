@@ -24,6 +24,6 @@ public class UserResponseDto {
         this.email = user.getEmail();
         this.phone = user.getPhone();
         this.roles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-        this.institution = new InstitutionResponseDto(user.getInstitution());
+        this.institution = user.getInstitution() != null ? new InstitutionResponseDto(user.getInstitution()) : null;
     }
 }

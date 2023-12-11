@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Reference;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,7 +17,7 @@ import java.util.List;
 
 @Document
 @Data
-public class User implements UserDetails, Cloneable {
+public class User implements UserDetails {
     @Id
     private String id;
     @NotNull
@@ -36,6 +37,7 @@ public class User implements UserDetails, Cloneable {
     private String phone;
     private List<Role> roles;
     @JsonProperty("institution")
+    @Reference
     private Institution institution;
     @JsonProperty("has_consent_for_data_sharing")
     private boolean hasConsentForDataSharing;
@@ -89,15 +91,5 @@ public class User implements UserDetails, Cloneable {
     @Override
     public boolean isEnabled() {
         return true;
-    }
-
-    @Override
-    public User clone() {
-        try {
-            // TODO: copy mutable state here, so the clone can't change the internals of the original
-            return (User) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
     }
 }

@@ -47,6 +47,9 @@ public class UserService implements UserDetailsService {
         if (user.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
             .noneMatch(r -> Objects.equals(r, role))) {
+            if (!Objects.equals(role, "ROLE_ADMIN") && user.getInstitution() == null){
+                throw new CEWebRequestError(CEErrorMessage.INSTITUTION_NOT_NULL);
+            }
             user.addRole(role);
             return new UserResponseDto(userRepository.insert(user));
         } else {
