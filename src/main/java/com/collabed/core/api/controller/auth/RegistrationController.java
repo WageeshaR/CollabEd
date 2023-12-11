@@ -4,7 +4,7 @@ import com.collabed.core.api.util.HTTPResponseErrorFormatter;
 import com.collabed.core.data.dto.UserResponseDto;
 import com.collabed.core.data.model.Institution;
 import com.collabed.core.data.model.User;
-import com.collabed.core.runtime.exception.CEUserServiceError;
+import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.InstitutionService;
 import com.collabed.core.service.UserService;
 import jakarta.validation.Valid;
@@ -34,7 +34,7 @@ public class RegistrationController {
             try {
                 UserResponseDto savedStudent = userService.saveUser(student, "ROLE_STUDENT");
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedStudent);
-            } catch (DuplicateKeyException | CEUserServiceError exception) {
+            } catch (DuplicateKeyException | CEWebRequestError exception) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.toString());
             }
         }
@@ -49,7 +49,7 @@ public class RegistrationController {
             try {
                 UserResponseDto savedFacilitator = userService.saveUser(facilitator, "ROLE_FACILITATOR");
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedFacilitator);
-            } catch (DuplicateKeyException | CEUserServiceError exception) {
+            } catch (DuplicateKeyException | CEWebRequestError exception) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.toString());
             }
         }
@@ -64,7 +64,7 @@ public class RegistrationController {
             try {
                 UserResponseDto savedAdmin = userService.saveUser(admin, "ROLE_ADMIN");
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedAdmin);
-            } catch (DuplicateKeyException | CEUserServiceError exception) {
+            } catch (DuplicateKeyException | CEWebRequestError exception) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.toString());
             }
         }
@@ -79,7 +79,7 @@ public class RegistrationController {
             try {
                 Institution savedInstitution = institutionService.save(institution);
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedInstitution);
-            } catch (DuplicateKeyException exception) {
+            } catch (DuplicateKeyException | CEWebRequestError exception) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.toString());
             }
         }

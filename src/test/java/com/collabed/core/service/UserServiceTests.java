@@ -7,7 +7,7 @@ import com.collabed.core.data.model.User;
 import com.collabed.core.data.model.UserGroup;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
-import com.collabed.core.runtime.exception.CEUserServiceError;
+import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.runtime.exception.CEErrorMessage;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
@@ -94,7 +94,7 @@ public class UserServiceTests {
     @Test
     public void userServiceSaveUserWithExistingRoleTest() {
         user.addRole("ROLE_STUDENT");
-        CEUserServiceError error = assertThrows(CEUserServiceError.class, () -> userService.saveUser(this.user, "ROLE_STUDENT"));
+        CEWebRequestError error = assertThrows(CEWebRequestError.class, () -> userService.saveUser(this.user, "ROLE_STUDENT"));
         assertEquals(error.getMessage(), CEErrorMessage.ROLE_ALREADY_EXISTS);
     }
 
@@ -122,7 +122,7 @@ public class UserServiceTests {
 
     @Test
     public void userServiceAddToGroupNoUserTest() {
-        CEUserServiceError error = assertThrows(CEUserServiceError.class, () -> userService.addToGroup(new ObjectId().toHexString(), new ObjectId().toHexString()));
+        CEWebRequestError error = assertThrows(CEWebRequestError.class, () -> userService.addToGroup(new ObjectId().toHexString(), new ObjectId().toHexString()));
         assertEquals(error.getMessage(), CEErrorMessage.USER_NOT_EXIST);
     }
 
@@ -136,7 +136,7 @@ public class UserServiceTests {
         userGroup.setRole("ROLE_FACILITATOR");
         Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         Mockito.when(userGroupRepository.findById(groupId)).thenReturn(Optional.of(userGroup));
-        CEUserServiceError error = assertThrows(CEUserServiceError.class, () -> userService.addToGroup(userId, groupId));
+        CEWebRequestError error = assertThrows(CEWebRequestError.class, () -> userService.addToGroup(userId, groupId));
         assertEquals(error.getMessage(), CEErrorMessage.GROUP_ROLE_NOT_MATCHED_WITH_USER);
     }
 

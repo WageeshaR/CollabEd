@@ -19,9 +19,10 @@ import java.util.List;
 public class User implements UserDetails, Cloneable {
     @Id
     private String id;
-    @NotNull(message = "username must not be empty")
+    @NotNull
     @Size(min = 6, message = "username must be at least 6 characters long")
     private String username;
+    @NotNull
     private String password;
     @NotNull
     @JsonProperty("first_name")
@@ -29,6 +30,7 @@ public class User implements UserDetails, Cloneable {
     @NotNull
     @JsonProperty("last_name")
     private String lastName;
+    @NotNull
     @Indexed(unique = true)
     private String email;
     private String phone;

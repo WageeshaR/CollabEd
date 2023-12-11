@@ -2,9 +2,8 @@ package com.collabed.core.data.model;
 
 import com.collabed.core.data.repository.user.UserRepository;
 import com.collabed.core.runtime.exception.CEErrorMessage;
-import com.collabed.core.runtime.exception.CEUserServiceError;
+import com.collabed.core.runtime.exception.CEWebRequestError;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,6 +37,6 @@ public class UserGroup {
             this.userIds.add(userId);
             return this;
         }
-        throw new CEUserServiceError(CEErrorMessage.GROUP_ROLE_NOT_MATCHED_WITH_USER);
+        throw new CEWebRequestError(CEErrorMessage.GROUP_ROLE_NOT_MATCHED_WITH_USER);
     }
 }

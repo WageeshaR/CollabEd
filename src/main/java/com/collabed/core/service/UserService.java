@@ -6,7 +6,7 @@ import com.collabed.core.data.model.User;
 import com.collabed.core.data.model.UserGroup;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
-import com.collabed.core.runtime.exception.CEUserServiceError;
+import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.runtime.exception.CEErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -50,7 +50,7 @@ public class UserService implements UserDetailsService {
             user.addRole(role);
             return new UserResponseDto(userRepository.insert(user));
         } else {
-            throw new CEUserServiceError(CEErrorMessage.ROLE_ALREADY_EXISTS);
+            throw new CEWebRequestError(CEErrorMessage.ROLE_ALREADY_EXISTS);
         }
     }
 
@@ -60,7 +60,7 @@ public class UserService implements UserDetailsService {
     }
 
     public UserGroup addToGroup(String userId, String groupId) {
-        if (userRepository.findById(userId).isEmpty()) throw new CEUserServiceError(CEErrorMessage.USER_NOT_EXIST);
+        if (userRepository.findById(userId).isEmpty()) throw new CEWebRequestError(CEErrorMessage.USER_NOT_EXIST);
         UserGroup userGroup = userGroupRepository.findById(groupId).orElseThrow();
         return userGroup.addToGroup(userId);
     }

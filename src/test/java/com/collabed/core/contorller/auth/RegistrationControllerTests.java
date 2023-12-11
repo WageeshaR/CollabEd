@@ -1,28 +1,26 @@
 package com.collabed.core.contorller.auth;
 
-import com.collabed.core.api.controller.auth.RegistrationController;
 import com.collabed.core.data.dto.UserResponseDto;
 import com.collabed.core.data.model.Institution;
 import com.collabed.core.data.model.User;
+import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.InstitutionService;
 import com.collabed.core.service.UserService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Profile;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.MediaType;
-import org.springframework.http.converter.json.GsonFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -66,7 +64,6 @@ public class RegistrationControllerTests {
         // setup institution
         institution = new Institution();
         institution.setName("The University of York");
-        institution.setAddressId(new ObjectId().toHexString());
 
         //setup user
         user = new User();
@@ -80,22 +77,120 @@ public class RegistrationControllerTests {
         user.setHasConsentForDataSharing(false);
     }
 
+    // users
+    @ParameterizedTest
+    @ValueSource(strings = {"student", "facilitator", "admin"})
+    public void registerStudentTest(String param) throws Exception {
+        String role = "ROLE_" + param.toUpperCase();
+        String userString = mapToJson(user);
+        User copiedUser = mapFromJson(userString, User.class);
+        copiedUser.addRole(role);
+        UserResponseDto dto = new UserResponseDto(copiedUser);
+
+        Mockito.when(userService.saveUser(Mockito.any(User.class), Mockito.eq(role))).thenReturn(dto);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/register/" + param)
+                        .content(userString)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("n.elliot"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.roles[0]").value(role));
+    }
+
     @Test
-    public void registerStudentTest() throws Exception {
+    public void registerStudentWithNullUsernameTest() throws Exception {
+        user.setUsername(null);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/register/student")
+                        .content(mapToJson(user))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value("username: must not be null"));
+    }
+
+    @Test
+    public void registerStudentWithNullPasswordTest() throws Exception {
+        user.setPassword(null);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/register/student")
+                        .content(mapToJson(user))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value("password: must not be null"));
+    }
+
+    @Test
+    public void registerStudentWithNullEmailTest() throws Exception {
+        user.setEmail(null);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/register/student")
+                        .content(mapToJson(user))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value("email: must not be null"));
+    }
+
+    @Test
+    public void registerStudentWithDuplicateEmailTest() throws Exception {
         String userString = mapToJson(user);
         User copiedUser = mapFromJson(userString, User.class);
         copiedUser.addRole("ROLE_STUDENT");
-        UserResponseDto dto = new UserResponseDto(copiedUser);
 
-        Mockito.when(userService.saveUser(Mockito.any(User.class), Mockito.eq("ROLE_STUDENT"))).thenReturn(dto);
+        Mockito.when(userService.saveUser(Mockito.any(User.class), Mockito.eq("ROLE_STUDENT"))).thenThrow(DuplicateKeyException.class);
 
         mockMvc.perform(MockMvcRequestBuilders
-            .post("/register/student")
-            .content(userString)
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON))
-            .andExpect(status().isCreated())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("n.elliot"))
-            .andExpect(MockMvcResultMatchers.jsonPath("$.roles[0]").value("ROLE_STUDENT"));
+                        .post("/register/student")
+                        .content(mapToJson(user))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value(DuplicateKeyException.class.getName()));
+    }
+
+    // institutions
+    @ParameterizedTest
+    @ValueSource(strings = {"The University of York", "The University of Manchester"})
+    public void registerInstitutionTest(String param) throws Exception {
+        institution.setName(param);
+        String institutionString = mapToJson(institution);
+        Mockito.when(institutionService.save(institution)).thenReturn(institution);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/register/institution")
+                        .content(institutionString)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(param));
+    }
+
+    @Test
+    public void registerInstitutionWithoutNameTest() throws Exception {
+        institution.setName(null);
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/register/institution")
+                        .content(mapToJson(institution))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value("name: must not be null"));
+    }
+
+    @Test
+    public void registerInstitutionWithoutAddressTest() throws Exception {
+        Mockito.when(institutionService.save(institution)).thenThrow(CEWebRequestError.class);
+
+        mockMvc.perform(MockMvcRequestBuilders
+                        .post("/register/institution")
+                        .content(mapToJson(institution))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().is4xxClientError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value(CEWebRequestError.class.getName()));;
     }
 }
