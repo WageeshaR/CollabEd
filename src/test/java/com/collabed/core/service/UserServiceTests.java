@@ -35,11 +35,11 @@ public class UserServiceTests {
 
     @BeforeEach
     public void setupUser() {
-        List<User> students = Arrays.asList(new User("student1", "STUDENT"), new User("student2", "STUDENT"));
-        List<User> facilitators = Arrays.asList(new User("fac1", "FACILITATOR"), new User("fac2", "FACILITATOR"));
-        List<User> admins = Arrays.asList(new User("adm1", "ADMIN"), new User("adm2", "ADMIN"));
+        List<User> students = Arrays.asList(new User("student1", "ROLE_STUDENT"), new User("student2", "ROLE_STUDENT"));
+        List<User> facilitators = Arrays.asList(new User("fac1", "ROLE_FACILITATOR"), new User("fac2", "ROLE_FACILITATOR"));
+        List<User> admins = Arrays.asList(new User("adm1", "ROLE_ADMIN"), new User("adm2", "ROLE_ADMIN"));
 
-        Mockito.when(userRepository.findAllByRoles_Authority("STUDENT")).thenReturn(
+        Mockito.when(userRepository.findAllByRoles_Authority("ROLE_STUDENT")).thenReturn(
                 Optional.of(students)
         );
         Mockito.when(userRepository.findAll()).thenReturn(
@@ -69,32 +69,32 @@ public class UserServiceTests {
 
     @Test
     public void userServiceGetAllByRoleTest() {
-        List<User> students = userService.getAll("STUDENT");
+        List<User> students = userService.getAll("ROLE_STUDENT");
         assertNotNull(students);
         assertEquals(students.size(), 2);
-        students.forEach(e -> assertTrue(e.getAuthorities().stream().anyMatch(role -> Objects.equals(role.getAuthority(), "STUDENT"))));
+        students.forEach(e -> assertTrue(e.getAuthorities().stream().anyMatch(role -> Objects.equals(role.getAuthority(), "ROLE_STUDENT"))));
     }
 
     @Test
     public void userServiceGetAllTest() {
         List<User> allUsers = userService.getAll();
         assertNotNull(allUsers);
-        assertEquals(allUsers.stream().filter(u -> Objects.equals(u.getAuthorities().stream().toList().get(0).getAuthority(), "STUDENT")).count(), 2);
-        assertEquals(allUsers.stream().filter(u -> Objects.equals(u.getAuthorities().stream().toList().get(0).getAuthority(), "FACILITATOR")).count(), 2);
-        assertEquals(allUsers.stream().filter(u -> Objects.equals(u.getAuthorities().stream().toList().get(0).getAuthority(), "ADMIN")).count(), 2);
+        assertEquals(allUsers.stream().filter(u -> Objects.equals(u.getAuthorities().stream().toList().get(0).getAuthority(), "ROLE_STUDENT")).count(), 2);
+        assertEquals(allUsers.stream().filter(u -> Objects.equals(u.getAuthorities().stream().toList().get(0).getAuthority(), "ROLE_FACILITATOR")).count(), 2);
+        assertEquals(allUsers.stream().filter(u -> Objects.equals(u.getAuthorities().stream().toList().get(0).getAuthority(), "ROLE_ADMIN")).count(), 2);
     }
 
     @Test
     public void userServiceSaveUserTest() {
-        UserResponseDto userDto = userService.saveUser(this.user, "STUDENT");
+        UserResponseDto userDto = userService.saveUser(this.user, "ROLE_STUDENT");
         assertNotNull(userDto);
         assertEquals(userDto.getUsername(), "testUser");
     }
 
     @Test
     public void userServiceSaveUserWithExistingRoleTest() {
-        user.addRole("STUDENT");
-        CEUserServiceError error = assertThrows(CEUserServiceError.class, () -> userService.saveUser(this.user, "STUDENT"));
+        user.addRole("ROLE_STUDENT");
+        CEUserServiceError error = assertThrows(CEUserServiceError.class, () -> userService.saveUser(this.user, "ROLE_STUDENT"));
         assertEquals(error.getMessage(), CEErrorMessage.ROLE_ALREADY_EXISTS);
     }
 
@@ -110,9 +110,9 @@ public class UserServiceTests {
         String userId = new ObjectId().toHexString();
         String groupId = new ObjectId().toHexString();
         user.setId(userId);
-        user.addRole("STUDENT");
+        user.addRole("ROLE_STUDENT");
         userGroup.setId(groupId);
-        userGroup.setRole("STUDENT");
+        userGroup.setRole("ROLE_STUDENT");
         Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         Mockito.when(userGroupRepository.findById(groupId)).thenReturn(Optional.of(userGroup));
         UserGroup group = userService.addToGroup(userId, groupId);
@@ -131,9 +131,9 @@ public class UserServiceTests {
         String userId = new ObjectId().toHexString();
         String groupId = new ObjectId().toHexString();
         user.setId(userId);
-        user.addRole("STUDENT");
+        user.addRole("ROLE_STUDENT");
         userGroup.setId(groupId);
-        userGroup.setRole("FACILITATOR");
+        userGroup.setRole("ROLE_FACILITATOR");
         Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         Mockito.when(userGroupRepository.findById(groupId)).thenReturn(Optional.of(userGroup));
         CEUserServiceError error = assertThrows(CEUserServiceError.class, () -> userService.addToGroup(userId, groupId));

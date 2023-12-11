@@ -18,6 +18,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.GsonFactoryBean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -81,14 +82,20 @@ public class RegistrationControllerTests {
 
     @Test
     public void registerStudentTest() throws Exception {
-        Mockito.when(userService.saveUser(Mockito.any(User.class), Mockito.eq("STUDENT"))).thenReturn(new UserResponseDto(user));
-        ResultActions result = mockMvc.perform(
-                MockMvcRequestBuilders
-                        .post("/register/student")
-                        .content(mapToJson(user))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON));
-        result.andExpect(status().isCreated())
-            .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("n.elliot"));
+        String userString = mapToJson(user);
+        User copiedUser = mapFromJson(userString, User.class);
+        copiedUser.addRole("ROLE_STUDENT");
+        UserResponseDto dto = new UserResponseDto(copiedUser);
+
+        Mockito.when(userService.saveUser(Mockito.any(User.class), Mockito.eq("ROLE_STUDENT"))).thenReturn(dto);
+
+        mockMvc.perform(MockMvcRequestBuilders
+            .post("/register/student")
+            .content(userString)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isCreated())
+            .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("n.elliot"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.roles[0]").value("ROLE_STUDENT"));
     }
 }

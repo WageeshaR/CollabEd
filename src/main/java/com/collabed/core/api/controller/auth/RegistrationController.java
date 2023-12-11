@@ -26,13 +26,13 @@ public class RegistrationController {
 
     // users
     @PostMapping("/student")
-    public ResponseEntity<?> registerStudent(@RequestBody User student, Errors errors) {
+    public ResponseEntity<?> registerStudent(@Valid @RequestBody User student, Errors errors) {
         if (errors.hasErrors()) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HTTPResponseErrorFormatter.format(errors));
         } else {
             student.setPassword(passwordEncoder.encode(student.getPassword()));
             try {
-                UserResponseDto savedStudent = userService.saveUser(student, "STUDENT");
+                UserResponseDto savedStudent = userService.saveUser(student, "ROLE_STUDENT");
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedStudent);
             } catch (DuplicateKeyException | CEUserServiceError exception) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.toString());
@@ -47,7 +47,7 @@ public class RegistrationController {
         } else {
             facilitator.setPassword(passwordEncoder.encode(facilitator.getPassword()));
             try {
-                UserResponseDto savedFacilitator = userService.saveUser(facilitator, "FACILITATOR");
+                UserResponseDto savedFacilitator = userService.saveUser(facilitator, "ROLE_FACILITATOR");
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedFacilitator);
             } catch (DuplicateKeyException | CEUserServiceError exception) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.toString());
@@ -62,7 +62,7 @@ public class RegistrationController {
         } else {
             admin.setPassword(passwordEncoder.encode(admin.getPassword()));
             try {
-                UserResponseDto savedAdmin = userService.saveUser(admin, "ADMIN");
+                UserResponseDto savedAdmin = userService.saveUser(admin, "ROLE_ADMIN");
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedAdmin);
             } catch (DuplicateKeyException | CEUserServiceError exception) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.toString());

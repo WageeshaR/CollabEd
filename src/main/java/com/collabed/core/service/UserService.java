@@ -47,6 +47,7 @@ public class UserService implements UserDetailsService {
         if (user.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
             .noneMatch(r -> Objects.equals(r, role))) {
+            user.addRole(role);
             return new UserResponseDto(userRepository.insert(user));
         } else {
             throw new CEUserServiceError(CEErrorMessage.ROLE_ALREADY_EXISTS);

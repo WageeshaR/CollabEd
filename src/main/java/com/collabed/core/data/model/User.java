@@ -16,7 +16,7 @@ import java.util.List;
 
 @Document
 @Data
-public class User implements UserDetails {
+public class User implements UserDetails, Cloneable {
     @Id
     private String id;
     @NotNull(message = "username must not be empty")
@@ -87,5 +87,15 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public User clone() {
+        try {
+            // TODO: copy mutable state here, so the clone can't change the internals of the original
+            return (User) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }
