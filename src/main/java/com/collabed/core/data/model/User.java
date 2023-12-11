@@ -39,6 +39,13 @@ public class User implements UserDetails {
     private boolean hasConsentForDataSharing;
     @JsonProperty("has_agreed_terms")
     private boolean hasAgreedTerms;
+    @JsonProperty("account_non_expired")
+    private boolean accountNonExpired;
+    @JsonProperty("account_non_locked")
+    private boolean accountNonLocked;
+    @JsonProperty("credentials_non_expired")
+    private boolean credentialsNonExpired;
+    private boolean enabled;
 
     public User() {
         super();

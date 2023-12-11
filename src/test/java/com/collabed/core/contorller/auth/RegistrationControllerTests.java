@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
@@ -31,25 +32,23 @@ import java.io.IOException;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-@WebAppConfiguration
+//@WebAppConfiguration
 @Profile({"test"})
 public class RegistrationControllerTests {
-    private final RegistrationController registrationController;
-    private final UserService userService;
-    private final InstitutionService institutionService;
-    private final BCryptPasswordEncoder passwordEncoder;
+    /*
+    Usual boilerplate code
+     */
+    @MockBean
+    UserService userService;
+    @MockBean
+    InstitutionService institutionService;
+    @MockBean
+    BCryptPasswordEncoder passwordEncoder;
     private MockMvc mockMvc;
     @Autowired
     private WebApplicationContext webApplicationContext;
     private User user;
     private Institution institution;
-
-    public RegistrationControllerTests() {
-        this.userService = Mockito.mock(UserService.class);
-        this.institutionService = Mockito.mock(InstitutionService.class);
-        this.passwordEncoder = Mockito.mock(BCryptPasswordEncoder.class);
-        this.registrationController = new RegistrationController(userService, institutionService, passwordEncoder);
-    }
     protected String mapToJson(Object obj) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         return objectMapper.writeValueAsString(obj);
@@ -62,10 +61,12 @@ public class RegistrationControllerTests {
 
     @BeforeEach
     public void setup() {
+        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         // setup institution
         institution = new Institution();
         institution.setName("The University of York");
         institution.setAddressId(new ObjectId().toHexString());
+
         //setup user
         user = new User();
         user.setUsername("n.elliot");
@@ -80,8 +81,7 @@ public class RegistrationControllerTests {
 
     @Test
     public void registerStudentTest() throws Exception {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        Mockito.when(userService.saveUser(user, "STUDENT")).thenReturn(new UserResponseDto(user));
+        Mockito.when(userService.saveUser(Mockito.any(User.class), Mockito.eq("STUDENT"))).thenReturn(new UserResponseDto(user));
         ResultActions result = mockMvc.perform(
                 MockMvcRequestBuilders
                         .post("/register/student")
@@ -89,6 +89,6 @@ public class RegistrationControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON));
         result.andExpect(status().isCreated())
-            .andExpect(MockMvcResultMatchers.jsonPath("$").exists());
+            .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("n.elliot"));
     }
 }
