@@ -6,8 +6,8 @@ import com.collabed.core.data.model.User;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.InstitutionService;
 import com.collabed.core.service.UserService;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static com.collabed.core.JacksonUtils.mapFromJson;
+import static com.collabed.core.JacksonUtils.mapToJson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,7 +31,6 @@ import java.io.IOException;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-//@WebAppConfiguration
 @Profile({"test"})
 public class RegistrationControllerTests {
     /*
@@ -48,15 +47,6 @@ public class RegistrationControllerTests {
     private WebApplicationContext webApplicationContext;
     private User user;
     private Institution institution;
-    protected String mapToJson(Object obj) throws JsonProcessingException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(obj);
-    }
-    protected <T> T mapFromJson(String json, Class<T> clazz)
-            throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.readValue(json, clazz);
-    }
 
     @BeforeEach
     public void setup() {

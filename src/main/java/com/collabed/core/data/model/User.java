@@ -22,6 +22,7 @@ public class User implements UserDetails {
     private String id;
     @NotNull
     @Size(min = 6, message = "username must be at least 6 characters long")
+    @Indexed(unique = true)
     private String username;
     @NotNull
     private String password;

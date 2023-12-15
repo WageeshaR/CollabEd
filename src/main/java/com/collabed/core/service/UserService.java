@@ -2,6 +2,7 @@ package com.collabed.core.service;
 
 import com.collabed.core.data.dto.UserGroupResponseDto;
 import com.collabed.core.data.dto.UserResponseDto;
+import com.collabed.core.data.model.Role;
 import com.collabed.core.data.model.User;
 import com.collabed.core.data.model.UserGroup;
 import com.collabed.core.data.repository.user.UserGroupRepository;
@@ -65,7 +66,11 @@ public class UserService implements UserDetailsService {
     public UserGroup addToGroup(String userId, String groupId) {
         if (userRepository.findById(userId).isEmpty()) throw new CEWebRequestError(CEErrorMessage.USER_NOT_EXIST);
         UserGroup userGroup = userGroupRepository.findById(groupId).orElseThrow();
-        return userGroup.addToGroup(userId);
+        List<Role> userRoles = userRepository.findById(userId).get().getRoles();
+        if (userRoles.stream().noneMatch(r -> r.getAuthority() != null && r.getAuthority().equals(userGroup.getRole())))
+            throw new CEWebRequestError(CEErrorMessage.GROUP_ROLE_NOT_MATCHED_WITH_USER);
+        userGroup.addUsers(userId);
+        return userGroup;
     }
 
     public UserGroupResponseDto loadGroupById(String id) {

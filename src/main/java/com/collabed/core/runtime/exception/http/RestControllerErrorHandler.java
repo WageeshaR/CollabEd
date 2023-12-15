@@ -1,10 +1,12 @@
-package com.collabed.core.api;
+package com.collabed.core.runtime.exception.http;
 
+import com.collabed.core.data.model.ApiError;
 import com.collabed.core.runtime.exception.CEOperationNotAllowedError;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -12,13 +14,20 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class RestControllerErrorHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(CEOperationNotAllowedError.class)
-    protected ResponseEntity<Object> handleOperationNotAllowed(CEOperationNotAllowedError ex) {
+    public ResponseEntity<?> handleOperationNotAllowed(CEOperationNotAllowedError ex) {
         ApiError error = new ApiError(HttpStatus.NOT_ACCEPTABLE);
         error.setMessage(ex.getMessage());
         return buildResponseEntity(error);
     }
 
-    private ResponseEntity<Object> buildResponseEntity(ApiError apiError) {
-        return new ResponseEntity<>(apiError, apiError.getStatus());
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> handleAccessDenied(AccessDeniedException ex) {
+        ApiError error = new ApiError(HttpStatus.UNAUTHORIZED);
+        error.setMessage(ex.getClass().getName());
+        return buildResponseEntity(error);
+    }
+
+    private ResponseEntity<?> buildResponseEntity(ApiError apiError) {
+        return ResponseEntity.status(apiError.getStatus()).body(apiError.getMessage());
     }
 }

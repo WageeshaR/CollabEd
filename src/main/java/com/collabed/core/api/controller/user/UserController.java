@@ -8,11 +8,14 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("users")
@@ -60,15 +63,16 @@ public class UserController {
     }
 
     @PostMapping("/groups/add-user")
-    public ResponseEntity<?> addUserToGroup(@RequestBody String user_id, String group_id) {
-        if (user_id == null) {
+    public ResponseEntity<?> addUserToGroup(@RequestBody Map<String, String> request) {
+        if (request.get("user_id") == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("user_id must be specified");
         }
-        if (group_id == null) {
+        if (request.get("group_id") == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("group_id must be specified");
         }
         try {
-            return ResponseEntity.ok().body(userService.addToGroup(user_id, group_id));
+            UserGroup group = userService.addToGroup(request.get("user_id"), request.get("group_id"));
+            return ResponseEntity.ok().body(group);
         } catch (Exception e) {
             return ResponseEntity.internalServerError().build();
         }

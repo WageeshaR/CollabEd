@@ -56,8 +56,8 @@ public class UserServiceTests {
 
     @BeforeEach
     public void setupGroup() {
-        ObjectId objectId = new ObjectId();
-        userGroup = new UserGroup(null, "testUserGroup", null, null, userRepository);
+        userGroup = new UserGroup();
+        userGroup.setName("testUserGroup");
         Mockito.when(userGroupRepository.insert(userGroup)).thenReturn(userGroup);
     }
 
