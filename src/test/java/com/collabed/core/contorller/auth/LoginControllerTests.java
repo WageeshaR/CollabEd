@@ -1,10 +1,7 @@
 package com.collabed.core.contorller.auth;
 
 import com.collabed.core.data.model.User;
-import org.bson.json.JsonObject;
-import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -20,7 +17,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -29,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @Profile({"test"})
-public class LoginControllerTest {
+public class LoginControllerTests {
     @MockBean
     private AuthenticationManager authenticationManager;
     @MockBean

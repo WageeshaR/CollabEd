@@ -1,5 +1,9 @@
 package com.collabed.core.contorller.user;
 
+import com.collabed.core.api.controller.user.UserController;
+import com.collabed.core.api.util.JwtTokenFilter;
+import com.collabed.core.api.util.JwtTokenUtil;
+import com.collabed.core.config.SecurityConfig;
 import com.collabed.core.data.dto.UserGroupResponseDto;
 import com.collabed.core.data.dto.UserResponseDto;
 import com.collabed.core.data.model.User;
@@ -11,17 +15,28 @@ import org.hamcrest.Matcher;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContext;
+import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -34,18 +49,15 @@ import static com.collabed.core.JacksonUtils.mapToJson;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@Profile({"test"})
+@Import(SecurityConfig.class)
+@WebMvcTest(UserController.class)
 public class UserControllerTest {
     @MockBean
     private UserService userService;
+    @MockBean
+    JwtTokenUtil jwtTokenUtil;
     @Autowired
-    private WebApplicationContext webApplicationContext;
     private MockMvc mockMvc;
-    @BeforeEach
-    public void setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    }
 
     private Matcher<?> getMatcher(int numUsers) {
         return new Matcher<List<?>>() {
@@ -245,6 +257,7 @@ public class UserControllerTest {
 
     // groups
     @Test
+    @WithMockUser
     public void createUserGroupTest() throws Exception {
         UserGroup group = new UserGroup();
         group.setName("testgroup");
@@ -260,6 +273,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void addUserToGroup() throws Exception {
         String userId = new ObjectId().toHexString();
         String groupId = new ObjectId().toHexString();
@@ -282,6 +296,7 @@ public class UserControllerTest {
     }
 
     @Test
+    @WithMockUser
     public void getGroupDetailsTest() throws Exception {
         String id = new ObjectId().toHexString();
         UserGroup group = new UserGroup();
