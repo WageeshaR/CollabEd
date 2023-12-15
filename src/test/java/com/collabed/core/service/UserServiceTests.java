@@ -23,15 +23,20 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@Profile({"test"})
 public class UserServiceTests {
 
-    UserRepository userRepository = Mockito.mock(UserRepository.class);
-    UserGroupRepository userGroupRepository = Mockito.mock(UserGroupRepository.class);
-    UserService userService = new UserService(userRepository, userGroupRepository);
+    private UserRepository userRepository;
+    private UserGroupRepository userGroupRepository;
+    private UserService userService;
     private User user;
     private UserGroup userGroup;
+
+    @BeforeEach
+    public void setup() {
+        userRepository = Mockito.mock(UserRepository.class);
+        userGroupRepository = Mockito.mock(UserGroupRepository.class);
+        userService = new UserService(userRepository, userGroupRepository);
+    }
 
     @BeforeEach
     public void setupUser() {
