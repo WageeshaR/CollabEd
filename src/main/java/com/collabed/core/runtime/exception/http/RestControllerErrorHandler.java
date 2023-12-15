@@ -27,6 +27,13 @@ public class RestControllerErrorHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(error);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<?> handleException(AccessDeniedException ex) {
+        ApiError error = new ApiError(HttpStatus.UNAUTHORIZED);
+        error.setMessage(ex.getMessage());
+        return buildResponseEntity(error);
+    }
+
     private ResponseEntity<?> buildResponseEntity(ApiError apiError) {
         return ResponseEntity.status(apiError.getStatus()).body(apiError.getMessage());
     }

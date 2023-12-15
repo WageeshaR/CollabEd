@@ -6,8 +6,8 @@ import com.collabed.core.data.model.User;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.InstitutionService;
 import com.collabed.core.service.UserService;
-import static com.collabed.core.JacksonUtils.mapFromJson;
-import static com.collabed.core.JacksonUtils.mapToJson;
+import static com.collabed.core.HttpRequestResponseUtils.mapFromJson;
+import static com.collabed.core.HttpRequestResponseUtils.mapToJson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -25,8 +25,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.io.IOException;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
