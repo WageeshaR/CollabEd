@@ -1,5 +1,6 @@
 package com.collabed.core;
 
+import com.collabed.core.api.util.LicenseUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.Description;
@@ -34,18 +35,24 @@ public class HttpRequestResponseUtils {
         };
     }
 
-    public static Matcher<? super String> sessionIdLenMatcher(int len) {
-        return new Matcher<String>() {
+    public static Matcher<? super String> sessionKeyValidator(int len) {
+        return new Matcher<>() {
             @Override
-            public void describeTo(Description description) {}
+            public void describeTo(Description description) {
+            }
+
             @Override
             public boolean matches(Object o) {
-                return o instanceof String && ((String) o).length() == len;
+                return LicenseUtil.isValid((String) o);
             }
+
             @Override
-            public void describeMismatch(Object o, Description description) {}
+            public void describeMismatch(Object o, Description description) {
+            }
+
             @Override
-            public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {}
+            public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {
+            }
         };
     }
 }
