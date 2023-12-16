@@ -33,4 +33,19 @@ public class HttpRequestResponseUtils {
             public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {}
         };
     }
+
+    public static Matcher<? super String> sessionIdLenMatcher(int len) {
+        return new Matcher<String>() {
+            @Override
+            public void describeTo(Description description) {}
+            @Override
+            public boolean matches(Object o) {
+                return o instanceof String && ((String) o).length() == len;
+            }
+            @Override
+            public void describeMismatch(Object o, Description description) {}
+            @Override
+            public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {}
+        };
+    }
 }
