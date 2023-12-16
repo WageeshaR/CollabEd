@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -38,8 +39,9 @@ public class User implements UserDetails {
     private String phone;
     private List<Role> roles;
     @JsonProperty("institution")
-    @Reference
+    @DocumentReference
     private Institution institution;
+    private UserLicense license;
     @JsonProperty("has_consent_for_data_sharing")
     private boolean hasConsentForDataSharing;
     @JsonProperty("has_agreed_terms")
