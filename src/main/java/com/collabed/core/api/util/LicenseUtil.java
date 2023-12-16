@@ -40,11 +40,11 @@ public class LicenseUtil {
     }
 
     public static boolean isValid(String key) {
-        String b64Date = key.substring(SESSION_KEY_LEN);
         try {
+            String b64Date = key.substring(SESSION_KEY_LEN);
             Date expiry = dateFromB64String(b64Date);
             return expiry.after(Calendar.getInstance().getTime());
-        } catch (CEWebRequestError e) {
+        } catch (Exception e) {
             return false;
         }
     }

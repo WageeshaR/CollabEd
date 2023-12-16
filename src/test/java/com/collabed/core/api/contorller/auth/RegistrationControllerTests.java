@@ -1,4 +1,4 @@
-package com.collabed.core.contorller.auth;
+package com.collabed.core.api.contorller.auth;
 
 import com.collabed.core.data.dto.UserResponseDto;
 import com.collabed.core.data.model.Institution;

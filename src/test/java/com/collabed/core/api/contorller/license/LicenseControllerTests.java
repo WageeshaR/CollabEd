@@ -1,4 +1,4 @@
-package com.collabed.core.contorller.license;
+package com.collabed.core.api.contorller.license;
 
 import com.collabed.core.api.controller.license.LicenseController;
 import com.collabed.core.api.util.CustomHttpHeaders;

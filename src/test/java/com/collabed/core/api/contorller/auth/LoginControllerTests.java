@@ -1,4 +1,4 @@
-package com.collabed.core.contorller.auth;
+package com.collabed.core.api.contorller.auth;
 
 import com.collabed.core.data.model.User;
 import org.json.JSONObject;

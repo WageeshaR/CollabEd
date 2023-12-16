@@ -1,4 +1,4 @@
-package com.collabed.core.contorller;
+package com.collabed.core.api.contorller;
 
 import com.collabed.core.api.controller.InstitutionController;
 import com.collabed.core.api.util.JwtTokenUtil;

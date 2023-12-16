@@ -17,7 +17,7 @@ public class RandomUtil {
             return new String(buf);
         }
 
-        private static final int DEFAULT_LENGTH = 16;
+        public static final int DEFAULT_LENGTH = 16;
         public static final String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
         public static final String lower = upper.toLowerCase(Locale.ROOT);

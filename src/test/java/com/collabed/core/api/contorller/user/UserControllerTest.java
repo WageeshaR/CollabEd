@@ -1,4 +1,4 @@
-package com.collabed.core.contorller.user;
+package com.collabed.core.api.contorller.user;
 
 import com.collabed.core.api.controller.user.UserController;
 import com.collabed.core.api.util.JwtTokenUtil;
