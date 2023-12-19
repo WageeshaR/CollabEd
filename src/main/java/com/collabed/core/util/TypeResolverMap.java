@@ -1,17 +1,16 @@
 package com.collabed.core.util;
 
 import com.collabed.core.data.repository.InstitutionRepository;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
-public class TypeResolver {
+public class TypeResolverMap {
     public static class RepositoryTypeResolver {
+        public static final String INSTITUTION_REPOSITORY = "InstitutionRepository";
         public static Map<String, Class<?>> classNameMap = new HashMap<>();
         static {
-            classNameMap.put("InstitutionRepository", InstitutionRepository.class);
+            classNameMap.put(INSTITUTION_REPOSITORY, InstitutionRepository.class);
         }
     }
 }

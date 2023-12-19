@@ -4,6 +4,7 @@ import com.collabed.core.data.model.Institution;
 import com.collabed.core.data.model.User;
 import com.collabed.core.data.util.ReferenceDataObjectMapper;
 import com.collabed.core.runtime.exception.CEReferenceObjectMappingError;
+import com.collabed.core.util.TypeResolverMap;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -32,7 +33,7 @@ public class UserResponseDto {
 
     private InstitutionResponseDto institution(Institution institution) throws CEReferenceObjectMappingError {
         ReferenceDataObjectMapper<Institution> mapper = new ReferenceDataObjectMapper<>();
-        Institution referenceObject = mapper.readReferenceObject(institution, "InstitutionRepository");
+        Institution referenceObject = mapper.readReferenceObject(institution, TypeResolverMap.RepositoryTypeResolver.INSTITUTION_REPOSITORY);
         return new InstitutionResponseDto(referenceObject);
     }
 }

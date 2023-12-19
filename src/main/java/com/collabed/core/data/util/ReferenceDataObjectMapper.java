@@ -1,6 +1,6 @@
 package com.collabed.core.data.util;
 
-import com.collabed.core.util.TypeResolver;
+import com.collabed.core.util.TypeResolverMap;
 import com.collabed.core.runtime.exception.CEReferenceObjectMappingError;
 import com.collabed.core.util.SpringContext;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -13,7 +13,7 @@ public class ReferenceDataObjectMapper<T> {
 
     public T readReferenceObject(T object, String repositoryName) {
         try {
-            repository = (MongoRepository<T, String>) SpringContext.getBean(TypeResolver.RepositoryTypeResolver.classNameMap.get(repositoryName));
+            repository = (MongoRepository<T, String>) SpringContext.getBean(TypeResolverMap.RepositoryTypeResolver.classNameMap.get(repositoryName));
         } catch (ClassCastException e) {
             throw new CEReferenceObjectMappingError("Error resolving repository bean from classname " + repositoryName);
         }
