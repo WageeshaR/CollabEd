@@ -9,8 +9,6 @@ import java.math.BigDecimal;
 
 @Data
 public class Price {
-    @Id
-    private String id;
     @NotNull
     private String subject;
     @NotNull

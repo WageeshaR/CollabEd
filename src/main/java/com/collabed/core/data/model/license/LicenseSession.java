@@ -14,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 @Document
 public class LicenseSession extends Session {
     @NotNull
-    @DocumentReference
+    @DocumentReference(lazy = true)
     private LicenseModel licenseModel;
     private boolean initStripe = false;
     private boolean addedPaymentMethod = false;

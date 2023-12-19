@@ -2,6 +2,7 @@ package com.collabed.core.api.controller;
 
 import com.collabed.core.api.util.CustomHttpHeaders;
 import com.collabed.core.api.util.HTTPResponseErrorFormatter;
+import com.collabed.core.data.model.Session;
 import com.collabed.core.data.model.license.LicenseOption;
 import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.service.license.LicenseService;
@@ -33,15 +34,14 @@ public class LicenseController {
     }
 
     @PostMapping("/select-option")
-    public ResponseEntity<?> selectOption(@Valid @RequestBody LicenseOption option, Errors errors) {
+    public ResponseEntity<?> selectOption(@Valid @RequestBody LicenseOption option, Errors errors,
+                                          @RequestHeader(CustomHttpHeaders.SESSION_KEY) String sessionKey) {
         if (errors.hasErrors()) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HTTPResponseErrorFormatter.format(errors));
         }
         try {
-            boolean initLicenseBuilder = licenseService.initSession(option);
-            if (initLicenseBuilder)
-                return ResponseEntity.ok().build();
-            else return ResponseEntity.internalServerError().build();
+            Session licenseSession = licenseService.initSession(option, sessionKey);
+            return ResponseEntity.ok().body(licenseSession);
         } catch (CEServiceError e) {
             return ResponseEntity.internalServerError().body(e);
         }

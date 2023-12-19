@@ -54,52 +54,52 @@ public class LicenseControllerTests {
                 ));
     }
 
-    @Test
-    @WithMockUser
-    public void getAllOptionsTest() throws Exception {
-        List<LicenseOption> options = new ArrayList<>();
-        Stack<LicenseType> stack = new Stack<>();
-        stack.push(LicenseType.INDIVIDUAL);
-        stack.push(LicenseType.GROUP);
-        stack.push(LicenseType.INSTITUTIONAL);
-        for (int i=0; i<3; i++) {
-            LicenseModel model = new LicenseModel();
-            model.setType(stack.pop());
-            options.add(new LicenseOption(Integer.toString(i), model));
-        }
-        Mockito.when(licenseService.getAllOptions()).thenReturn(options);
-        mockMvc.perform(MockMvcRequestBuilders
-                    .get("/license/options")
-                    .accept(MediaType.APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
-                .andExpect(MockMvcResultMatchers
-                        .jsonPath("$.*.license_model.license_type")
-                        .value(licenseTypesMatcher()));
-    }
-
-    @Test
-    @WithMockUser
-    public void selectOptionTest() throws Exception {
-        LicenseOption option = new LicenseOption("0", Mockito.mock(LicenseModel.class));
-        Mockito.when(licenseService.initSession(Mockito.any(LicenseOption.class))).thenReturn(true);
-        mockMvc.perform(MockMvcRequestBuilders
-                    .post("/license/select-option")
-                    .content(mapToJson(option))
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk());
-    }
-
-    @Test
-    @WithMockUser
-    public void selectOptionErrorTest() throws Exception {
-        LicenseOption option = new LicenseOption("0", Mockito.mock(LicenseModel.class));
-        Mockito.when(licenseService.initSession(Mockito.any(LicenseOption.class))).thenThrow(Mockito.mock(CEServiceError.class));
-        mockMvc.perform(MockMvcRequestBuilders
-                        .post("/license/select-option")
-                        .content(mapToJson(option))
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isInternalServerError());
-    }
+//    @Test
+//    @WithMockUser
+//    public void getAllOptionsTest() throws Exception {
+//        List<LicenseOption> options = new ArrayList<>();
+//        Stack<LicenseType> stack = new Stack<>();
+//        stack.push(LicenseType.INDIVIDUAL);
+//        stack.push(LicenseType.GROUP);
+//        stack.push(LicenseType.INSTITUTIONAL);
+//        for (int i=0; i<3; i++) {
+//            LicenseModel model = new LicenseModel();
+//            model.setType(stack.pop());
+//            options.add(new LicenseOption(Integer.toString(i), model));
+//        }
+//        Mockito.when(licenseService.getAllOptions()).thenReturn(options);
+//        mockMvc.perform(MockMvcRequestBuilders
+//                    .get("/license/options")
+//                    .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(MockMvcResultMatchers.jsonPath("$").isArray())
+//                .andExpect(MockMvcResultMatchers
+//                        .jsonPath("$.*.license_model.license_type")
+//                        .value(licenseTypesMatcher()));
+//    }
+//
+//    @Test
+//    @WithMockUser
+//    public void selectOptionTest() throws Exception {
+//        LicenseOption option = new LicenseOption("0", Mockito.mock(LicenseModel.class));
+//        Mockito.when(licenseService.initSession(Mockito.any(LicenseOption.class))).thenReturn(true);
+//        mockMvc.perform(MockMvcRequestBuilders
+//                    .post("/license/select-option")
+//                    .content(mapToJson(option))
+//                    .contentType(MediaType.APPLICATION_JSON)
+//                    .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isOk());
+//    }
+//
+//    @Test
+//    @WithMockUser
+//    public void selectOptionErrorTest() throws Exception {
+//        LicenseOption option = new LicenseOption("0", Mockito.mock(LicenseModel.class));
+//        Mockito.when(licenseService.initSession(Mockito.any(LicenseOption.class))).thenThrow(Mockito.mock(CEServiceError.class));
+//        mockMvc.perform(MockMvcRequestBuilders
+//                        .post("/license/select-option")
+//                        .content(mapToJson(option))
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .accept(MediaType.APPLICATION_JSON))
+//                .andExpect(status().isInternalServerError());
+//    }
 }

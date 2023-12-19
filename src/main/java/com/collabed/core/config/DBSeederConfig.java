@@ -45,8 +45,6 @@ public class DBSeederConfig {
         try (InputStream inputStream = new FileInputStream(licenseModelsJsonFile)) {
             List<LicenseModel> licenseModels = objectMapper.readValue(inputStream, licenseModelsCollectionType);
             licenseRepository.saveAll(licenseModels);
-        } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException ignored) {
-            System.out.println("Dup key");
-        }
+        } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException ignored) {}
     }
 }

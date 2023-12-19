@@ -1,5 +1,6 @@
 package com.collabed.core.service.license;
 
+import com.collabed.core.data.model.Session;
 import com.collabed.core.data.model.license.LicenseModel;
 import com.collabed.core.data.model.license.LicenseOption;
 import com.collabed.core.data.model.license.LicenseSession;
@@ -22,18 +23,22 @@ public class LicenseService {
         List<LicenseOption> options = new ArrayList<>();
         List<LicenseModel> models = licenseRepository.findAll();
         for (int i=0; i<models.size(); i++) {
-            LicenseOption option = new LicenseOption(Integer.toString(i), models.get(i));
+            LicenseOption option = new LicenseOption();
+            option.setId(Integer.toString(i));
+            option.setModel(models.get(i));
             options.add(option);
         }
         return options;
     }
 
-    public boolean initSession(LicenseOption option) {
+    public Session initSession(LicenseOption option, String sessionKey) {
         LicenseSession session = new LicenseSession();
         session.setLicenseModel(option.getModel());
+        session.setSessionKey(sessionKey);
         try {
             sessionRepository.save(session);
-            return true;
+            session.setSessionKey(null);
+            return session;
         } catch (Exception e) {
             throw new CEServiceError(e.getMessage());
         }

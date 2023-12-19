@@ -1,6 +1,7 @@
 package com.collabed.core.data.model.license;
 
 import com.collabed.core.data.model.pricing.Price;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotNull;
@@ -33,6 +34,7 @@ public class LicenseModel {
     private Price premium;
 
     @AssertTrue
+    @JsonIgnore
     public boolean isTypeUnitValidated() {
         if (this.type == LicenseType.INDIVIDUAL)
             return this.unitCount == 1;
