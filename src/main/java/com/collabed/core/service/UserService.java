@@ -7,9 +7,9 @@ import com.collabed.core.data.model.User;
 import com.collabed.core.data.model.UserGroup;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
+import com.collabed.core.runtime.exception.CEReferenceObjectMappingError;
 import com.collabed.core.runtime.exception.CEWebRequestError;
-import com.collabed.core.runtime.exception.CEErrorMessage;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -26,7 +26,6 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
 
-    @Autowired
     public UserService(UserRepository userRepository, UserGroupRepository userGroupRepository) {
         this.userRepository = userRepository;
         this.userGroupRepository = userGroupRepository;
@@ -49,12 +48,16 @@ public class UserService implements UserDetailsService {
             .map(GrantedAuthority::getAuthority)
             .noneMatch(r -> Objects.equals(r, role))) {
             if (!Objects.equals(role, "ROLE_ADMIN") && user.getInstitution() == null){
-                throw new CEWebRequestError(CEErrorMessage.INSTITUTION_NOT_NULL);
+                throw new CEWebRequestError(CEUserErrorMessage.INSTITUTION_NOT_NULL);
             }
             user.addRole(role);
-            return new UserResponseDto(userRepository.insert(user));
+            try {
+                return new UserResponseDto(userRepository.insert(user));
+            } catch (CEReferenceObjectMappingError e) {
+                throw new CEWebRequestError("Error resolving user data from object mapper");
+            }
         } else {
-            throw new CEWebRequestError(CEErrorMessage.ROLE_ALREADY_EXISTS);
+            throw new CEWebRequestError(CEUserErrorMessage.ROLE_ALREADY_EXISTS);
         }
     }
 
@@ -64,11 +67,11 @@ public class UserService implements UserDetailsService {
     }
 
     public UserGroup addToGroup(String userId, String groupId) {
-        if (userRepository.findById(userId).isEmpty()) throw new CEWebRequestError(CEErrorMessage.USER_NOT_EXIST);
+        if (userRepository.findById(userId).isEmpty()) throw new CEWebRequestError(CEUserErrorMessage.USER_NOT_EXIST);
         UserGroup userGroup = userGroupRepository.findById(groupId).orElseThrow();
         List<Role> userRoles = userRepository.findById(userId).get().getRoles();
         if (userRoles.stream().noneMatch(r -> r.getAuthority() != null && r.getAuthority().equals(userGroup.getRole())))
-            throw new CEWebRequestError(CEErrorMessage.GROUP_ROLE_NOT_MATCHED_WITH_USER);
+            throw new CEWebRequestError(CEUserErrorMessage.GROUP_ROLE_NOT_MATCHED_WITH_USER);
         userGroup.addUsers(userId);
         return userGroup;
     }

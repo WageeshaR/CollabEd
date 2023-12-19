@@ -1,6 +1,6 @@
 package com.collabed.core.api.contorller;
 
-import com.collabed.core.api.controller.license.LicenseController;
+import com.collabed.core.api.controller.LicenseController;
 import com.collabed.core.api.util.CustomHttpHeaders;
 import com.collabed.core.api.util.JwtTokenUtil;
 import com.collabed.core.config.SecurityConfig;
@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 

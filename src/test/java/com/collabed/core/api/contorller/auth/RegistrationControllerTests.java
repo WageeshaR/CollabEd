@@ -3,6 +3,7 @@ package com.collabed.core.api.contorller.auth;
 import com.collabed.core.data.dto.UserResponseDto;
 import com.collabed.core.data.model.Institution;
 import com.collabed.core.data.model.User;
+import com.collabed.core.data.repository.InstitutionRepository;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.InstitutionService;
 import com.collabed.core.service.UserService;

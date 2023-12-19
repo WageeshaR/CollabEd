@@ -4,7 +4,7 @@ import com.collabed.core.data.model.Institution;
 import com.collabed.core.data.model.location.Address;
 import com.collabed.core.data.repository.AddressRepository;
 import com.collabed.core.data.repository.InstitutionRepository;
-import com.collabed.core.runtime.exception.CEErrorMessage;
+import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +51,7 @@ public class InstitutionServiceTests {
     public void saveNoAddressTest() {
         Institution institution = Mockito.mock(Institution.class);
         CEWebRequestError error = assertThrows(CEWebRequestError.class, () -> institutionService.save(institution));
-        assertEquals(error.getMessage(), CEErrorMessage.INSTITUTION_ADDRESS_NOT_NULL);
+        assertEquals(error.getMessage(), CEUserErrorMessage.INSTITUTION_ADDRESS_NOT_NULL);
     }
 
     @ParameterizedTest

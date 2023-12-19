@@ -41,6 +41,7 @@ public class User implements UserDetails {
     @JsonProperty("institution")
     @DocumentReference
     private Institution institution;
+    @DocumentReference
     private UserLicense license;
     @JsonProperty("has_consent_for_data_sharing")
     private boolean hasConsentForDataSharing;

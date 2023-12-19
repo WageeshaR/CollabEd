@@ -1,4 +1,4 @@
-package com.collabed.core.api.controller.license;
+package com.collabed.core.api.controller;
 
 import com.collabed.core.api.util.CustomHttpHeaders;
 import com.collabed.core.api.util.HTTPResponseErrorFormatter;
@@ -47,4 +47,6 @@ public class LicenseController {
         }
 
     }
+
+    // TODO: add controller endpoint to update unitCount for user license object (validation: LicenseType.GROUP only)
 }

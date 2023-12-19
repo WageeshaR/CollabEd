@@ -1,21 +1,15 @@
 package com.collabed.core.data.model;
 
-import com.collabed.core.data.repository.user.UserRepository;
-import com.collabed.core.runtime.exception.CEErrorMessage;
-import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.security.core.GrantedAuthority;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 @Data
 @Document

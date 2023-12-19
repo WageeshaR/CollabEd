@@ -4,7 +4,7 @@ import com.collabed.core.data.model.Institution;
 import com.collabed.core.data.model.location.Address;
 import com.collabed.core.data.repository.AddressRepository;
 import com.collabed.core.data.repository.InstitutionRepository;
-import com.collabed.core.runtime.exception.CEErrorMessage;
+import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,7 +19,7 @@ public class InstitutionService {
 
     public Institution save(Institution institution) {
         if (institution.getAddress() == null) {
-            throw new CEWebRequestError(CEErrorMessage.INSTITUTION_ADDRESS_NOT_NULL);
+            throw new CEWebRequestError(CEUserErrorMessage.INSTITUTION_ADDRESS_NOT_NULL);
         }
         Address address = addressRepository.insert(institution.getAddress());
         institution.setAddressId(address.getId());

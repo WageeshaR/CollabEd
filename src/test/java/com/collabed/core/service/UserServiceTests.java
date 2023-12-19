@@ -8,13 +8,11 @@ import com.collabed.core.data.model.UserGroup;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
 import com.collabed.core.runtime.exception.CEWebRequestError;
-import com.collabed.core.runtime.exception.CEErrorMessage;
+import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
@@ -100,7 +98,7 @@ public class UserServiceTests {
     public void userServiceSaveUserWithExistingRoleTest() {
         user.addRole("ROLE_STUDENT");
         CEWebRequestError error = assertThrows(CEWebRequestError.class, () -> userService.saveUser(this.user, "ROLE_STUDENT"));
-        assertEquals(error.getMessage(), CEErrorMessage.ROLE_ALREADY_EXISTS);
+        assertEquals(error.getMessage(), CEUserErrorMessage.ROLE_ALREADY_EXISTS);
     }
 
     @Test
@@ -128,7 +126,7 @@ public class UserServiceTests {
     @Test
     public void userServiceAddToGroupNoUserTest() {
         CEWebRequestError error = assertThrows(CEWebRequestError.class, () -> userService.addToGroup(new ObjectId().toHexString(), new ObjectId().toHexString()));
-        assertEquals(error.getMessage(), CEErrorMessage.USER_NOT_EXIST);
+        assertEquals(error.getMessage(), CEUserErrorMessage.USER_NOT_EXIST);
     }
 
     @Test
@@ -142,7 +140,7 @@ public class UserServiceTests {
         Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         Mockito.when(userGroupRepository.findById(groupId)).thenReturn(Optional.of(userGroup));
         CEWebRequestError error = assertThrows(CEWebRequestError.class, () -> userService.addToGroup(userId, groupId));
-        assertEquals(error.getMessage(), CEErrorMessage.GROUP_ROLE_NOT_MATCHED_WITH_USER);
+        assertEquals(error.getMessage(), CEUserErrorMessage.GROUP_ROLE_NOT_MATCHED_WITH_USER);
     }
 
     @Test
