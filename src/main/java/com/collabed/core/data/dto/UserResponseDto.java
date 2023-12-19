@@ -26,7 +26,8 @@ public class UserResponseDto {
         this.email = user.getEmail();
         this.phone = user.getPhone();
         this.roles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
-        this.institution = user.getInstitution() != null ? institution(user.getInstitution()) : null;
+        this.institution = user.getInstitution() != null && user.getInstitution().getId() != null ?
+                institution(user.getInstitution()) : null;
     }
 
     private InstitutionResponseDto institution(Institution institution) throws CEReferenceObjectMappingError {
