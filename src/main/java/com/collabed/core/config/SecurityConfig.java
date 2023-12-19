@@ -50,7 +50,14 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/", "/register/*", "/login").permitAll()
+                        .requestMatchers(
+                                "/",
+                                "/api-docs",
+                                "/api-docs/*",
+                                "/swagger-ui/*",
+                                "/register/*",
+                                "/login")
+                        .permitAll()
                         .anyRequest().authenticated()
                 )
                 .logout(logout -> logout.permitAll()

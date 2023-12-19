@@ -9,3 +9,6 @@ spring:
       host: localhost
       auto-index-creation: true
       uuid-representation: standard
+springdoc:
+  api-docs:
+    path: /api-docs
