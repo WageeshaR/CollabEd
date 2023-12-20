@@ -50,7 +50,7 @@ public class InstitutionControllerTests {
 
     @ParameterizedTest
     @ValueSource(ints = {1,5,20})
-    @WithMockUser
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
     public void allTest(int num) throws Exception {
         List<Institution> institutions = new ArrayList<>();
         for (int i=0; i< num; i++)
