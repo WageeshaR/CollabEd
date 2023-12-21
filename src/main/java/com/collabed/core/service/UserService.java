@@ -1,13 +1,12 @@
 package com.collabed.core.service;
 
-import com.collabed.core.data.dto.UserGroupResponseDto;
-import com.collabed.core.data.dto.UserResponseDto;
 import com.collabed.core.data.model.Role;
 import com.collabed.core.data.model.User;
 import com.collabed.core.data.model.UserGroup;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
 import com.collabed.core.runtime.exception.CEReferenceObjectMappingError;
+import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import org.springframework.security.core.GrantedAuthority;
@@ -43,7 +42,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findAllByRoles_Authority(role).orElseGet(List::of);
     }
 
-    public UserResponseDto saveUser(User user, String role) {
+    public User saveUser(User user, String role) {
         if (user.getAuthorities().stream()
             .map(GrantedAuthority::getAuthority)
             .noneMatch(r -> Objects.equals(r, role))) {
@@ -52,12 +51,21 @@ public class UserService implements UserDetailsService {
             }
             user.addRole(role);
             try {
-                return new UserResponseDto(userRepository.insert(user));
+                return userRepository.insert(user);
             } catch (CEReferenceObjectMappingError e) {
                 throw new CEWebRequestError("Error resolving user data from object mapper");
             }
         } else {
             throw new CEWebRequestError(CEUserErrorMessage.ROLE_ALREADY_EXISTS);
+        }
+    }
+
+    public boolean deleteUser(User user) {
+        try {
+            userRepository.delete(user);
+            return true;
+        } catch (Exception e) {
+            throw new CEServiceError("Error deleting the user: " + e.getMessage());
         }
     }
 
@@ -76,12 +84,7 @@ public class UserService implements UserDetailsService {
         return userGroup;
     }
 
-    public UserGroupResponseDto loadGroupById(String id) {
-        UserGroup group = userGroupRepository.findById(id).orElseThrow();
-        List<UserResponseDto> usersOfGroup = new ArrayList<>();
-        for (String userId : group.getUserIds()) {
-            usersOfGroup.add(new UserResponseDto(userRepository.findById(userId).orElseThrow()));
-        }
-        return new UserGroupResponseDto(group.getId(), group.getName(), usersOfGroup);
+    public UserGroup loadGroupById(String id) {
+        return userGroupRepository.findById(id).orElseThrow();
     }
 }

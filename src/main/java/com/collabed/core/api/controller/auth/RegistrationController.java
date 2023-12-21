@@ -1,7 +1,6 @@
 package com.collabed.core.api.controller.auth;
 
 import com.collabed.core.api.util.HTTPResponseErrorFormatter;
-import com.collabed.core.data.dto.UserResponseDto;
 import com.collabed.core.data.model.Institution;
 import com.collabed.core.data.model.User;
 import com.collabed.core.runtime.exception.CEWebRequestError;
@@ -32,7 +31,7 @@ public class RegistrationController {
         } else {
             student.setPassword(passwordEncoder.encode(student.getPassword()));
             try {
-                UserResponseDto savedStudent = userService.saveUser(student, "ROLE_STUDENT");
+                User savedStudent = userService.saveUser(student, "ROLE_STUDENT");
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedStudent);
             } catch (DuplicateKeyException | CEWebRequestError exception) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.toString());
@@ -47,7 +46,7 @@ public class RegistrationController {
         } else {
             facilitator.setPassword(passwordEncoder.encode(facilitator.getPassword()));
             try {
-                UserResponseDto savedFacilitator = userService.saveUser(facilitator, "ROLE_FACILITATOR");
+                User savedFacilitator = userService.saveUser(facilitator, "ROLE_FACILITATOR");
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedFacilitator);
             } catch (DuplicateKeyException | CEWebRequestError exception) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.toString());
@@ -62,7 +61,7 @@ public class RegistrationController {
         } else {
             admin.setPassword(passwordEncoder.encode(admin.getPassword()));
             try {
-                UserResponseDto savedAdmin = userService.saveUser(admin, "ROLE_ADMIN");
+                User savedAdmin = userService.saveUser(admin, "ROLE_ADMIN");
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedAdmin);
             } catch (DuplicateKeyException | CEWebRequestError exception) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(exception.toString());

@@ -1,14 +1,10 @@
 package com.collabed.core.api.contorller.auth;
 
-import com.collabed.core.data.dto.UserResponseDto;
 import com.collabed.core.data.model.Institution;
 import com.collabed.core.data.model.User;
-import com.collabed.core.data.repository.InstitutionRepository;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.InstitutionService;
 import com.collabed.core.service.UserService;
-import static com.collabed.core.HttpRequestResponseUtils.mapFromJson;
-import static com.collabed.core.HttpRequestResponseUtils.mapToJson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,18 +19,18 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import static com.collabed.core.HttpRequestResponseUtils.mapFromJson;
+import static com.collabed.core.HttpRequestResponseUtils.mapToJson;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @Profile({"test"})
 public class RegistrationControllerTests {
-    /*
-    Usual boilerplate code
-     */
     @MockBean
     UserService userService;
     @MockBean
@@ -74,9 +70,8 @@ public class RegistrationControllerTests {
         String userString = mapToJson(user);
         User copiedUser = mapFromJson(userString, User.class);
         copiedUser.addRole(role);
-        UserResponseDto dto = new UserResponseDto(copiedUser);
 
-        Mockito.when(userService.saveUser(Mockito.any(User.class), Mockito.eq(role))).thenReturn(dto);
+        Mockito.when(userService.saveUser(Mockito.any(User.class), Mockito.eq(role))).thenReturn(copiedUser);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/register/" + param)
@@ -85,7 +80,7 @@ public class RegistrationControllerTests {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.username").value("n.elliot"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.roles[0]").value(role));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.roles[0].authority").value(role));
     }
 
     @Test

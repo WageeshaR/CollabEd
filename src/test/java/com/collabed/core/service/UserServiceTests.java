@@ -1,12 +1,11 @@
 package com.collabed.core.service;
 
-import com.collabed.core.data.dto.UserGroupResponseDto;
-import com.collabed.core.data.dto.UserResponseDto;
 import com.collabed.core.data.model.Institution;
 import com.collabed.core.data.model.User;
 import com.collabed.core.data.model.UserGroup;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
+import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import org.bson.types.ObjectId;
@@ -89,9 +88,9 @@ public class UserServiceTests {
 
     @Test
     public void userServiceSaveUserTest() {
-        UserResponseDto userDto = userService.saveUser(this.user, "ROLE_STUDENT");
-        assertNotNull(userDto);
-        assertEquals(userDto.getUsername(), "testUser");
+        User savedUser = userService.saveUser(this.user, "ROLE_STUDENT");
+        assertNotNull(savedUser);
+        assertEquals(savedUser.getUsername(), "testUser");
     }
 
     @Test
@@ -99,6 +98,21 @@ public class UserServiceTests {
         user.addRole("ROLE_STUDENT");
         CEWebRequestError error = assertThrows(CEWebRequestError.class, () -> userService.saveUser(this.user, "ROLE_STUDENT"));
         assertEquals(error.getMessage(), CEUserErrorMessage.ROLE_ALREADY_EXISTS);
+    }
+
+    @Test
+    public void deleteUserTest() {
+        Mockito.doNothing().when(userRepository).delete(Mockito.any(User.class));
+        User user = Mockito.mock(User.class);
+        Object result = userService.deleteUser(user);
+        assertEquals(result, true);
+    }
+
+    @Test
+    public void deleteUserErrorTest() {
+        Mockito.doThrow(new CEServiceError("")).when(userRepository).delete(Mockito.any(User.class));
+        User user = Mockito.mock(User.class);
+        assertThrows(CEServiceError.class, () -> userService.deleteUser(user));
     }
 
     @Test
@@ -152,8 +166,8 @@ public class UserServiceTests {
         userGroup.setUserIds(List.of(userId));
         Mockito.when(userGroupRepository.findById(groupId)).thenReturn(Optional.of(userGroup));
         Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        UserGroupResponseDto dto = userService.loadGroupById(groupId);
-        assertNotNull(dto);
-        assertEquals(dto.name(), "testUserGroup");
+        UserGroup group = userService.loadGroupById(groupId);
+        assertNotNull(group);
+        assertEquals(group.getName(), "testUserGroup");
     }
 }

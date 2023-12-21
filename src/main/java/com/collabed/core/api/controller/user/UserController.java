@@ -48,6 +48,20 @@ public class UserController {
         return userService.getAll("ROLE_FACILITATOR");
     }
 
+    @PostMapping("/delete")
+    @RolesAllowed({"SUPER_ADMIN", "ADMIN"})
+    public ResponseEntity<?> deleteUser(@Valid @RequestBody User user, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
+                    errors.getAllErrors().stream().map(
+                            ObjectError::getDefaultMessage
+                    )
+            );
+        } else {
+            return ResponseEntity.ok().body("User deleted successfully");
+        }
+    }
+
     // user groups
     @PostMapping("/groups")
     public ResponseEntity<?> createUserGroup(@Valid @RequestBody UserGroup group, Errors errors) {

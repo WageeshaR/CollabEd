@@ -3,8 +3,7 @@ package com.collabed.core.api.contorller;
 import com.collabed.core.api.controller.user.UserController;
 import com.collabed.core.api.util.JwtTokenUtil;
 import com.collabed.core.config.SecurityConfig;
-import com.collabed.core.data.dto.UserGroupResponseDto;
-import com.collabed.core.data.dto.UserResponseDto;
+import com.collabed.core.data.model.Institution;
 import com.collabed.core.data.model.User;
 import com.collabed.core.data.model.UserGroup;
 import com.collabed.core.service.UserService;
@@ -224,6 +223,30 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$").value(countMatcher(numUsers)));
     }
 
+    @Test
+    @WithMockUser(authorities = {"ROLE_ADMIN"})
+    public void deleteUserTest() throws Exception {
+        Institution institution = new Institution();
+        institution.setName("The University of York");
+        User user = new User();
+        user.setUsername("n.elliot");
+        user.setPassword("password1234");
+        user.setFirstName("Nathon");
+        user.setLastName("Elliot");
+        user.setEmail("n.elliot@collabed.org");
+        user.setInstitution(institution);
+        user.setHasAgreedTerms(true);
+        user.setHasConsentForDataSharing(false);
+
+        Mockito.when(userService.deleteUser(Mockito.any(User.class))).thenReturn(true);
+        mockMvc.perform(MockMvcRequestBuilders
+                    .post("/users/delete")
+                    .content(mapToJson(user))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
     // groups
     @Test
     @WithMockUser
@@ -271,7 +294,7 @@ public class UserControllerTest {
         UserGroup group = new UserGroup();
         group.setId(id);
         group.setName("testgroup");
-        Mockito.when(userService.loadGroupById(id)).thenReturn(new UserGroupResponseDto(id, "testgroup", List.of(Mockito.mock(UserResponseDto.class))));
+        Mockito.when(userService.loadGroupById(id)).thenReturn(group);
         mockMvc.perform(MockMvcRequestBuilders
                     .get("/users/groups/{id}", id)
                     .accept(MediaType.APPLICATION_JSON))
