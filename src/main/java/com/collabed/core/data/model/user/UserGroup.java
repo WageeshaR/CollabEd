@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,11 +22,12 @@ public class UserGroup {
     @NotNull(message = "role must be specified")
     private String role;
     @Size(min = 1, message = "a group must have at least one member")
-    private List<String> userIds;
+    @DocumentReference
+    private List<User> users;
 
-    public void addUsers(String... ids) {
-        if (this.userIds == null)
-            this.userIds = new ArrayList<>();
-        this.userIds.addAll(Arrays.asList(ids));
+    public void addUsers(User... users) {
+        if (this.users == null)
+            this.users = new ArrayList<>();
+        this.users.addAll(Arrays.asList(users));
     }
 }

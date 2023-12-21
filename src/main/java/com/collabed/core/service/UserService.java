@@ -79,10 +79,11 @@ public class UserService implements UserDetailsService {
     public UserGroup addToGroup(String userId, String groupId) {
         if (userRepository.findById(userId).isEmpty()) throw new CEWebRequestError(CEUserErrorMessage.USER_NOT_EXIST);
         UserGroup userGroup = userGroupRepository.findById(groupId).orElseThrow();
-        List<Role> userRoles = userRepository.findById(userId).get().getRoles();
+        User user = userRepository.findById(userId).get();
+        List<Role> userRoles = user.getRoles();
         if (userRoles.stream().noneMatch(r -> r.getAuthority() != null && r.getAuthority().equals(userGroup.getRole())))
             throw new CEWebRequestError(CEUserErrorMessage.GROUP_ROLE_NOT_MATCHED_WITH_USER);
-        userGroup.addUsers(userId);
+        userGroup.addUsers(user);
         return userGroup;
     }
 

@@ -162,7 +162,7 @@ public class UserServiceTests {
         String groupId = new ObjectId().toHexString();
         user.setId(userId);
         userGroup.setId(groupId);
-        userGroup.setUserIds(List.of(userId));
+        userGroup.setUsers(List.of(user));
         Mockito.when(userGroupRepository.findById(groupId)).thenReturn(Optional.of(userGroup));
         Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         UserGroup group = userService.loadGroupById(groupId);

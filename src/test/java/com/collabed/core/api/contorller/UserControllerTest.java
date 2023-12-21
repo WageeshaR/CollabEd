@@ -254,7 +254,7 @@ public class UserControllerTest {
         UserGroup group = new UserGroup();
         group.setName("testgroup");
         group.setRole("ROLE_STUDENT");
-        group.setUserIds(List.of(new ObjectId().toHexString()));
+        group.setUsers(List.of(new User()));
         Mockito.when(userService.saveUserGroup(group)).thenReturn(group);
         mockMvc.perform(MockMvcRequestBuilders
                     .post("/users/groups")
@@ -273,7 +273,7 @@ public class UserControllerTest {
         user.setId(userId);
         UserGroup group = new UserGroup();
         group.setId(groupId);
-        group.addUsers(userId);
+        group.addUsers(user);
         Mockito.when(userService.addToGroup(userId, groupId)).thenReturn(group);
         mockMvc.perform(MockMvcRequestBuilders
                     .post("/users/groups/add-user")
