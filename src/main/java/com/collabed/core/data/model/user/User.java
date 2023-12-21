@@ -2,7 +2,6 @@ package com.collabed.core.data.model.user;
 
 import com.collabed.core.data.model.Institution;
 import com.collabed.core.data.model.user.profile.Profile;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
