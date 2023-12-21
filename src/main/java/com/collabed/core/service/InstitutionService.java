@@ -22,7 +22,7 @@ public class InstitutionService {
             throw new CEWebRequestError(CEUserErrorMessage.INSTITUTION_ADDRESS_NOT_NULL);
         }
         Address address = addressRepository.insert(institution.getAddress());
-        institution.setAddressId(address.getId());
+        institution.setAddress(address);
         return institutionRepository.insert(institution);
     }
 

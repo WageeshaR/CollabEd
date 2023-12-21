@@ -1,8 +1,8 @@
 package com.collabed.core.service;
 
 import com.collabed.core.data.model.Institution;
-import com.collabed.core.data.model.User;
-import com.collabed.core.data.model.UserGroup;
+import com.collabed.core.data.model.user.User;
+import com.collabed.core.data.model.user.UserGroup;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
 import com.collabed.core.runtime.exception.CEServiceError;

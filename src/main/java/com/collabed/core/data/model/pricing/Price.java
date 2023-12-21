@@ -12,7 +12,6 @@ public class Price {
     @NotNull
     private String subject;
     @NotNull
-    @JsonProperty("unit_price")
     private BigDecimal unitPrice;
     private Currency currency = Currency.GBP;
 }

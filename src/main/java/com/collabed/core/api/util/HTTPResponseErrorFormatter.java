@@ -7,7 +7,7 @@ import java.util.stream.Stream;
 public class HTTPResponseErrorFormatter {
     public static Stream<String> format(Errors errors) {
         return errors.getAllErrors().stream().map(
-                o -> camelToSnake(((FieldError) o).getField()) + ": " + o.getDefaultMessage()
+                o -> ((FieldError) o).getField() + ": " + o.getDefaultMessage()
         );
     }
 

@@ -1,7 +1,7 @@
 package com.collabed.core.api.controller.auth;
 
 import com.collabed.core.api.util.JwtTokenUtil;
-import com.collabed.core.data.model.User;
+import com.collabed.core.data.model.user.User;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

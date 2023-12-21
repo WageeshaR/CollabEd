@@ -1,74 +1,74 @@
 [
   {
-    "license_type": "individual",
+    "licenseType": "individual",
     "frequency": 1,
-    "default_unit_size": 1,
+    "defaultUnitSize": 1,
     "premium": {
       "subject": "Individual license monthly rate",
-      "unit_price": 2.99
+      "unitPrice": 2.99
     }
   },
   {
-    "license_type": "individual",
+    "licenseType": "individual",
     "frequency": 12,
-    "default_unit_size": 1,
+    "defaultUnitSize": 1,
     "premium": {
       "subject": "Individual license annual rate",
-      "unit_price": 29.99
+      "unitPrice": 29.99
     }
   },
   {
-    "license_type": "group",
+    "licenseType": "group",
     "frequency": 1,
-    "default_unit_size": 10,
+    "defaultUnitSize": 10,
     "premium": {
       "subject": "Group license monthly rate",
-      "unit_price": 25.99
+      "unitPrice": 25.99
     }
   },
   {
-    "license_type": "group",
+    "licenseType": "group",
     "frequency": 3,
-    "default_unit_size": 10,
+    "defaultUnitSize": 10,
     "premium": {
       "subject": "Group license quarterly rate",
-      "unit_price": 65.99
+      "unitPrice": 65.99
     }
   },
   {
-    "license_type": "group",
+    "licenseType": "group",
     "frequency": 12,
-    "default_unit_size": 10,
+    "defaultUnitSize": 10,
     "premium": {
       "subject": "Group license annual rate",
-      "unit_price": 249.99
+      "unitPrice": 249.99
     }
   },
   {
-    "license_type": "institutional",
+    "licenseType": "institutional",
     "frequency": 3,
-    "default_unit_size": 500,
+    "defaultUnitSize": 500,
     "premium": {
       "subject": "Institutional license quarterly rate",
-      "unit_price": 3899.99
+      "unitPrice": 3899.99
     }
   },
   {
-    "license_type": "institutional",
+    "licenseType": "institutional",
     "frequency": 12,
-    "default_unit_size": 500,
+    "defaultUnitSize": 500,
     "premium": {
       "subject": "Institutional license annual rate",
-      "unit_price": 12899.99
+      "unitPrice": 12899.99
     }
   },
   {
-    "license_type": "institutional",
+    "licenseType": "institutional",
     "frequency": 36,
-    "default_unit_size": 500,
+    "defaultUnitSize": 500,
     "premium": {
       "subject": "Institutional license triennial rate",
-      "unit_price": 35999.99
+      "unitPrice": 35999.99
     }
   }
 ]

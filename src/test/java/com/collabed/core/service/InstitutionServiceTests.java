@@ -38,13 +38,12 @@ public class InstitutionServiceTests {
         Institution institution = new Institution();
         institution.setName("testinstitution");
         institution.setAddress(address);
-        institution.setAddressId(address.getId());
         Mockito.when(addressRepository.insert(Mockito.any(Address.class))).thenReturn(address);
         Mockito.when(institutionRepository.insert(Mockito.any(Institution.class))).thenReturn(institution);
 
         Institution result = institutionService.save(institution);
         assertEquals(result.getName(), "testinstitution");
-        assertEquals(result.getAddressId(), address.getId());
+        assertEquals(result.getAddress().getId(), address.getId());
     }
 
     @Test

@@ -19,14 +19,11 @@ public class Address {
     @Id
     private String id;
     @NotNull
-    @JsonProperty("line_1")
     private String line1;
-    @JsonProperty("line_2")
     private String line2;
     @NotNull
     private String city;
     @NotNull
-    @JsonProperty("postal_code")
     private String postalCode;
     private String county;
     @NotNull

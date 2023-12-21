@@ -1,7 +1,7 @@
 package com.collabed.core.api.contorller.auth;
 
 import com.collabed.core.data.model.Institution;
-import com.collabed.core.data.model.User;
+import com.collabed.core.data.model.user.User;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.InstitutionService;
 import com.collabed.core.service.UserService;
@@ -19,7 +19,6 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -53,7 +52,7 @@ public class RegistrationControllerTests {
         //setup user
         user = new User();
         user.setUsername("n.elliot");
-        user.setPassword("password1234");
+        user.setPassword("Password@1234");
         user.setFirstName("Nathon");
         user.setLastName("Elliot");
         user.setEmail("n.elliot@collabed.org");

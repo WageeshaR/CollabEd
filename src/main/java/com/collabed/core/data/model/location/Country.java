@@ -15,7 +15,6 @@ public class Country {
     private String id;
     @NotNull
     private String name;
-    @JsonProperty("iso_code")
     @NotNull
     private String isoCode;
 }

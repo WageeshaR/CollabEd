@@ -1,4 +1,4 @@
-package com.collabed.core.data.model;
+package com.collabed.core.data.model.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +21,6 @@ public class UserGroup {
     @NotNull(message = "role must be specified")
     private String role;
     @Size(min = 1, message = "a group must have at least one member")
-    @JsonProperty("user_ids")
     private List<String> userIds;
 
     public void addUsers(String... ids) {

@@ -8,6 +8,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @Data
 @Document
@@ -17,8 +18,6 @@ public class Institution {
     @NotNull
     @Indexed(unique = true)
     private String name;
-    @JsonProperty("address_id")
-    private String addressId;
-    @Transient
+    @DocumentReference
     private Address address;
 }

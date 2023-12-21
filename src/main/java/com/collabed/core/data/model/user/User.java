@@ -1,7 +1,10 @@
-package com.collabed.core.data.model;
+package com.collabed.core.data.model.user;
 
+import com.collabed.core.data.model.Institution;
+import com.collabed.core.data.model.user.profile.Profile;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -21,36 +24,40 @@ public class User implements UserDetails {
     @Id
     private String id;
     @NotNull
-    @Size(min = 6, message = "username must be at least 6 characters long")
+    @Size(min = 6)
     @Indexed(unique = true)
     private String username;
     @NotNull
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",
+            message = """
+                    * at least one digit
+                    * at least one lower-case character
+                    * at least one upper-case character
+                    * at least one special character (@#$%^&+=)
+                    * at least 8 characters long
+                    * at most zero whitespace allowed
+                    """
+    )
     private String password;
     @NotNull
-    @JsonProperty("first_name")
     private String firstName;
     @NotNull
-    @JsonProperty("last_name")
     private String lastName;
     @NotNull
     @Indexed(unique = true)
     private String email;
     private String phone;
     private List<Role> roles;
-    @JsonProperty("institution")
     @DocumentReference
     private Institution institution;
     @DocumentReference
+    private Profile profile;
+    @DocumentReference
     private UserLicense license;
-    @JsonProperty("has_consent_for_data_sharing")
     private boolean hasConsentForDataSharing;
-    @JsonProperty("has_agreed_terms")
     private boolean hasAgreedTerms;
-    @JsonProperty("account_non_expired")
     private boolean accountNonExpired;
-    @JsonProperty("account_non_locked")
     private boolean accountNonLocked;
-    @JsonProperty("credentials_non_expired")
     private boolean credentialsNonExpired;
     private boolean enabled;
 

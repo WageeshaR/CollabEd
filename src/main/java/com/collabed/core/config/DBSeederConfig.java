@@ -38,7 +38,7 @@ public class DBSeederConfig {
     }
 
     @PostConstruct
-    public void populateLicensingDate() throws IOException {
+    public void populateLicensingData() throws IOException {
         CollectionType licenseModelsCollectionType
                 = objectMapper.getTypeFactory().constructCollectionType(List.class, LicenseModel.class);
         File licenseModelsJsonFile = ResourceUtils.getFile("classpath:seeder/license_models.json");

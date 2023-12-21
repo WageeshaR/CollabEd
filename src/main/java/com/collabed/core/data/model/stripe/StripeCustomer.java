@@ -1,7 +1,6 @@
 package com.collabed.core.data.model.stripe;
 
-import com.collabed.core.data.model.User;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.collabed.core.data.model.user.User;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -17,6 +16,5 @@ public class StripeCustomer {
     @DocumentReference
     private User user;
     @NotNull
-    @JsonProperty("stripe_customer_id")
     private String stripeCustomerId;
 }

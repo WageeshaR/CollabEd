@@ -13,6 +13,5 @@ public class LicenseOption {
     @NotNull
     private String id;
     @NotNull
-    @JsonProperty("license_model")
     private LicenseModel model;
 }

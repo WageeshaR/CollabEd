@@ -1,6 +1,6 @@
 package com.collabed.core.api.contorller.auth;
 
-import com.collabed.core.data.model.User;
+import com.collabed.core.data.model.user.User;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

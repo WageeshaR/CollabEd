@@ -1,6 +1,5 @@
 package com.collabed.core.api.util;
 
-import com.collabed.core.data.model.User;
 import com.collabed.core.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

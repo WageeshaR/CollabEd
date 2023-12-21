@@ -1,7 +1,7 @@
 package com.collabed.core.api.controller.user;
 
-import com.collabed.core.data.model.User;
-import com.collabed.core.data.model.UserGroup;
+import com.collabed.core.data.model.user.User;
+import com.collabed.core.data.model.user.UserGroup;
 import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.service.UserService;
 import jakarta.annotation.security.RolesAllowed;
@@ -9,12 +9,10 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +23,15 @@ public class UserController {
     private final UserService userService;
 
     // users
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUser(@PathVariable String id) {
+        try {
+            User user = userService.findUser(id);
+            return ResponseEntity.ok().body(user);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
+    }
     @GetMapping
     @RolesAllowed({"SUPER_ADMIN", "ADMIN"})
     public List<User> getAll() {

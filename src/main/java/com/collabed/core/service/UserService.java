@@ -1,8 +1,8 @@
 package com.collabed.core.service;
 
-import com.collabed.core.data.model.Role;
-import com.collabed.core.data.model.User;
-import com.collabed.core.data.model.UserGroup;
+import com.collabed.core.data.model.user.Role;
+import com.collabed.core.data.model.user.User;
+import com.collabed.core.data.model.user.UserGroup;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
 import com.collabed.core.runtime.exception.CEReferenceObjectMappingError;
@@ -15,7 +15,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,6 +33,10 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.findByUsername(username).orElseThrow();
+    }
+
+    public User findUser(String id) {
+        return userRepository.findById(id).orElseThrow();
     }
 
     public List<User> getAll() { return userRepository.findAll(); }

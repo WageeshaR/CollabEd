@@ -21,14 +21,11 @@ public class LicenseModel {
     @Id
     private String id;
     @NotNull
-    @JsonProperty("license_type")
-    private LicenseType type;
+    private LicenseType licenseType;
     @NotNull
     private int frequency;
     @NotNull
-    @JsonProperty("default_unit_size")
     private int defaultUnitSize;
-    @JsonProperty("unit_count")
     private int unitCount = 1;
     @NotNull
     private Price premium;
@@ -36,7 +33,7 @@ public class LicenseModel {
     @AssertTrue
     @JsonIgnore
     public boolean isTypeUnitValidated() {
-        if (this.type == LicenseType.INDIVIDUAL)
+        if (this.licenseType == LicenseType.INDIVIDUAL)
             return this.unitCount == 1;
         return true;
     }

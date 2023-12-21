@@ -1,4 +1,4 @@
-package com.collabed.core.data.model;
+package com.collabed.core.data.model.user;
 
 import org.springframework.security.core.GrantedAuthority;
 
