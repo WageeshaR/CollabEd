@@ -19,7 +19,7 @@ public class InstitutionController {
     private InstitutionService institutionService;
     @GetMapping
     @RolesAllowed({"ADMIN", "SUPER_ADMIN"})
-    public ResponseEntity<?> all() {
-        return ResponseEntity.ok().body(institutionService.getAll());
+    public List<Institution> all() {
+        return institutionService.getAll();
     }
 }
