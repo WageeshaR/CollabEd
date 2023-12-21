@@ -1,5 +1,6 @@
 package com.collabed.core.config;
 
+import com.collabed.core.api.util.CustomHttpHeaders;
 import com.collabed.core.api.util.JwtTokenFilter;
 import com.collabed.core.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -21,7 +22,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 import java.util.List;
@@ -52,48 +52,30 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(c -> c.configurationSource(corsConfigurationSource()))
-                .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(
-                                "/",
-                                "/register/*",
-                                "/login",
-                                "/api-docs",
-                                "/api-docs/*",
-                                "/swagger-ui/*")
-                        .permitAll()
-                        .anyRequest().authenticated()
-                )
-                .logout(logout -> logout.permitAll()
-                        .logoutSuccessHandler(
-                                (request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK)
-                        )
-                )
-                .addFilterBefore(
-                        jwtTokenFilter,
-                        UsernamePasswordAuthenticationFilter.class
-                )
+            .cors(Customizer.withDefaults())
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests((requests) -> requests
+                    .requestMatchers(
+                            "/",
+                            "/register/*",
+                            "/login",
+                            "/api-docs",
+                            "/api-docs/*",
+                            "/swagger-ui/*")
+                    .permitAll()
+                    .anyRequest().authenticated()
+            )
+            .logout(logout -> logout.permitAll()
+                    .logoutSuccessHandler(
+                            (request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK)
+                    )
+            )
+            .addFilterBefore(
+                    jwtTokenFilter,
+                    UsernamePasswordAuthenticationFilter.class
+            )
         ;
-
         return http.build();
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        UrlBasedCorsConfigurationSource source =
-                new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.setAllowedOrigins(List.of("http://localhost:5173"));
-        config.setAllowedMethods(Arrays.asList(
-                HttpMethod.GET.name(),
-                HttpMethod.POST.name(),
-                HttpMethod.OPTIONS.name(),
-                HttpMethod.PUT.name()
-        ));
-        source.registerCorsConfiguration("/**", config);
-        return source;
     }
 }

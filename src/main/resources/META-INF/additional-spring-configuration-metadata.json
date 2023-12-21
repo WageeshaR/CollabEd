@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "client.host",
+      "type": "java.lang.Integer"
+    }
+  ]
+}
