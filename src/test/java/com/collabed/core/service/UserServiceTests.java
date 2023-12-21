@@ -104,8 +104,7 @@ public class UserServiceTests {
     public void deleteUserTest() {
         Mockito.doNothing().when(userRepository).delete(Mockito.any(User.class));
         User user = Mockito.mock(User.class);
-        Object result = userService.deleteUser(user);
-        assertEquals(result, true);
+        userService.deleteUser(user);
     }
 
     @Test

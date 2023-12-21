@@ -238,7 +238,7 @@ public class UserControllerTest {
         user.setHasAgreedTerms(true);
         user.setHasConsentForDataSharing(false);
 
-        Mockito.when(userService.deleteUser(Mockito.any(User.class))).thenReturn(true);
+        Mockito.doNothing().when(userService).deleteUser(Mockito.any(User.class));
         mockMvc.perform(MockMvcRequestBuilders
                     .post("/users/delete")
                     .content(mapToJson(user))

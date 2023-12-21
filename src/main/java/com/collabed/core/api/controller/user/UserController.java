@@ -2,6 +2,7 @@ package com.collabed.core.api.controller.user;
 
 import com.collabed.core.data.model.User;
 import com.collabed.core.data.model.UserGroup;
+import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.service.UserService;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
@@ -57,8 +58,12 @@ public class UserController {
                             ObjectError::getDefaultMessage
                     )
             );
-        } else {
+        }
+        try {
+            userService.deleteUser(user);
             return ResponseEntity.ok().body("User deleted successfully");
+        } catch (CEServiceError e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }
 

@@ -60,10 +60,9 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public boolean deleteUser(User user) {
+    public void deleteUser(User user) {
         try {
             userRepository.delete(user);
-            return true;
         } catch (Exception e) {
             throw new CEServiceError("Error deleting the user: " + e.getMessage());
         }
