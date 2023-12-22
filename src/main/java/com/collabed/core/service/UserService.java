@@ -3,6 +3,8 @@ package com.collabed.core.service;
 import com.collabed.core.data.model.user.Role;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.model.user.UserGroup;
+import com.collabed.core.data.model.user.profile.Profile;
+import com.collabed.core.data.repository.user.ProfileRepository;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
 import com.collabed.core.runtime.exception.CEReferenceObjectMappingError;
@@ -23,10 +25,14 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
+    private final ProfileRepository profileRepository;
 
-    public UserService(UserRepository userRepository, UserGroupRepository userGroupRepository) {
+    public UserService(UserRepository userRepository,
+                       UserGroupRepository userGroupRepository,
+                       ProfileRepository profileRepository) {
         this.userRepository = userRepository;
         this.userGroupRepository = userGroupRepository;
+        this.profileRepository = profileRepository;
     }
 
     // users
@@ -54,6 +60,10 @@ public class UserService implements UserDetailsService {
             }
             user.addRole(role);
             try {
+                if (user.getProfile() != null) {
+                    Profile userProfile = user.getProfile();
+                    profileRepository.save(userProfile);
+                }
                 return userRepository.insert(user);
             } catch (CEReferenceObjectMappingError e) {
                 throw new CEWebRequestError("Error resolving user data from object mapper");
