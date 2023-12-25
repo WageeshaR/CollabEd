@@ -1,9 +1,11 @@
 package com.collabed.core.data.model.user;
 
+import com.collabed.core.data.model.AuditMetadata;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
@@ -12,9 +14,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @Document
-public class UserGroup {
+public class UserGroup extends AuditMetadata {
     @Id
     private String id;
     @NotNull

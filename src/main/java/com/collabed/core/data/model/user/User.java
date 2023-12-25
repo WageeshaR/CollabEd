@@ -1,5 +1,6 @@
 package com.collabed.core.data.model.user;
 
+import com.collabed.core.data.model.AuditMetadata;
 import com.collabed.core.data.model.Institution;
 import com.collabed.core.data.model.channel.Channel;
 import com.collabed.core.data.model.user.profile.Profile;
@@ -7,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,9 +20,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+@EqualsAndHashCode(callSuper = true)
 @Document
 @Data
-public class User implements UserDetails {
+public class User extends AuditMetadata implements UserDetails {
     @Id
     private String id;
     @NotNull
