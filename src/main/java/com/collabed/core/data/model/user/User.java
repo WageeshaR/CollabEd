@@ -1,6 +1,7 @@
 package com.collabed.core.data.model.user;
 
 import com.collabed.core.data.model.Institution;
+import com.collabed.core.data.model.channel.Channel;
 import com.collabed.core.data.model.user.profile.Profile;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -53,12 +54,15 @@ public class User implements UserDetails {
     private Profile profile;
     @DocumentReference
     private UserLicense license;
+    @DocumentReference
+    private List<Channel> channels;
     private boolean hasConsentForDataSharing;
     private boolean hasAgreedTerms;
     private boolean accountNonExpired;
     private boolean accountNonLocked;
     private boolean credentialsNonExpired;
     private boolean enabled;
+    private boolean deleted = false;
 
     public User() {
         super();

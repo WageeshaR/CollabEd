@@ -226,23 +226,9 @@ public class UserControllerTest {
     @Test
     @WithMockUser(authorities = {"ROLE_ADMIN"})
     public void deleteUserTest() throws Exception {
-        Institution institution = new Institution();
-        institution.setName("The University of York");
-        User user = new User();
-        user.setUsername("n.elliot");
-        user.setPassword("Password@1234");
-        user.setFirstName("Nathon");
-        user.setLastName("Elliot");
-        user.setEmail("n.elliot@collabed.org");
-        user.setInstitution(institution);
-        user.setHasAgreedTerms(true);
-        user.setHasConsentForDataSharing(false);
-
-        Mockito.doNothing().when(userService).deleteUser(Mockito.any(User.class));
+        Mockito.doNothing().when(userService).deleteUser(Mockito.anyString());
         mockMvc.perform(MockMvcRequestBuilders
-                    .post("/users/delete")
-                    .content(mapToJson(user))
-                    .contentType(MediaType.APPLICATION_JSON)
+                    .patch("/users/delete/{id}", new ObjectId().toHexString())
                     .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
     }

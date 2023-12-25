@@ -7,7 +7,6 @@ import com.collabed.core.data.model.user.profile.Profile;
 import com.collabed.core.data.repository.user.ProfileRepository;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
-import com.collabed.core.runtime.exception.CEReferenceObjectMappingError;
 import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
@@ -48,7 +47,7 @@ public class UserService implements UserDetailsService {
     public List<User> getAll() { return userRepository.findAll(); }
 
     public List<User> getAll(String role) {
-        return userRepository.findAllByRoles_Authority(role).orElseGet(List::of);
+        return userRepository.findAllByAuthority(role).orElseGet(List::of);
     }
 
     public User saveUser(User user, String role) {
@@ -59,23 +58,19 @@ public class UserService implements UserDetailsService {
                 throw new CEWebRequestError(CEUserErrorMessage.INSTITUTION_NOT_NULL);
             }
             user.addRole(role);
-            try {
-                if (user.getProfile() != null) {
-                    Profile userProfile = user.getProfile();
-                    profileRepository.save(userProfile);
-                }
-                return userRepository.insert(user);
-            } catch (CEReferenceObjectMappingError e) {
-                throw new CEWebRequestError("Error resolving user data from object mapper");
+            if (user.getProfile() != null) {
+                Profile userProfile = user.getProfile();
+                profileRepository.save(userProfile);
             }
+            return userRepository.insert(user);
         } else {
             throw new CEWebRequestError(CEUserErrorMessage.ROLE_ALREADY_EXISTS);
         }
     }
 
-    public void deleteUser(User user) {
+    public void deleteUser(String id) {
         try {
-            userRepository.delete(user);
+            userRepository.updateAndSoftDelete(id);
         } catch (Exception e) {
             throw new CEServiceError("Error deleting the user: " + e.getMessage());
         }

@@ -3,6 +3,7 @@ package com.collabed.core.service;
 import com.collabed.core.data.model.Institution;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.model.user.UserGroup;
+import com.collabed.core.data.repository.user.ProfileRepository;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
 import com.collabed.core.runtime.exception.CEServiceError;
@@ -24,6 +25,7 @@ public class UserServiceTests {
 
     private UserRepository userRepository;
     private UserGroupRepository userGroupRepository;
+    private ProfileRepository profileRepository;
     private UserService userService;
     private User user;
     private UserGroup userGroup;
@@ -32,7 +34,7 @@ public class UserServiceTests {
     public void setup() {
         userRepository = Mockito.mock(UserRepository.class);
         userGroupRepository = Mockito.mock(UserGroupRepository.class);
-        userService = new UserService(userRepository, userGroupRepository);
+        userService = new UserService(userRepository, userGroupRepository, profileRepository);
     }
 
     @BeforeEach
@@ -41,7 +43,7 @@ public class UserServiceTests {
         List<User> facilitators = Arrays.asList(new User("fac1", "ROLE_FACILITATOR"), new User("fac2", "ROLE_FACILITATOR"));
         List<User> admins = Arrays.asList(new User("adm1", "ROLE_ADMIN"), new User("adm2", "ROLE_ADMIN"));
 
-        Mockito.when(userRepository.findAllByRoles_Authority("ROLE_STUDENT")).thenReturn(
+        Mockito.when(userRepository.findAllByAuthority("ROLE_STUDENT")).thenReturn(
                 Optional.of(students)
         );
         Mockito.when(userRepository.findAll()).thenReturn(
@@ -102,16 +104,14 @@ public class UserServiceTests {
 
     @Test
     public void deleteUserTest() {
-        Mockito.doNothing().when(userRepository).delete(Mockito.any(User.class));
-        User user = Mockito.mock(User.class);
-        userService.deleteUser(user);
+        Mockito.doNothing().when(userRepository).updateAndSoftDelete(Mockito.anyString());
+        userService.deleteUser(new ObjectId().toHexString());
     }
 
     @Test
     public void deleteUserErrorTest() {
-        Mockito.doThrow(new CEServiceError("")).when(userRepository).delete(Mockito.any(User.class));
-        User user = Mockito.mock(User.class);
-        assertThrows(CEServiceError.class, () -> userService.deleteUser(user));
+        Mockito.doThrow(new CEServiceError("")).when(userRepository).updateAndSoftDelete(Mockito.anyString());
+        assertThrows(CEServiceError.class, () -> userService.deleteUser(new ObjectId().toHexString()));
     }
 
     @Test

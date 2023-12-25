@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("users")
@@ -28,6 +29,8 @@ public class UserController {
         try {
             User user = userService.findUser(id);
             return ResponseEntity.ok().body(user);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
@@ -56,18 +59,12 @@ public class UserController {
         return userService.getAll("ROLE_FACILITATOR");
     }
 
-    @PostMapping("/delete")
+    @PatchMapping("/delete/{id}")
     @RolesAllowed({"SUPER_ADMIN", "ADMIN"})
-    public ResponseEntity<?> deleteUser(@Valid @RequestBody User user, Errors errors) {
-        if (errors.hasErrors()) {
-            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
-                    errors.getAllErrors().stream().map(
-                            ObjectError::getDefaultMessage
-                    )
-            );
-        }
+    public ResponseEntity<?> deleteUser(@PathVariable String id) {
+
         try {
-            userService.deleteUser(user);
+            userService.deleteUser(id);
             return ResponseEntity.ok().body("User deleted successfully");
         } catch (CEServiceError e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
