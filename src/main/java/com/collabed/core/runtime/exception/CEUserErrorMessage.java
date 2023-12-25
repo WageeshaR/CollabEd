@@ -6,4 +6,6 @@ public class CEUserErrorMessage {
     public static final String USER_NOT_EXIST = "user_id does not exist in our system";
     public static final String INSTITUTION_NOT_NULL = "institution must not be null";
     public static final String INSTITUTION_ADDRESS_NOT_NULL = "institution address must not be null";
+    public static final String DUPLICATE_CHANNEL_ENTRIES = "a channel with identical name and topic already exists";
+    public static final String CHANNEL_NOT_EXISTS = "the specified channel does not exist";
 }

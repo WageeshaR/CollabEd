@@ -6,6 +6,7 @@ import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @EqualsAndHashCode(callSuper = true)
 @Document
@@ -15,6 +16,8 @@ public class Channel extends AuditMetadata {
     @Id
     private String id;
     private String name;
+    @DocumentReference
     private Topic topic;
     private String description;
+    private boolean deleted = false;
 }

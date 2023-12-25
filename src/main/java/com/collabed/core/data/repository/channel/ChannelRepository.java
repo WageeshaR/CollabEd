@@ -1,6 +1,7 @@
-package com.collabed.core.data.repository.user;
+package com.collabed.core.data.repository.channel;
 
-import com.collabed.core.data.model.user.User;
+import com.collabed.core.data.model.channel.Channel;
+import com.collabed.core.data.model.channel.Topic;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
@@ -10,16 +11,15 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository
-        extends MongoRepository<User, String> {
-    @Query("{ deleted: false, 'roles.authority': ?0 }")
-    Optional<List<User>> findAllByAuthority(String authority);
-    @Query("{ deleted: false, username: ?0 }")
-    Optional<User> findByUsername(String username);
+public interface ChannelRepository extends MongoRepository<Channel, String> {
     @Query("{ deleted: false }")
-    List<User> findAll();
+    List<Channel> findAll();
     @Query("{ deleted: false, _id: ?0 }")
-    Optional<User> findById(String id);
+    Optional<Channel> findById(String id);
+    @Query("{ deleted: false, name: ?0 }")
+    Optional<Channel> findByName(String name);
+    @Query("{ deleted: false, topic: ?0 }")
+    List<Channel> findAllByTopic(Topic topic);
     @Query("{ _id: ?0 }")
     @Update("{$set: { 'deleted': true }}")
     void updateAndSoftDelete(String id);
