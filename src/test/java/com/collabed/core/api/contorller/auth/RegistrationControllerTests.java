@@ -23,8 +23,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static com.collabed.core.HttpRequestResponseUtils.mapFromJson;
-import static com.collabed.core.HttpRequestResponseUtils.mapToJson;
+import static com.collabed.core.util.HttpRequestResponseUtils.mapFromJson;
+import static com.collabed.core.util.HttpRequestResponseUtils.mapToJson;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest

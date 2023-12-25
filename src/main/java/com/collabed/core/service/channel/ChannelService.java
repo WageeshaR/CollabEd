@@ -30,6 +30,22 @@ public class ChannelService {
         }
     }
 
+    public List<Channel> getAllChannels() {
+        try {
+            return channelRepository.findAll();
+        } catch (MongoException e) {
+            throw new CEServiceError(CEInternalErrorMessage.CHANNEL_SERVICE_QUERY_FAILED);
+        }
+    }
+
+    public List<Channel> getAllChannelsByTopic(String topicName) {
+        try {
+            return channelRepository.findAllByTopic(topicName);
+        } catch (MongoException e) {
+            throw new CEServiceError(CEInternalErrorMessage.CHANNEL_SERVICE_QUERY_FAILED);
+        }
+    }
+
     public Channel findChannelById(String id) {
         try {
             return channelRepository.findById(id).orElseThrow();
@@ -45,22 +61,6 @@ public class ChannelService {
             return channelRepository.findByName(name).orElseThrow();
         } catch (NoSuchElementException e) {
             throw new CEWebRequestError(CEUserErrorMessage.CHANNEL_NOT_EXISTS);
-        } catch (MongoException e) {
-            throw new CEServiceError(CEInternalErrorMessage.CHANNEL_SERVICE_QUERY_FAILED);
-        }
-    }
-
-    public List<Channel> getAllChannels() {
-        try {
-            return channelRepository.findAll();
-        } catch (MongoException e) {
-            throw new CEServiceError(CEInternalErrorMessage.CHANNEL_SERVICE_QUERY_FAILED);
-        }
-    }
-
-    public List<Channel> getAllChannelsByTopic(Topic topic) {
-        try {
-            return channelRepository.findAllByTopic(topic);
         } catch (MongoException e) {
             throw new CEServiceError(CEInternalErrorMessage.CHANNEL_SERVICE_QUERY_FAILED);
         }

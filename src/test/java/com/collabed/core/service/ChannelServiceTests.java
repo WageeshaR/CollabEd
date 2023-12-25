@@ -125,15 +125,15 @@ public class ChannelServiceTests {
         for (int i=0; i<num; i++) {
             channels.add(Mockito.mock(Channel.class));
         }
-        Mockito.when(channelRepository.findAllByTopic(Mockito.any(Topic.class))).thenReturn(channels);
-        Object result = channelService.getAllChannelsByTopic(Mockito.mock(Topic.class));
+        Mockito.when(channelRepository.findAllByTopic(Mockito.anyString())).thenReturn(channels);
+        Object result = channelService.getAllChannelsByTopic("dsfds78&834");
         assertInstanceOf(List.class, result);
     }
 
     @Test
     public void getAllChannelsByTopicErrorTest() {
-        Mockito.when(channelRepository.findAllByTopic(Mockito.any(Topic.class))).thenThrow(MongoQueryException.class);
-        Exception error = assertThrows(CEServiceError.class, () -> channelService.getAllChannelsByTopic(Mockito.mock(Topic.class)));
+        Mockito.when(channelRepository.findAllByTopic(Mockito.anyString())).thenThrow(MongoQueryException.class);
+        Exception error = assertThrows(CEServiceError.class, () -> channelService.getAllChannelsByTopic("dsfds78&834"));
         assertEquals(error.getMessage(), CEInternalErrorMessage.CHANNEL_SERVICE_QUERY_FAILED);
     }
 }

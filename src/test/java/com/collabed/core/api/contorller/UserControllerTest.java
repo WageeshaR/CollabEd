@@ -3,7 +3,6 @@ package com.collabed.core.api.contorller;
 import com.collabed.core.api.controller.user.UserController;
 import com.collabed.core.api.util.JwtTokenUtil;
 import com.collabed.core.config.SecurityConfig;
-import com.collabed.core.data.model.Institution;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.model.user.UserGroup;
 import com.collabed.core.service.UserService;
@@ -27,10 +26,10 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.collabed.core.HttpRequestResponseUtils.mapToJson;
+import static com.collabed.core.util.HttpRequestResponseUtils.mapToJson;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static com.collabed.core.HttpRequestResponseUtils.countMatcher;
+import static com.collabed.core.util.HttpRequestResponseUtils.countMatcher;
 
 @Import(SecurityConfig.class)
 @WebMvcTest(UserController.class)

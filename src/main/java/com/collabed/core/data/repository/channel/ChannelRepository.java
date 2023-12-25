@@ -18,8 +18,8 @@ public interface ChannelRepository extends MongoRepository<Channel, String> {
     Optional<Channel> findById(String id);
     @Query("{ deleted: false, name: ?0 }")
     Optional<Channel> findByName(String name);
-    @Query("{ deleted: false, topic: ?0 }")
-    List<Channel> findAllByTopic(Topic topic);
+    @Query("{ deleted: false, 'topic.name': ?0 }")
+    List<Channel> findAllByTopic(String topicName);
     @Query("{ _id: ?0 }")
     @Update("{$set: { 'deleted': true }}")
     void updateAndSoftDelete(String id);

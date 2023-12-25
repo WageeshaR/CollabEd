@@ -1,6 +1,7 @@
 package com.collabed.core.data.model.channel;
 
 import com.collabed.core.data.model.AuditMetadata;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.springframework.data.annotation.Id;
@@ -15,8 +16,10 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 public class Channel extends AuditMetadata {
     @Id
     private String id;
+    @NotNull
     private String name;
     @DocumentReference
+    @NotNull
     private Topic topic;
     private String description;
     private boolean deleted = false;
