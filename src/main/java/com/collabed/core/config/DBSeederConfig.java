@@ -10,14 +10,15 @@ import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.util.ResourceUtils;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+
+import static java.lang.String.format;
 
 @Configuration
 @AllArgsConstructor
@@ -30,8 +31,8 @@ public class DBSeederConfig {
     @PostConstruct
     public void populateCountries() throws IOException {
         CollectionType countryCollectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, Country.class);
-        File countriesJsonFile = ResourceUtils.getFile("classpath:seeder/countries.json");
-        try (InputStream inputStream = new FileInputStream(countriesJsonFile)) {
+        ClassPathResource countriesResource = new ClassPathResource(format("seeder%scountries.json", File.separator));
+        try (InputStream inputStream = countriesResource.getInputStream()) {
             List<Country> countries = objectMapper.readValue(inputStream, countryCollectionType);
             countryRepository.saveAll(countries);
         } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException ignored) {}
@@ -41,8 +42,8 @@ public class DBSeederConfig {
     public void populateLicensingData() throws IOException {
         CollectionType licenseModelsCollectionType
                 = objectMapper.getTypeFactory().constructCollectionType(List.class, LicenseModel.class);
-        File licenseModelsJsonFile = ResourceUtils.getFile("classpath:seeder/license_models.json");
-        try (InputStream inputStream = new FileInputStream(licenseModelsJsonFile)) {
+        ClassPathResource licenseModelsResource = new ClassPathResource(format("seeder%slicense_models.json", File.separator));
+        try (InputStream inputStream = licenseModelsResource.getInputStream()) {
             List<LicenseModel> licenseModels = objectMapper.readValue(inputStream, licenseModelsCollectionType);
             licenseRepository.saveAll(licenseModels);
         } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException ignored) {}

@@ -1,5 +1,21 @@
-version: "3.8"
+version: "3.9"
+
 services:
+  java:
+    image: amazoncorretto:17.0.9-al2
+    container_name: java
+    working_dir: /usr/src/app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../../target/core-0.0.1-SNAPSHOT.jar:/usr/src/app/core.jar
+    entrypoint: "java -jar core.jar"
+    environment:
+      DB_HOST: ${DB_HOST}
+      SPRING_ACTIVE_PROFILE: ${SPRING_ACTIVE_PROFILE}
+    depends_on:
+      mongodb:
+        condition: service_healthy
   mongodb:
     image: mongo
     container_name: mongodb
@@ -8,9 +24,9 @@ services:
       - "27017:27017"
     healthcheck:
       test: echo 'Health OK'
-      interval: 10s
-      timeout: 10s
-      retries: 5
+      interval: 1s
+      timeout: 3s
+      retries: 3
     volumes:
       - data:/data
     environment:
@@ -38,4 +54,4 @@ volumes:
 
 networks:
   default:
-    name: mongodb_network
+    name: app_network

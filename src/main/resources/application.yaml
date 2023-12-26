@@ -6,9 +6,11 @@ spring:
       password: rootpass
       database: collabed
       port: 27017
-      host: localhost
+      host: ${DB_HOST:localhost}
       auto-index-creation: true
       uuid-representation: standard
+  profiles:
+    active: ${SPRING_ACTIVE_PROFILE:production}
 springdoc:
   api-docs:
     path: /api-docs
