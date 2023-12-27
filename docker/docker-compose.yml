@@ -2,13 +2,13 @@ version: "3.9"
 
 services:
   java:
-    image: amazoncorretto:17.0.9-al2
+    image: maven:3-amazoncorretto-17
     container_name: java
     working_dir: /usr/src/app
     ports:
       - "8080:8080"
     volumes:
-      - ../../target/core-0.0.1-SNAPSHOT.jar:/usr/src/app/core.jar
+      - ../target/core-0.0.1-SNAPSHOT.jar:/usr/src/app/core.jar
     entrypoint: "java -jar core.jar"
     environment:
       DB_HOST: ${DB_HOST}
