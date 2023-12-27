@@ -1,0 +1,216 @@
+{
+  "taskDefinitionArn": "arn:aws:ecs:eu-west-2:289945415410:task-definition/ce-app-task-def:10",
+  "containerDefinitions": [
+    {
+      "name": "mongodb",
+      "image": "mongo",
+      "cpu": 512,
+      "memory": 1024,
+      "memoryReservation": 1024,
+      "portMappings": [
+        {
+          "name": "mongo-27017-tcp",
+          "containerPort": 27017,
+          "hostPort": 27017,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        {
+          "name": "MONGO_INITDB_ROOT_PASSWORD",
+          "value": "rootpass"
+        },
+        {
+          "name": "MONGO_INITDB_ROOT_USERNAME",
+          "value": "rootuser"
+        }
+      ],
+      "environmentFiles": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "ulimits": [],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-create-group": "true",
+          "awslogs-group": "/ecs/ce-app-task-def/mongo",
+          "awslogs-region": "eu-west-2",
+          "awslogs-stream-prefix": "ecs"
+        },
+        "secretOptions": []
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "sleep 5 && echo hello"
+        ],
+        "interval": 5,
+        "timeout": 10,
+        "retries": 3,
+        "startPeriod": 30
+      }
+    },
+    {
+      "name": "mongo-express",
+      "image": "mongo-express",
+      "cpu": 512,
+      "memory": 1024,
+      "memoryReservation": 1024,
+      "portMappings": [
+        {
+          "name": "me-8081-tcp",
+          "containerPort": 8081,
+          "hostPort": 8081,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "essential": false,
+      "environment": [
+        {
+          "name": "ME_CONFIG_BASICAUTH_PASSWORD",
+          "value": "admin123"
+        },
+        {
+          "name": "ME_CONFIG_MONGODB_AUTH_USERNAME",
+          "value": "rootuser"
+        },
+        {
+          "name": "ME_CONFIG_MONGODB_SERVER",
+          "value": "localhost"
+        },
+        {
+          "name": "ME_CONFIG_BASICAUTH_USERNAME",
+          "value": "admin"
+        },
+        {
+          "name": "ME_CONFIG_MONGODB_AUTH_PASSWORD",
+          "value": "rootpass"
+        },
+        {
+          "name": "ME_CONFIG_MONGODB_AUTH_DATABASE",
+          "value": "admin"
+        }
+      ],
+      "environmentFiles": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "dependsOn": [
+        {
+          "containerName": "mongodb",
+          "condition": "HEALTHY"
+        }
+      ]
+    },
+    {
+      "name": "java",
+      "image": "test",
+      "cpu": 1024,
+      "memory": 2048,
+      "memoryReservation": 2048,
+      "portMappings": [
+        {
+          "name": "java-8080-http",
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "essential": false,
+      "environment": [
+        {
+          "name": "DB_HOST",
+          "value": "localhost"
+        },
+        {
+          "name": "SPRING_ACTIVE_PROFILE",
+          "value": "develop"
+        }
+      ],
+      "environmentFiles": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "dependsOn": [
+        {
+          "containerName": "mongodb",
+          "condition": "HEALTHY"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-create-group": "true",
+          "awslogs-group": "/ecs/ce-app-task-def/java",
+          "awslogs-region": "eu-west-2",
+          "awslogs-stream-prefix": "ecs"
+        },
+        "secretOptions": []
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "echo HealthOk"
+        ],
+        "interval": 5,
+        "timeout": 2,
+        "retries": 3,
+        "startPeriod": 10
+      }
+    }
+  ],
+  "family": "ce-app-task-def",
+  "executionRoleArn": "arn:aws:iam::289945415410:role/ecsTaskExecutionRole",
+  "networkMode": "awsvpc",
+  "revision": 10,
+  "volumes": [],
+  "status": "ACTIVE",
+  "requiresAttributes": [
+    {
+      "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+    },
+    {
+      "name": "ecs.capability.execution-role-awslogs"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
+    },
+    {
+      "name": "ecs.capability.container-health-check"
+    },
+    {
+      "name": "ecs.capability.container-ordering"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+    },
+    {
+      "name": "ecs.capability.task-eni"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.29"
+    }
+  ],
+  "placementConstraints": [],
+  "compatibilities": [
+    "EC2",
+    "FARGATE"
+  ],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "cpu": "2048",
+  "memory": "4096",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "registeredAt": "2023-12-27T11:30:40.375Z",
+  "registeredBy": "arn:aws:iam::289945415410:root",
+  "tags": []
+}
