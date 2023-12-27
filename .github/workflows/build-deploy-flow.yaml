@@ -12,6 +12,26 @@ name: Deploy to Amazon ECS
 on:
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      aws-region:
+        description: "AWS Region"
+        default: "eu-west-2"
+      ecr-repository:
+        description: "ECR Repo"
+        default: "ce-java-repo"
+      ecr-service:
+        description: "ECR Service"
+        default: "ce-app-ecs-service"
+      ecr-cluster:
+        description: "ECR Cluster"
+        default: "CEDevelopCluster"
+      ecs-task-definition:
+        description: "ECS Task Def"
+        default: "../../deploy/ecs-task-definition.json"
+      container-name:
+        description: "Container Name"
+        default: "java"
 
 env:
   AWS_REGION: "eu-west-2"
