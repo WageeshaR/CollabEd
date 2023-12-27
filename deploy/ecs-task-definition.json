@@ -1,5 +1,5 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:eu-west-2:289945415410:task-definition/ce-app-task-def:8",
+  "taskDefinitionArn": "arn:aws:ecs:eu-west-2:289945415410:task-definition/ce-app-task-def:10",
   "containerDefinitions": [
     {
       "name": "mongodb",
@@ -103,12 +103,68 @@
           "condition": "HEALTHY"
         }
       ]
+    },
+    {
+      "name": "java",
+      "image": "test",
+      "cpu": 1024,
+      "memory": 2048,
+      "memoryReservation": 2048,
+      "portMappings": [
+        {
+          "name": "java-8080-http",
+          "containerPort": 8080,
+          "hostPort": 8080,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "essential": false,
+      "environment": [
+        {
+          "name": "DB_HOST",
+          "value": "localhost"
+        },
+        {
+          "name": "SPRING_ACTIVE_PROFILE",
+          "value": "develop"
+        }
+      ],
+      "environmentFiles": [],
+      "mountPoints": [],
+      "volumesFrom": [],
+      "dependsOn": [
+        {
+          "containerName": "mongodb",
+          "condition": "HEALTHY"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-create-group": "true",
+          "awslogs-group": "/ecs/ce-app-task-def/java",
+          "awslogs-region": "eu-west-2",
+          "awslogs-stream-prefix": "ecs"
+        },
+        "secretOptions": []
+      },
+      "healthCheck": {
+        "command": [
+          "CMD-SHELL",
+          "echo HealthOk"
+        ],
+        "interval": 5,
+        "timeout": 2,
+        "retries": 3,
+        "startPeriod": 10
+      }
     }
   ],
   "family": "ce-app-task-def",
   "executionRoleArn": "arn:aws:iam::289945415410:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
-  "revision": 8,
+  "revision": 10,
   "volumes": [],
   "status": "ACTIVE",
   "requiresAttributes": [
@@ -148,13 +204,13 @@
   "requiresCompatibilities": [
     "FARGATE"
   ],
-  "cpu": "1024",
-  "memory": "3072",
+  "cpu": "2048",
+  "memory": "4096",
   "runtimePlatform": {
     "cpuArchitecture": "X86_64",
     "operatingSystemFamily": "LINUX"
   },
-  "registeredAt": "2023-12-26T23:55:18.532Z",
+  "registeredAt": "2023-12-27T11:30:40.375Z",
   "registeredBy": "arn:aws:iam::289945415410:root",
   "tags": []
 }
