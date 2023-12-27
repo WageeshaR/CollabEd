@@ -14,12 +14,12 @@ on:
     branches: [ "main" ]
 
 env:
-  AWS_REGION: eu-west-2
-  ECR_REPOSITORY: ce-java-repo
-  ECS_SERVICE: ce-app-ecs-service
-  ECS_CLUSTER: CEDevelopCluster
-  ECS_TASK_DEFINITION: ../../deploy/ecs-task-definition.json
-  CONTAINER_NAME: java
+  AWS_REGION: "eu-west-2"
+  ECR_REPOSITORY: "ce-java-repo"
+  ECS_SERVICE: "ce-app-ecs-service"
+  ECS_CLUSTER: "CEDevelopCluster"
+  ECS_TASK_DEFINITION: "../../deploy/ecs-task-definition.json"
+  CONTAINER_NAME: "java"
 
 jobs:
   deploy:
