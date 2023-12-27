@@ -18,7 +18,7 @@ env:
   ECR_REPOSITORY: ce-java-repo
   ECS_SERVICE: ce-app-ecs-service
   ECS_CLUSTER: CEDevelopCluster
-  ECS_TASK_DEFINITION: ecs-task-definition.json
+  ECS_TASK_DEFINITION: .github/workflows/ecs-task-definition.json
   CONTAINER_NAME: java
 
 jobs:
