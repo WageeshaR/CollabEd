@@ -50,4 +50,4 @@ replay_pid*
 
 # profiling
 /profile/develop/output.jfr
-/docker/app/.env
+/docker/.env
