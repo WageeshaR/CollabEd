@@ -1,37 +1,91 @@
 package com.collabed.core.service.channel;
 
 import com.collabed.core.data.model.channel.Post;
+import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.repository.channel.PostRepository;
+import com.collabed.core.data.repository.user.UserRepository;
 import com.collabed.core.runtime.exception.CEInternalErrorMessage;
 import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.mongodb.MongoException;
+import lombok.AllArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
+@AllArgsConstructor
 public class PostService {
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
+    private final UserRepository userRepository;
+    private static final int DEFAULT_FETCH_LIMIT = 10;
 
-    public List<Post> getAllPosts() {
+    public List<Post> getAllPosts(String username, String channelId) {
         try {
-            return postRepository.findAll();
-        } catch (MongoException e) {
-            throw new CEServiceError(
-                    String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "post")
+            User user = userRepository.findByUsername(username).orElseThrow();
+            Pageable pageable = PageRequest.of(0, DEFAULT_FETCH_LIMIT, Sort.Direction.DESC, "createdDate");
+            return summarisePosts(
+                postRepository.findAllByAuthorAndChannelId(user, channelId, pageable).getContent()
             );
+        } catch (NoSuchElementException e) {
+            throw new CEWebRequestError(String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "user"));
+        } catch (Exception e) {
+            throw new CEServiceError(e.getMessage());
         }
     }
 
     public Post getPostById(String id) {
         try {
             return postRepository.findById(id).orElseThrow();
-        } catch (MongoException e) {
+        } catch (NoSuchElementException e) {
             throw new CEWebRequestError(
-                    String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel")
+                String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "post")
             );
         }
+    }
+
+    public List<Post> getAllChildrenSummary(String id) {
+        try {
+            Post parent = postRepository.findById(id).orElseThrow();
+            Optional<List<Post>> optionalChildren = postRepository.findAllByParentEquals(parent);
+            return optionalChildren.map(this::summarisePosts).orElseGet(() -> optionalChildren.orElseGet(List::of));
+        } catch (NoSuchElementException e) {
+            throw new CEWebRequestError(e.getMessage());
+        }
+    }
+
+    public Post savePost(String username, Post post) {
+        try {
+            User user = userRepository.findByUsername(username).orElseThrow();
+            post.setAuthor(user);
+            return postRepository.save(post);
+        } catch (DuplicateKeyException e) {
+            throw new CEWebRequestError(
+                String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "post") + ":\n" + e.getMessage()
+            );
+        } catch (MongoException e) {
+            throw new CEServiceError(
+                String.format(CEInternalErrorMessage.SERVICE_UPDATE_FAILED, "post")
+            );
+        }
+    }
+
+    private List<Post> summarisePosts(List<Post> posts) {
+        List<Post> summarisedPosts = new ArrayList<>(posts);
+        for (Post post : summarisedPosts) {
+            post.setAuthor(null);
+            if (!post.getTitle().isEmpty())
+                post.setContent(null);
+            post.getChannel().clearAudits();
+        }
+        return summarisedPosts;
     }
 }

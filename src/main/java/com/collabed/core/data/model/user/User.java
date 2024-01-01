@@ -28,7 +28,7 @@ public class User extends AuditMetadata implements UserDetails {
     private String id;
     @NotNull
     @Size(min = 6)
-    @Indexed(unique = true)
+    @Indexed(unique = true, sparse = true)
     private String username;
     @NotNull
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\\S+$).{8,}$",

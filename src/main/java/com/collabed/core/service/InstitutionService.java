@@ -20,7 +20,7 @@ public class InstitutionService {
     public Institution save(Institution institution) {
         if (institution.getAddress() == null) {
             throw new CEWebRequestError(
-                    String.format(CEUserErrorMessage.ENTITY_PROPERTY_MUST_NOT_BE_NULL, "institution", "address")
+                    String.format(CEUserErrorMessage.ENTITY_PROPERTY_MUST_NOT_BE_NULL, "Institution", "address")
             );
         }
         Address address = addressRepository.insert(institution.getAddress());
