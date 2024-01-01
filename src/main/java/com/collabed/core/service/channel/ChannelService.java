@@ -1,7 +1,6 @@
 package com.collabed.core.service.channel;
 
 import com.collabed.core.data.model.channel.Channel;
-import com.collabed.core.data.model.channel.Topic;
 import com.collabed.core.data.repository.channel.ChannelRepository;
 import com.collabed.core.runtime.exception.CEInternalErrorMessage;
 import com.collabed.core.runtime.exception.CEServiceError;
@@ -24,9 +23,13 @@ public class ChannelService {
         try {
             return channelRepository.insert(channel);
         } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException e) {
-            throw new CEWebRequestError(CEUserErrorMessage.DUPLICATE_CHANNEL_ENTRIES);
+            throw new CEWebRequestError(
+                    String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "channel")
+            );
         } catch (MongoException e) {
-            throw new CEServiceError(CEInternalErrorMessage.CHANNEL_SERVICE_UPDATE_FAILED);
+            throw new CEServiceError(
+                    String.format(CEInternalErrorMessage.SERVICE_UPDATE_FAILED, "channel")
+            );
         }
     }
 
@@ -34,7 +37,7 @@ public class ChannelService {
         try {
             return channelRepository.findAll();
         } catch (MongoException e) {
-            throw new CEServiceError(CEInternalErrorMessage.CHANNEL_SERVICE_QUERY_FAILED);
+            throw new CEServiceError(String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "channel"));
         }
     }
 
@@ -42,7 +45,7 @@ public class ChannelService {
         try {
             return channelRepository.findAllByTopic(topicName);
         } catch (MongoException e) {
-            throw new CEServiceError(CEInternalErrorMessage.CHANNEL_SERVICE_QUERY_FAILED);
+            throw new CEServiceError(String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "channel"));
         }
     }
 
@@ -50,9 +53,11 @@ public class ChannelService {
         try {
             return channelRepository.findById(id).orElseThrow();
         } catch (NoSuchElementException e) {
-            throw new CEWebRequestError(CEUserErrorMessage.CHANNEL_NOT_EXISTS);
+            throw new CEWebRequestError(
+                    String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel")
+            );
         } catch (MongoException e) {
-            throw new CEServiceError(CEInternalErrorMessage.CHANNEL_SERVICE_QUERY_FAILED);
+            throw new CEServiceError(String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "channel"));
         }
     }
 
@@ -60,9 +65,9 @@ public class ChannelService {
         try {
             return channelRepository.findByName(name).orElseThrow();
         } catch (NoSuchElementException e) {
-            throw new CEWebRequestError(CEUserErrorMessage.CHANNEL_NOT_EXISTS);
+            throw new CEWebRequestError(String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel"));
         } catch (MongoException e) {
-            throw new CEServiceError(CEInternalErrorMessage.CHANNEL_SERVICE_QUERY_FAILED);
+            throw new CEServiceError(String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "channel"));
         }
     }
 }

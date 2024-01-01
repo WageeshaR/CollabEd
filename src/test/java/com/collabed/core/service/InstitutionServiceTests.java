@@ -50,7 +50,10 @@ public class InstitutionServiceTests {
     public void saveNoAddressTest() {
         Institution institution = Mockito.mock(Institution.class);
         CEWebRequestError error = assertThrows(CEWebRequestError.class, () -> institutionService.save(institution));
-        assertEquals(error.getMessage(), CEUserErrorMessage.INSTITUTION_ADDRESS_NOT_NULL);
+        assertEquals(
+                error.getMessage(),
+                String.format(CEUserErrorMessage.ENTITY_PROPERTY_MUST_NOT_BE_NULL, "Institution", "address")
+        );
     }
 
     @ParameterizedTest

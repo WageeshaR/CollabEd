@@ -99,7 +99,10 @@ public class UserServiceTests {
     public void userServiceSaveUserWithExistingRoleTest() {
         user.addRole("ROLE_STUDENT");
         CEWebRequestError error = assertThrows(CEWebRequestError.class, () -> userService.saveUser(this.user, "ROLE_STUDENT"));
-        assertEquals(error.getMessage(), CEUserErrorMessage.ROLE_ALREADY_EXISTS);
+        assertEquals(
+                error.getMessage(),
+                String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "role")
+        );
     }
 
     @Test
@@ -139,7 +142,10 @@ public class UserServiceTests {
     @Test
     public void userServiceAddToGroupNoUserTest() {
         CEWebRequestError error = assertThrows(CEWebRequestError.class, () -> userService.addToGroup(new ObjectId().toHexString(), new ObjectId().toHexString()));
-        assertEquals(error.getMessage(), CEUserErrorMessage.USER_NOT_EXIST);
+        assertEquals(
+                error.getMessage(),
+                String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "user")
+        );
     }
 
     @Test

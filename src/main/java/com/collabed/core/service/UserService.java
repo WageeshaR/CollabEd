@@ -55,7 +55,9 @@ public class UserService implements UserDetailsService {
             .map(GrantedAuthority::getAuthority)
             .noneMatch(r -> Objects.equals(r, role))) {
             if (!Objects.equals(role, "ROLE_ADMIN") && user.getInstitution() == null){
-                throw new CEWebRequestError(CEUserErrorMessage.INSTITUTION_NOT_NULL);
+                throw new CEWebRequestError(
+                        String.format(CEUserErrorMessage.ENTITY_MUST_NOT_BE_NULL, "Institution")
+                );
             }
             user.addRole(role);
             if (user.getProfile() != null) {
@@ -64,7 +66,9 @@ public class UserService implements UserDetailsService {
             }
             return userRepository.insert(user);
         } else {
-            throw new CEWebRequestError(CEUserErrorMessage.ROLE_ALREADY_EXISTS);
+            throw new CEWebRequestError(
+                    String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "role")
+            );
         }
     }
 
@@ -82,7 +86,9 @@ public class UserService implements UserDetailsService {
     }
 
     public UserGroup addToGroup(String userId, String groupId) {
-        if (userRepository.findById(userId).isEmpty()) throw new CEWebRequestError(CEUserErrorMessage.USER_NOT_EXIST);
+        if (userRepository.findById(userId).isEmpty()) throw new CEWebRequestError(
+                String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "user")
+        );
         UserGroup userGroup = userGroupRepository.findById(groupId).orElseThrow();
         User user = userRepository.findById(userId).get();
         List<Role> userRoles = user.getRoles();

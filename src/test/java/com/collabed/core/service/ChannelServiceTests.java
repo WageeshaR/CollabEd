@@ -1,7 +1,6 @@
 package com.collabed.core.service;
 
 import com.collabed.core.data.model.channel.Channel;
-import com.collabed.core.data.model.channel.Topic;
 import com.collabed.core.data.repository.channel.ChannelRepository;
 import com.collabed.core.runtime.exception.CEInternalErrorMessage;
 import com.collabed.core.runtime.exception.CEServiceError;
@@ -48,12 +47,18 @@ public class ChannelServiceTests {
         Channel channel1 = Mockito.mock(Channel.class);
         Mockito.when(channelRepository.insert(channel1)).thenThrow(DuplicateKeyException.class);
         Exception error1 = assertThrows(CEWebRequestError.class, () -> channelService.createChannel(channel1));
-        assertEquals(error1.getMessage(), CEUserErrorMessage.DUPLICATE_CHANNEL_ENTRIES);
+        assertEquals(
+                error1.getMessage(),
+                String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "channel")
+        );
 
         Channel channel2 = Mockito.mock(Channel.class);
         Mockito.when(channelRepository.insert(channel2)).thenThrow(com.mongodb.DuplicateKeyException.class);
         Exception error2 = assertThrows(CEWebRequestError.class, () -> channelService.createChannel(channel2));
-        assertEquals(error2.getMessage(), CEUserErrorMessage.DUPLICATE_CHANNEL_ENTRIES);
+        assertEquals(
+                error2.getMessage(),
+                String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "channel")
+        );
 
         Channel channel3 = Mockito.mock(Channel.class);
         Mockito.when(channelRepository.insert(channel3)).thenThrow(MongoException.class);
@@ -72,7 +77,10 @@ public class ChannelServiceTests {
         String id1 = new ObjectId().toHexString();
         Mockito.when(channelRepository.findById(id1)).thenReturn(Optional.of(Mockito.mock(Channel.class)));
         Exception error = assertThrows(CEWebRequestError.class, () -> channelService.findChannelById(Mockito.anyString()));
-        assertEquals(error.getMessage(), CEUserErrorMessage.CHANNEL_NOT_EXISTS);
+        assertEquals(
+                error.getMessage(),
+                String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel")
+        );
 
         String id2 = new ObjectId().toHexString();
         Mockito.when(channelRepository.findById(Mockito.anyString())).thenThrow(MongoException.class);
@@ -92,7 +100,10 @@ public class ChannelServiceTests {
         String id1 = new ObjectId().toHexString();
         Mockito.when(channelRepository.findByName(id1)).thenReturn(Optional.of(Mockito.mock(Channel.class)));
         Exception error = assertThrows(CEWebRequestError.class, () -> channelService.findChannelByName(Mockito.anyString()));
-        assertEquals(error.getMessage(), CEUserErrorMessage.CHANNEL_NOT_EXISTS);
+        assertEquals(
+                error.getMessage(),
+                String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel")
+        );
 
         String id2 = new ObjectId().toHexString();
         Mockito.when(channelRepository.findById(Mockito.anyString())).thenThrow(MongoException.class);
@@ -115,7 +126,7 @@ public class ChannelServiceTests {
     public void getAllChannelsErrorTest() {
         Mockito.when(channelRepository.findAll()).thenThrow(MongoQueryException.class);
         Exception error = assertThrows(CEServiceError.class, () -> channelService.getAllChannels());
-        assertEquals(error.getMessage(), CEInternalErrorMessage.CHANNEL_SERVICE_QUERY_FAILED);
+        assertEquals(error.getMessage(), String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "channel"));
     }
 
     @ParameterizedTest
@@ -134,6 +145,6 @@ public class ChannelServiceTests {
     public void getAllChannelsByTopicErrorTest() {
         Mockito.when(channelRepository.findAllByTopic(Mockito.anyString())).thenThrow(MongoQueryException.class);
         Exception error = assertThrows(CEServiceError.class, () -> channelService.getAllChannelsByTopic("dsfds78&834"));
-        assertEquals(error.getMessage(), CEInternalErrorMessage.CHANNEL_SERVICE_QUERY_FAILED);
+        assertEquals(error.getMessage(), String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "channel"));
     }
 }
