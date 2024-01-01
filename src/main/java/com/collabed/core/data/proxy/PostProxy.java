@@ -9,7 +9,6 @@ import lombok.EqualsAndHashCode;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostProxy extends Post {
     public PostProxy(Post post) {
         this.id = post.getId();

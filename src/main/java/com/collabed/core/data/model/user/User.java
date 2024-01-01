@@ -4,7 +4,9 @@ import com.collabed.core.data.model.AuditMetadata;
 import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.data.model.channel.Channel;
 import com.collabed.core.data.model.user.profile.Profile;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -24,7 +26,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Document
 @Data
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class User extends AuditMetadata implements UserDetails {
     @Id
     private String id;
@@ -63,10 +65,15 @@ public class User extends AuditMetadata implements UserDetails {
     private List<Channel> channels;
     private boolean hasConsentForDataSharing;
     private boolean hasAgreedTerms;
+    @JsonIgnore
     private boolean accountNonExpired;
+    @JsonIgnore
     private boolean accountNonLocked;
+    @JsonIgnore
     private boolean credentialsNonExpired;
+    @JsonIgnore
     private boolean enabled;
+    @JsonIgnore
     private boolean deleted = false;
 
     public User() {
@@ -89,6 +96,33 @@ public class User extends AuditMetadata implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles;
+    }
+
+    @JsonIgnore
+    public String getPassword() {
+        return password;
+    }
+
+    @JsonProperty
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    @JsonIgnore
+    public boolean isHasAgreedTerms() {
+        return hasAgreedTerms;
+    }
+    @JsonProperty
+    public void setHasAgreedTerms(boolean hasAgreedTerms) {
+        this.hasAgreedTerms = hasAgreedTerms;
+    }
+    @JsonIgnore
+    public boolean isHasConsentForDataSharing() {
+        return hasConsentForDataSharing;
+    }
+    @JsonProperty
+    public void setHasConsentForDataSharing(boolean hasConsentForDataSharing) {
+        this.hasConsentForDataSharing = hasConsentForDataSharing;
     }
 
     @Override

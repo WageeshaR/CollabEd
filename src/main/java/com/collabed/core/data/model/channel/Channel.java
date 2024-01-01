@@ -1,6 +1,7 @@
 package com.collabed.core.data.model.channel;
 
 import com.collabed.core.data.model.AuditMetadata;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
@@ -24,5 +25,6 @@ public class Channel extends AuditMetadata {
     @NotNull
     private Topic topic;
     private String description;
+    @JsonIgnore
     private boolean deleted = false;
 }
