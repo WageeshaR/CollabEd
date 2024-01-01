@@ -41,6 +41,17 @@ public class PostService {
         }
     }
 
+    public List<Post> getAllPosts(String channelId) {
+        try {
+            Pageable pageable = PageRequest.of(0, DEFAULT_FETCH_LIMIT, Sort.Direction.DESC, "createdDate");
+            return summarisePosts(
+                    postRepository.findAllByChannelId(channelId, pageable).getContent()
+            );
+        } catch (Exception e) {
+            throw new CEServiceError(e.getMessage());
+        }
+    }
+
     public Post getPostById(String id) {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try {
@@ -74,7 +85,7 @@ public class PostService {
             throw new CEWebRequestError(
                 String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "post") + ":\n" + e.getMessage()
             );
-        } catch (MongoException e) {
+        } catch (Exception e) {
             throw new CEServiceError(
                 String.format(CEInternalErrorMessage.SERVICE_UPDATE_FAILED, "post")
             );

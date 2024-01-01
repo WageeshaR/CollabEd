@@ -47,7 +47,7 @@ public class ChannelControllerTests {
         Channel channel = new Channel();
         channel.setName("My Channel");
         channel.setTopic(Mockito.mock(Topic.class));
-        Mockito.when(channelService.createChannel(Mockito.any(Channel.class))).thenReturn(channel);
+        Mockito.when(channelService.saveChannel(Mockito.any(Channel.class))).thenReturn(channel);
         mockMvc.perform(MockMvcRequestBuilders
                     .post("/channels")
                     .content(mapToJson(channel))

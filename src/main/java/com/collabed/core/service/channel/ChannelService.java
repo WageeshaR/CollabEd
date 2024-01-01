@@ -19,9 +19,9 @@ import java.util.NoSuchElementException;
 public class ChannelService {
     private final ChannelRepository channelRepository;
 
-    public Channel createChannel(Channel channel) {
+    public Channel saveChannel(Channel channel) {
         try {
-            return channelRepository.insert(channel);
+            return channelRepository.save(channel);
         } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException e) {
             throw new CEWebRequestError(
                     String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "channel")

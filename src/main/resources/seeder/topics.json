@@ -1,0 +1,161 @@
+[
+  {
+    "name": "Engineering",
+    "layer": 0,
+    "key": "eng"
+  },
+  {
+    "name": "Medicine",
+    "layer": 0,
+    "key": "med"
+  },
+  {
+    "name": "Economics",
+    "layer": 0, 
+    "key": "ecn"
+  },
+  {
+    "name": "Electrical Engineering",
+    "layer": 1,
+    "key": "elc_eng",
+    "parentKey": "eng"
+  },
+  {
+    "name": "Mechanical Engineering",
+    "layer": 1,
+    "key": "mec_eng",
+    "parentKey": "eng"
+  },
+  {
+    "name": "Surgery",
+    "layer": 1,
+    "key": "sgry",
+    "parentKey": "med"
+  },
+  {
+    "name": "Clinical Medicine",
+    "layer": 1,
+    "key": "cln_med",
+    "parentKey": "med"
+  },
+  {
+    "name": "Applied Economics",
+    "layer": 1,
+    "key": "app_ecn",
+    "parentKey": "ecn"
+  },
+  {
+    "name": "Economic History",
+    "layer": 1,
+    "key": "ecn_hsr",
+    "parentKey": "ecn"
+  },
+  {
+    "name": "Analog Electronics",
+    "layer": 2,
+    "key": "anlg_elc_eng",
+    "parentKey": "elc_eng"
+  },
+  {
+    "name": "Communications",
+    "layer": 2,
+    "key": "cmm_elc_eng",
+    "parentKey": "elc_eng"
+  },
+  {
+    "name": "Electromagnetism",
+    "layer": 2,
+    "key": "elcmgnt_elc_eng",
+    "parentKey": "elc_eng"
+  },
+  {
+    "name": "Fluid Mechanics",
+    "layer": 2,
+    "key": "fld_mec_eng",
+    "parentKey": "mec_eng"
+  },
+  {
+    "name": "Thermo Dynamics",
+    "layer": 2,
+    "key": "thmdyn_mec_eng",
+    "parentKey": "mec_eng"
+  },
+  {
+    "name": "Mechatronics",
+    "layer": 2,
+    "key": "mctrnc_mec_eng",
+    "parentKey": "mec_eng"
+  },
+  {
+    "name": "Neonatal Surgery",
+    "layer": 2,
+    "key": "nntl_sgry",
+    "parentKey": "sgry"
+  },
+  {
+    "name": "Paediatric Surgery",
+    "layer": 2,
+    "key": "pd_sgry",
+    "parentKey": "sgry"
+  },
+  {
+    "name": "Urological Surgery",
+    "layer": 2,
+    "key": "urlg_sgry",
+    "parentKey": "sgry"
+  },
+  {
+    "name": "Ageing and Complex Health",
+    "layer": 2,
+    "key": "ach_cln_med",
+    "parentKey": "cln_med"
+  },
+  {
+    "name": "Oncology and Breast Health",
+    "layer": 2,
+    "key": "obh_cln_med",
+    "parentKey": "cln_med"
+  },
+  {
+    "name": "Dermatology and Infectious Diseases",
+    "layer": 2,
+    "key": "did_cln_med",
+    "parentKey": "cln_med"
+  },
+  {
+    "name": "Labour Economics",
+    "layer": 2,
+    "key": "lbr_app_ecn",
+    "parentKey": "app_ecn"
+  },
+  {
+    "name": "Development Microeconomics",
+    "layer": 2,
+    "key": "devmic_app_ecn",
+    "parentKey": "app_ecn"
+  },
+  {
+    "name": "Food Systems",
+    "layer": 2,
+    "key": "fs_app_ecn",
+    "parentKey": "app_ecn"
+  },
+  {
+    "name": "Population Dynamics and Economic Growth",
+    "layer": 2,
+    "key": "pdeg_ecn_hsr",
+    "parentKey": "ecn_hsr"
+  },
+  {
+    "name": "British Monetary History",
+    "layer": 2,
+    "key": "bmh_ecn_hsr",
+    "parentKey": "ecn_hsr"
+  },
+  {
+    "name": "Historical Analysis of Economic Change",
+    "layer": 2,
+    "key": "haec_ecn_hsr",
+    "parentKey": "ecn_hsr"
+  }
+]

@@ -1,9 +1,11 @@
 package com.collabed.core.config;
 
+import com.collabed.core.data.model.channel.Topic;
 import com.collabed.core.data.model.license.LicenseModel;
 import com.collabed.core.data.model.location.Country;
 import com.collabed.core.data.repository.CountryRepository;
 import com.collabed.core.data.repository.LicenseRepository;
+import com.collabed.core.data.repository.channel.TopicRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import jakarta.annotation.PostConstruct;
@@ -26,6 +28,7 @@ import static java.lang.String.format;
 public class DBSeederConfig {
     private CountryRepository countryRepository;
     private LicenseRepository licenseRepository;
+    private TopicRepository topicRepository;
     private ObjectMapper objectMapper;
 
     @PostConstruct
@@ -46,6 +49,16 @@ public class DBSeederConfig {
         try (InputStream inputStream = licenseModelsResource.getInputStream()) {
             List<LicenseModel> licenseModels = objectMapper.readValue(inputStream, licenseModelsCollectionType);
             licenseRepository.saveAll(licenseModels);
+        } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException ignored) {}
+    }
+
+    @PostConstruct
+    public void populateTopics() throws IOException {
+        CollectionType topicsCollectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, Topic.class);
+        ClassPathResource topicsResource = new ClassPathResource(format("seeder%stopics.json", File.separator));
+        try (InputStream inputStream = topicsResource.getInputStream()) {
+            List<Topic> topics = objectMapper.readValue(inputStream, topicsCollectionType);
+            topicRepository.saveAll(topics);
         } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException ignored) {}
     }
 }

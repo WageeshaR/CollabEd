@@ -13,6 +13,7 @@ import java.util.Optional;
 
 @Repository
 public interface PostRepository extends MongoRepository<Post, String> {
-    public Optional<List<Post>> findAllByParentEquals(Post post);
-    public Page<Post> findAllByAuthorAndChannelId(User user, String channelId, Pageable pageable);
+    Optional<List<Post>> findAllByParentEquals(Post post);
+    Page<Post> findAllByChannelId(String channelId, Pageable pageable);
+    Page<Post> findAllByAuthorAndChannelId(User user, String channelId, Pageable pageable);
 }

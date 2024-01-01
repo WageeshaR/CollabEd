@@ -24,7 +24,7 @@ public class ChannelController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(HTTPResponseErrorFormatter.format(errors));
         }
         try {
-            return ResponseEntity.ok().body(channelService.createChannel(channel));
+            return ResponseEntity.ok().body(channelService.saveChannel(channel));
         } catch (CEWebRequestError e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e);
         } catch (CEServiceError e) {

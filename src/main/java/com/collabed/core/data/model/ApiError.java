@@ -24,14 +24,20 @@ public class ApiError {
         this.status = status;
     }
 
-    ApiError(HttpStatus status, Throwable ex) {
+    public ApiError(HttpStatus status, String message) {
+        this();
+        this.status = status;
+        this.message = message;
+    }
+
+    public ApiError(HttpStatus status, Throwable ex) {
         this();
         this.status = status;
         this.message = "Unexpected error";
         this.debugMessage = ex.getLocalizedMessage();
     }
 
-    ApiError(HttpStatus status, String message, Throwable ex) {
+    public ApiError(HttpStatus status, String message, Throwable ex) {
         this();
         this.status = status;
         this.message = message;
