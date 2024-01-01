@@ -2,6 +2,7 @@ package com.collabed.core.api.controller.channel;
 
 import com.collabed.core.api.util.HTTPResponseErrorFormatter;
 import com.collabed.core.data.model.channel.Post;
+import com.collabed.core.data.proxy.PostProxy;
 import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.channel.PostService;

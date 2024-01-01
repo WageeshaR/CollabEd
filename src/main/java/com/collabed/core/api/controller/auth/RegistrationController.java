@@ -1,7 +1,7 @@
 package com.collabed.core.api.controller.auth;
 
 import com.collabed.core.api.util.HTTPResponseErrorFormatter;
-import com.collabed.core.data.model.Institution;
+import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.InstitutionService;

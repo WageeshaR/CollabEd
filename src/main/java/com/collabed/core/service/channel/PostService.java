@@ -2,6 +2,7 @@ package com.collabed.core.service.channel;
 
 import com.collabed.core.data.model.channel.Post;
 import com.collabed.core.data.model.user.User;
+import com.collabed.core.data.proxy.PostProxy;
 import com.collabed.core.data.repository.channel.PostRepository;
 import com.collabed.core.data.repository.user.UserRepository;
 import com.collabed.core.runtime.exception.CEInternalErrorMessage;
@@ -14,12 +15,10 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -43,8 +42,12 @@ public class PostService {
     }
 
     public Post getPostById(String id) {
+        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try {
-            return postRepository.findById(id).orElseThrow();
+            Post post = postRepository.findById(id).orElseThrow();
+            if (!Objects.equals(post.getAuthor().getUsername(), username))
+                return new PostProxy(post);
+            return post;
         } catch (NoSuchElementException e) {
             throw new CEWebRequestError(
                 String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "post")

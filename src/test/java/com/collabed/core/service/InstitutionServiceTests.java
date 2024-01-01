@@ -1,6 +1,6 @@
 package com.collabed.core.service;
 
-import com.collabed.core.data.model.Institution;
+import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.data.model.location.Address;
 import com.collabed.core.data.repository.AddressRepository;
 import com.collabed.core.data.repository.InstitutionRepository;

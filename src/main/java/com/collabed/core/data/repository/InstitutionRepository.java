@@ -1,6 +1,6 @@
 package com.collabed.core.data.repository;
 
-import com.collabed.core.data.model.Institution;
+import com.collabed.core.data.model.institution.Institution;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

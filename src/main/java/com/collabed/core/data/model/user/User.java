@@ -1,9 +1,10 @@
 package com.collabed.core.data.model.user;
 
 import com.collabed.core.data.model.AuditMetadata;
-import com.collabed.core.data.model.Institution;
+import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.data.model.channel.Channel;
 import com.collabed.core.data.model.user.profile.Profile;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
@@ -23,6 +24,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Document
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class User extends AuditMetadata implements UserDetails {
     @Id
     private String id;

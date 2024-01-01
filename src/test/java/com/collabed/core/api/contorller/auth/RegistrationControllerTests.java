@@ -1,6 +1,6 @@
 package com.collabed.core.api.contorller.auth;
 
-import com.collabed.core.data.model.Institution;
+import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.InstitutionService;
@@ -19,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -141,7 +142,7 @@ public class RegistrationControllerTests {
     public void registerInstitutionTest(String param) throws Exception {
         institution.setName(param);
         String institutionString = mapToJson(institution);
-        Mockito.when(institutionService.save(institution)).thenReturn(institution);
+        Mockito.when(institutionService.save(Mockito.any(Institution.class))).thenReturn(institution);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/register/institution")
@@ -149,6 +150,7 @@ public class RegistrationControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(param));
     }
 
@@ -166,7 +168,7 @@ public class RegistrationControllerTests {
 
     @Test
     public void registerInstitutionWithoutAddressTest() throws Exception {
-        Mockito.when(institutionService.save(institution)).thenThrow(CEWebRequestError.class);
+        Mockito.when(institutionService.save(Mockito.any(Institution.class))).thenThrow(CEWebRequestError.class);
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/register/institution")

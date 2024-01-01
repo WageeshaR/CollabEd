@@ -3,7 +3,7 @@ package com.collabed.core.api.contorller;
 import com.collabed.core.api.controller.InstitutionController;
 import com.collabed.core.api.util.JwtTokenUtil;
 import com.collabed.core.config.SecurityConfig;
-import com.collabed.core.data.model.Institution;
+import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.service.InstitutionService;
 import com.collabed.core.service.UserService;
 import org.junit.jupiter.api.Test;

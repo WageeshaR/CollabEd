@@ -1,6 +1,6 @@
 package com.collabed.core.service;
 
-import com.collabed.core.data.model.Institution;
+import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.model.user.UserGroup;
 import com.collabed.core.data.repository.user.ProfileRepository;

@@ -2,6 +2,7 @@ package com.collabed.core.data.model.channel;
 
 import com.collabed.core.data.model.AuditMetadata;
 import com.collabed.core.data.model.user.User;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -14,17 +15,18 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @Document
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Post extends AuditMetadata {
     @Id
-    private String id;
+    protected String id;
     @DocumentReference
-    private User author;
-    private Post parent;
-    private String title;
+    protected User author;
+    protected Post parent;
+    protected String title;
     @NotNull
-    private PostContent content;
-    private List<Reaction> reactions;
-//    @NotNull
-//    @DocumentReference
-    private Channel channel;
+    protected PostContent content;
+    protected List<Reaction> reactions;
+    @NotNull
+    @DocumentReference
+    protected Channel channel;
 }

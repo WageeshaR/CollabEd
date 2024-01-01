@@ -1,5 +1,6 @@
 package com.collabed.core.data.model.location;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
@@ -14,6 +15,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
         def = "{'line_1': 1, 'city': 1, 'postal_code': 1}",
         unique = true
 )
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Address {
     @Id
     private String id;
