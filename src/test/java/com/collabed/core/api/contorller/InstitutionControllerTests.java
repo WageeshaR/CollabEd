@@ -6,6 +6,7 @@ import com.collabed.core.config.SecurityConfig;
 import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.service.InstitutionService;
 import com.collabed.core.service.UserService;
+import com.collabed.core.service.util.CEServiceResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -54,7 +55,9 @@ public class InstitutionControllerTests {
         List<Institution> institutions = new ArrayList<>();
         for (int i=0; i< num; i++)
             institutions.add(Mockito.mock(Institution.class));
-        Mockito.when(institutionService.getAll()).thenReturn(institutions);
+        Mockito.when(institutionService.getAll()).thenReturn(
+                CEServiceResponse.success().data(institutions)
+        );
         mockMvc.perform(MockMvcRequestBuilders
                     .get("/institutions")
                     .accept(MediaType.APPLICATION_JSON))

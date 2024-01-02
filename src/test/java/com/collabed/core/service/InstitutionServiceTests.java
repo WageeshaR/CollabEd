@@ -6,6 +6,7 @@ import com.collabed.core.data.repository.AddressRepository;
 import com.collabed.core.data.repository.InstitutionRepository;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.runtime.exception.CEWebRequestError;
+import com.collabed.core.service.util.CEServiceResponse;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +17,7 @@ import org.mockito.Mockito;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class InstitutionServiceTests {
     private InstitutionRepository institutionRepository;
@@ -38,20 +38,21 @@ public class InstitutionServiceTests {
         Institution institution = new Institution();
         institution.setName("testinstitution");
         institution.setAddress(address);
-        Mockito.when(addressRepository.insert(Mockito.any(Address.class))).thenReturn(address);
-        Mockito.when(institutionRepository.insert(Mockito.any(Institution.class))).thenReturn(institution);
+        Mockito.when(addressRepository.save(Mockito.any(Address.class))).thenReturn(address);
+        Mockito.when(institutionRepository.save(Mockito.any(Institution.class))).thenReturn(institution);
 
-        Institution result = institutionService.save(institution);
-        assertEquals(result.getName(), "testinstitution");
-        assertEquals(result.getAddress().getId(), address.getId());
+        CEServiceResponse response = institutionService.save(institution);
+        assertEquals(((Institution) response.getData()).getName(), "testinstitution");
+        assertEquals(((Institution) response.getData()).getAddress().getId(), address.getId());
     }
 
     @Test
     public void saveNoAddressTest() {
         Institution institution = Mockito.mock(Institution.class);
-        CEWebRequestError error = assertThrows(CEWebRequestError.class, () -> institutionService.save(institution));
+        CEServiceResponse response = institutionService.save(institution);
+        assertTrue(response.isError());
         assertEquals(
-                error.getMessage(),
+                ((CEWebRequestError) response.getData()).getMessage(),
                 String.format(CEUserErrorMessage.ENTITY_PROPERTY_MUST_NOT_BE_NULL, "Institution", "address")
         );
     }
@@ -64,7 +65,7 @@ public class InstitutionServiceTests {
             institutions.add(Mockito.mock(Institution.class));
         Mockito.when(institutionRepository.findAll()).thenReturn(institutions);
 
-        List<Institution> result = institutionService.getAll();
-        assertEquals(result.size(), num);
+        CEServiceResponse response = institutionService.getAll();
+        assertEquals(((List<?>) response.getData()).size(), num);
     }
 }

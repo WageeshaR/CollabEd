@@ -108,17 +108,13 @@ public class RegistrationController {
                     HTTPResponseErrorFormatter.format(errors)
             ));
         } else {
-            try {
-                Institution savedInstitution = institutionService.save(institution);
-                log.info("Institution saved successfully");
-                return ResponseEntity.status(HttpStatus.CREATED).body(savedInstitution);
-            } catch (DuplicateKeyException | CEWebRequestError exception) {
-                log.error(String.format("Error saving new institution: %s", exception));
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiError(
-                        HttpStatus.BAD_REQUEST,
-                        exception
-                ));
-            }
+            CEServiceResponse response = institutionService.save(institution);
+            if (response.isSuccess())
+                return ResponseEntity.status(HttpStatus.CREATED).body(response.getData());
+            return ResponseEntity.internalServerError().body(new ApiError(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    (CEWebRequestError) response.getData()
+            ));
         }
     }
 }

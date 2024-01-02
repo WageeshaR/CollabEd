@@ -27,8 +27,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import static com.collabed.core.util.HttpRequestResponseUtils.mapFromJson;
-import static com.collabed.core.util.HttpRequestResponseUtils.mapToJson;
+import static com.collabed.core.util.HttpRequestResponseUtils.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -151,7 +150,9 @@ public class RegistrationControllerTests {
     public void registerInstitutionTest(String param) throws Exception {
         institution.setName(param);
         String institutionString = mapToJson(institution);
-        Mockito.when(institutionService.save(Mockito.any(Institution.class))).thenReturn(institution);
+        Mockito.when(institutionService.save(Mockito.any(Institution.class))).thenReturn(
+                CEServiceResponse.success().data(institution)
+        );
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/register/institution")
@@ -177,14 +178,16 @@ public class RegistrationControllerTests {
 
     @Test
     public void registerInstitutionWithoutAddressTest() throws Exception {
-        Mockito.when(institutionService.save(Mockito.any(Institution.class))).thenThrow(CEWebRequestError.class);
+        Mockito.when(institutionService.save(Mockito.any(Institution.class))).thenReturn(
+                CEServiceResponse.error().data(new CEWebRequestError(""))
+        );
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/register/institution")
                         .content(mapToJson(institution))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("BAD_REQUEST"));;
+                .andExpect(status().is5xxServerError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception").value(isException()));;
     }
 }
