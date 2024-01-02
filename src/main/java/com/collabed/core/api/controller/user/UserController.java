@@ -1,5 +1,6 @@
 package com.collabed.core.api.controller.user;
 
+import com.collabed.core.data.model.ApiError;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.model.user.UserGroup;
 import com.collabed.core.runtime.exception.CEServiceError;
@@ -30,39 +31,72 @@ public class UserController {
             User user = userService.findUser(id);
             return ResponseEntity.ok().body(user);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiError(
+                    HttpStatus.NOT_FOUND,
+                    e.getMessage()
+            ));
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().body(new ApiError(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.fillInStackTrace()
+            ));
         }
     }
     @GetMapping
     @RolesAllowed({"SUPER_ADMIN", "ADMIN"})
-    public List<User> getAll() {
-        return userService.getAll();
+    public ResponseEntity<?> getAll() {
+        try {
+            return ResponseEntity.ok().body(userService.getAll());
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().body(new ApiError(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.fillInStackTrace()
+            ));
+        }
     }
 
     @GetMapping("/admins")
     @RolesAllowed({"SUPER_ADMIN", "ADMIN"})
-    public List<User> getAllAdmins() {
-        return userService.getAll("ROLE_ADMIN");
+    public ResponseEntity<?> getAllAdmins() {
+        try {
+            return ResponseEntity.ok().body(userService.getAll("ROLE_ADMIN"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().body(new ApiError(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.fillInStackTrace()
+            ));
+        }
     }
 
     @GetMapping("/students")
     @RolesAllowed({"SUPER_ADMIN", "ADMIN", "FACILITATOR"})
-    public List<User> getAllStudents() {
-        return userService.getAll("ROLE_STUDENT");
+    public ResponseEntity<?> getAllStudents() {
+        try {
+            return ResponseEntity.ok().body(userService.getAll("ROLE_STUDENT"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().body(new ApiError(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.fillInStackTrace()
+            ));
+        }
     }
 
     @GetMapping("/facilitators")
     @RolesAllowed({"SUPER_ADMIN", "ADMIN"})
-    public List<User> getAllFacilitators() {
-        return userService.getAll("ROLE_FACILITATOR");
+    public ResponseEntity<?> getAllFacilitators() {
+        try {
+            return ResponseEntity.ok().body(userService.getAll("ROLE_FACILITATOR"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.internalServerError().body(new ApiError(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    e.fillInStackTrace()
+            ));
+        }
     }
 
     @PatchMapping("/delete/{id}")
     @RolesAllowed({"SUPER_ADMIN", "ADMIN"})
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
-
         try {
             userService.deleteUser(id);
             return ResponseEntity.ok().body("User deleted successfully");

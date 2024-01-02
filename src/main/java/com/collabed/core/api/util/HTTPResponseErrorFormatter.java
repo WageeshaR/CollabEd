@@ -1,14 +1,21 @@
 package com.collabed.core.api.util;
 
+import lombok.extern.log4j.Log4j2;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
+
+import java.util.List;
 import java.util.stream.Stream;
 
+@Log4j2
 public class HTTPResponseErrorFormatter {
-    public static Stream<String> format(Errors errors) {
-        return errors.getAllErrors().stream().map(
+    public static List<String> format(Errors errors) {
+        Stream<String> errorStream = errors.getAllErrors().stream().map(
                 o -> ((FieldError) o).getField() + ": " + o.getDefaultMessage()
         );
+        List<String> errorList = errorStream.toList();
+        log.info(String.format("Request body constraint validation failed: %s", errorList));
+        return errorList;
     }
 
     public static String camelToSnake(String str)
