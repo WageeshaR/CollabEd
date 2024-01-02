@@ -7,9 +7,10 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 @Data
 public class Reaction {
+    String emoji;
     @NotNull
-    byte emoji;
-    @NotNull
+    @DocumentReference
+    Post post;
     @DocumentReference
     User user;
 }

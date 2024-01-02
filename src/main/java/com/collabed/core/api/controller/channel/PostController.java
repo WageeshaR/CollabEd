@@ -3,6 +3,7 @@ package com.collabed.core.api.controller.channel;
 import com.collabed.core.api.util.HTTPResponseErrorFormatter;
 import com.collabed.core.data.model.ApiError;
 import com.collabed.core.data.model.channel.Post;
+import com.collabed.core.data.model.channel.Reaction;
 import com.collabed.core.data.repository.channel.ChannelRepository;
 import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
@@ -70,6 +71,20 @@ public class PostController {
                     postService.getAllPosts(username, channelId) : postService.getAllPosts(channelId);
             return ResponseEntity.ok().body(posts);
         } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/reaction")
+    public ResponseEntity<?> updateReaction(Authentication authentication,
+                                            @Valid @RequestBody Reaction reaction, Errors errors) {
+        String username = (String) authentication.getPrincipal();
+        if (errors.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HTTPResponseErrorFormatter.format(errors));
+        }
+        try {
+            return ResponseEntity.status(HttpStatus.CREATED).body(postService.saveReaction(username, reaction));
+        } catch (CEServiceError e) {
             return ResponseEntity.internalServerError().body(e.getMessage());
         }
     }

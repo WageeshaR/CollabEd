@@ -20,7 +20,6 @@ public class PostProxy extends Post {
         this.parent = post.getParent();
         this.title = post.getTitle();
         this.content = post.getContent();
-        this.reactions = post.getReactions();
         this.channel = new Channel();
         this.channel.setTopic(post.getChannel() == null ? null : post.getChannel().getTopic());
         this.channel.setName(post.getChannel() == null ? null : post.getChannel().getName());

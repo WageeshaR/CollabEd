@@ -1,6 +1,7 @@
 package com.collabed.core.service.channel;
 
 import com.collabed.core.data.model.channel.Post;
+import com.collabed.core.data.model.channel.Reaction;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.proxy.PostProxy;
 import com.collabed.core.data.repository.channel.PostRepository;
@@ -9,12 +10,12 @@ import com.collabed.core.runtime.exception.CEInternalErrorMessage;
 import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.runtime.exception.CEWebRequestError;
-import com.mongodb.MongoException;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +26,7 @@ import java.util.*;
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final MongoTemplate mongoTemplate;
     private static final int DEFAULT_FETCH_LIMIT = 10;
 
     public List<Post> getAllPosts(String username, String channelId) {
@@ -32,7 +34,7 @@ public class PostService {
             User user = userRepository.findByUsername(username).orElseThrow();
             Pageable pageable = PageRequest.of(0, DEFAULT_FETCH_LIMIT, Sort.Direction.DESC, "createdDate");
             return summarisePosts(
-                postRepository.findAllByAuthorAndChannelId(user, channelId, pageable).getContent()
+                    postRepository.findAllByAuthorAndChannelId(user, channelId, pageable).getContent()
             );
         } catch (NoSuchElementException e) {
             throw new CEWebRequestError(String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "user"));
@@ -61,7 +63,7 @@ public class PostService {
             return post;
         } catch (NoSuchElementException e) {
             throw new CEWebRequestError(
-                String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "post")
+                    String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "post")
             );
         }
     }
@@ -83,11 +85,34 @@ public class PostService {
             return postRepository.save(post);
         } catch (DuplicateKeyException e) {
             throw new CEWebRequestError(
-                String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "post") + ":\n" + e.getMessage()
+                    String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "post") + ":\n" + e.getMessage()
             );
         } catch (Exception e) {
             throw new CEServiceError(
-                String.format(CEInternalErrorMessage.SERVICE_UPDATE_FAILED, "post")
+                    String.format(CEInternalErrorMessage.SERVICE_UPDATE_FAILED, "post")
+            );
+        }
+    }
+
+    public Reaction saveReaction(String username, Reaction reaction) {
+        try {
+            User user = userRepository.findByUsername(username).orElseThrow();
+            Post post = postRepository.findById(reaction.getPost().getId()).orElseThrow();
+            if (!post.getAuthor().getId().equals(user.getId()))
+                throw new IllegalAccessException();
+            reaction.setUser(user);
+            return mongoTemplate.save(reaction, "reaction");
+        } catch (IllegalAccessException e) {
+            throw new CEWebRequestError(
+                    String.format(CEUserErrorMessage.ENTITY_NOT_BELONG_TO_USER, "post")
+            );
+        } catch (NoSuchElementException e) {
+            throw new CEWebRequestError(
+                    String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "post")
+            );
+        } catch (Exception e) {
+            throw new CEServiceError(
+                    String.format(CEInternalErrorMessage.SERVICE_UPDATE_FAILED, "reaction")
             );
         }
     }

@@ -25,7 +25,6 @@ public class Post extends AuditMetadata {
     protected String title;
     @NotNull
     protected PostContent content;
-    protected List<Reaction> reactions;
     @NotNull
     @DocumentReference
     protected Channel channel;
