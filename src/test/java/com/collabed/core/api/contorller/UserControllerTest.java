@@ -6,6 +6,7 @@ import com.collabed.core.config.SecurityConfig;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.model.user.UserGroup;
 import com.collabed.core.service.UserService;
+import com.collabed.core.service.util.CEServiceResponse;
 import org.bson.types.ObjectId;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -225,7 +226,7 @@ public class UserControllerTest {
     @Test
     @WithMockUser(authorities = {"ROLE_ADMIN"})
     public void deleteUserTest() throws Exception {
-        Mockito.doNothing().when(userService).deleteUser(Mockito.anyString());
+        Mockito.when(userService.deleteUser(Mockito.anyString())).thenReturn(CEServiceResponse.success().build());
         mockMvc.perform(MockMvcRequestBuilders
                     .patch("/users/delete/{id}", new ObjectId().toHexString())
                     .accept(MediaType.APPLICATION_JSON))
@@ -240,7 +241,9 @@ public class UserControllerTest {
         group.setName("testgroup");
         group.setRole("ROLE_STUDENT");
         group.setUsers(List.of(new User()));
-        Mockito.when(userService.saveUserGroup(group)).thenReturn(group);
+        Mockito.when(userService.saveUserGroup(Mockito.any(UserGroup.class))).thenReturn(
+                CEServiceResponse.success().data(group)
+        );
         mockMvc.perform(MockMvcRequestBuilders
                     .post("/users/groups")
                     .content(mapToJson(group))
@@ -259,7 +262,9 @@ public class UserControllerTest {
         UserGroup group = new UserGroup();
         group.setId(groupId);
         group.addUsers(user);
-        Mockito.when(userService.addToGroup(userId, groupId)).thenReturn(group);
+        Mockito.when(userService.addToGroup(userId, groupId)).thenReturn(
+                CEServiceResponse.success().data(group)
+        );
         mockMvc.perform(MockMvcRequestBuilders
                     .post("/users/groups/add-user")
                     .content(new JSONObject()
@@ -279,7 +284,9 @@ public class UserControllerTest {
         UserGroup group = new UserGroup();
         group.setId(id);
         group.setName("testgroup");
-        Mockito.when(userService.loadGroupById(id)).thenReturn(group);
+        Mockito.when(userService.loadGroupById(id)).thenReturn(
+                CEServiceResponse.success().data(group)
+        );
         mockMvc.perform(MockMvcRequestBuilders
                     .get("/users/groups/{id}", id)
                     .accept(MediaType.APPLICATION_JSON))

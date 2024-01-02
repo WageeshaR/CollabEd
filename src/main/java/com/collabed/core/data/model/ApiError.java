@@ -15,6 +15,7 @@ public class ApiError {
     private LocalDateTime timestamp;
     private String message;
     private String debugMessage;
+    private Exception exception;
 
     private ApiError() {
         timestamp = LocalDateTime.now();
@@ -41,6 +42,7 @@ public class ApiError {
         this();
         this.status = status;
         this.message = "Unexpected error";
+        this.exception = (Exception) ex;
         this.debugMessage = ex.getLocalizedMessage();
     }
 

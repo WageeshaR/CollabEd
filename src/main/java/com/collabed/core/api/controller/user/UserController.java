@@ -3,8 +3,8 @@ package com.collabed.core.api.controller.user;
 import com.collabed.core.data.model.ApiError;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.model.user.UserGroup;
-import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.service.UserService;
+import com.collabed.core.service.util.CEServiceResponse;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -14,7 +14,6 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -27,20 +26,9 @@ public class UserController {
     // users
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(@PathVariable String id) {
-        try {
-            User user = userService.findUser(id);
-            return ResponseEntity.ok().body(user);
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiError(
-                    HttpStatus.NOT_FOUND,
-                    e.getMessage()
-            ));
-        } catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().body(new ApiError(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    e.fillInStackTrace()
-            ));
-        }
+        CEServiceResponse user = userService.findUser(id);
+        return user.isSuccess() ?
+                ResponseEntity.ok().body(user.getData()) : ResponseEntity.internalServerError().body(user.getData());
     }
     @GetMapping
     @RolesAllowed({"SUPER_ADMIN", "ADMIN"})
@@ -50,7 +38,7 @@ public class UserController {
         } catch (RuntimeException e) {
             return ResponseEntity.internalServerError().body(new ApiError(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    e.fillInStackTrace()
+                    e
             ));
         }
     }
@@ -63,7 +51,7 @@ public class UserController {
         } catch (RuntimeException e) {
             return ResponseEntity.internalServerError().body(new ApiError(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    e.fillInStackTrace()
+                    e
             ));
         }
     }
@@ -76,7 +64,7 @@ public class UserController {
         } catch (RuntimeException e) {
             return ResponseEntity.internalServerError().body(new ApiError(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    e.fillInStackTrace()
+                    e
             ));
         }
     }
@@ -89,7 +77,7 @@ public class UserController {
         } catch (RuntimeException e) {
             return ResponseEntity.internalServerError().body(new ApiError(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    e.fillInStackTrace()
+                    e
             ));
         }
     }
@@ -97,12 +85,11 @@ public class UserController {
     @PatchMapping("/delete/{id}")
     @RolesAllowed({"SUPER_ADMIN", "ADMIN"})
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
-        try {
-            userService.deleteUser(id);
-            return ResponseEntity.ok().body("User deleted successfully");
-        } catch (CEServiceError e) {
-            return ResponseEntity.internalServerError().body(e.getMessage());
-        }
+        CEServiceResponse deleted = userService.deleteUser(id);
+        return deleted.isSuccess() ? ResponseEntity.ok().build() : ResponseEntity.internalServerError().body(new ApiError(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                deleted.getData().toString()
+        ));
     }
 
     // user groups
@@ -110,12 +97,13 @@ public class UserController {
     public ResponseEntity<?> createUserGroup(@Valid @RequestBody UserGroup group, Errors errors) {
         if (errors.hasErrors()) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
-                    errors.getAllErrors().stream().map(
-                            ObjectError::getDefaultMessage
-                    )
+                    errors.getAllErrors().stream().map(ObjectError::getDefaultMessage)
             );
         } else {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.saveUserGroup(group));
+            CEServiceResponse saved = userService.saveUserGroup(group);
+            if (saved.isSuccess())
+                return ResponseEntity.status(HttpStatus.CREATED).body(saved.getData());
+            return ResponseEntity.internalServerError().body(saved.getData());
         }
     }
 
@@ -127,20 +115,15 @@ public class UserController {
         if (request.get("group_id") == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("group_id must be specified");
         }
-        try {
-            UserGroup group = userService.addToGroup(request.get("user_id"), request.get("group_id"));
-            return ResponseEntity.ok().body(group);
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        CEServiceResponse group = userService.addToGroup(request.get("user_id"), request.get("group_id"));
+        return group.isSuccess() ?
+                ResponseEntity.ok().body(group.getData()) : ResponseEntity.internalServerError().body(group.getData());
     }
 
     @GetMapping("/groups/{id}")
     public ResponseEntity<?> groupDetails(@PathVariable String id) {
-        try {
-            return ResponseEntity.ok().body(userService.loadGroupById(id));
-        } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
-        }
+        CEServiceResponse group = userService.loadGroupById(id);
+        return group.isSuccess() ?
+                ResponseEntity.ok().body(group.getData()) : ResponseEntity.internalServerError().body(group.getData());
     }
 }

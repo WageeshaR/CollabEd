@@ -91,9 +91,9 @@ public class HttpRequestResponseUtils {
 
             @Override
             public boolean matches(Object o) {
-                return o instanceof List<?> &&
-                        ((List<?>) o).size() == messages.size() &&
-                        ((List<?>) o).stream().allMatch(obj -> messages.stream().anyMatch(m -> m.equals(obj)));
+                return o instanceof String &&
+                        ((String) o).contains(messages.get(0)) &&
+                        ((String) o).contains(messages.get(1));
             }
 
             @Override

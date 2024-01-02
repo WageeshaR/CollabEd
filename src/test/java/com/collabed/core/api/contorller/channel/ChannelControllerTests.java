@@ -21,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.ArrayList;
@@ -67,7 +68,7 @@ public class ChannelControllerTests {
                     .contentType(MediaType.APPLICATION_JSON)
                     .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").value(constraintValidationMessageMatcher(
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(constraintValidationMessageMatcher(
                         List.of("name: must not be null", "topic: must not be null")
                 )));
     }
@@ -95,7 +96,7 @@ public class ChannelControllerTests {
                     .get("/channels")
                     .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").value(isException()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception").value(isException()));
     }
 
     @Test
@@ -108,7 +109,8 @@ public class ChannelControllerTests {
                         .queryParam("id", "myid")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty());
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").exists());
     }
 
     @Test
@@ -120,7 +122,7 @@ public class ChannelControllerTests {
                         .queryParam("id", "myid1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").value(isException()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception").value(isException()));
 
         Mockito.when(channelService.findChannelById("myid2")).thenThrow(CEWebRequestError.class);
         mockMvc.perform(MockMvcRequestBuilders
@@ -128,7 +130,7 @@ public class ChannelControllerTests {
                         .queryParam("id", "myid2")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").value(isException()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception").value(isException()));
     }
 
     @Test
@@ -141,7 +143,7 @@ public class ChannelControllerTests {
                         .queryParam("name", "myname")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty());
+                .andExpect(MockMvcResultMatchers.jsonPath("$").exists());
     }
 
     @Test
@@ -153,7 +155,7 @@ public class ChannelControllerTests {
                         .queryParam("name", "myname1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").value(isException()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception").value(isException()));
 
         Mockito.when(channelService.findChannelByName("myname2")).thenThrow(CEWebRequestError.class);
         mockMvc.perform(MockMvcRequestBuilders
@@ -161,7 +163,7 @@ public class ChannelControllerTests {
                         .queryParam("name", "myname2")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").value(isException()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception").value(isException()));
     }
 
     @ParameterizedTest
@@ -189,6 +191,6 @@ public class ChannelControllerTests {
                         .queryParam("topic", "mytopic")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").value(isException()));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception").value(isException()));
     }
 }

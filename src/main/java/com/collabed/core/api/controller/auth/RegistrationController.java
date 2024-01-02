@@ -7,6 +7,7 @@ import com.collabed.core.data.model.user.User;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.InstitutionService;
 import com.collabed.core.service.UserService;
+import com.collabed.core.service.util.CEServiceResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -41,17 +42,10 @@ public class RegistrationController {
             ));
         } else {
             student.setPassword(passwordEncoder.encode(student.getPassword()));
-            try {
-                User savedStudent = userService.saveUser(student, "ROLE_STUDENT");
-                log.info("User with ROLE_STUDENT saved successfully.");
-                return ResponseEntity.status(HttpStatus.CREATED).body(savedStudent);
-            } catch (DuplicateKeyException | CEWebRequestError exception) {
-                log.error(String.format("Error saving new user: %s", exception));
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiError(
-                        HttpStatus.BAD_REQUEST,
-                        exception.getMessage()
-                ));
-            }
+            CEServiceResponse savedStudent = userService.saveUser(student, "ROLE_STUDENT");
+            if (savedStudent.isSuccess())
+                return ResponseEntity.status(HttpStatus.CREATED).body(savedStudent.getData());
+            return ResponseEntity.internalServerError().body(savedStudent.getData());
         }
     }
 
@@ -70,17 +64,10 @@ public class RegistrationController {
             ));
         } else {
             facilitator.setPassword(passwordEncoder.encode(facilitator.getPassword()));
-            try {
-                User savedFacilitator = userService.saveUser(facilitator, "ROLE_FACILITATOR");
-                log.info("User with ROLE_FACILITATOR saved successfully.");
-                return ResponseEntity.status(HttpStatus.CREATED).body(savedFacilitator);
-            } catch (DuplicateKeyException | CEWebRequestError exception) {
-                log.error(String.format("Error saving new user: %s", exception));
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiError(
-                        HttpStatus.BAD_REQUEST,
-                        exception.getMessage()
-                ));
-            }
+            CEServiceResponse savedFacilitator = userService.saveUser(facilitator, "ROLE_FACILITATOR");
+            if (savedFacilitator.isSuccess())
+                return ResponseEntity.status(HttpStatus.CREATED).body(savedFacilitator.getData());
+            return ResponseEntity.internalServerError().body(savedFacilitator.getData());
         }
     }
 
@@ -99,17 +86,10 @@ public class RegistrationController {
             ));
         } else {
             admin.setPassword(passwordEncoder.encode(admin.getPassword()));
-            try {
-                User savedAdmin = userService.saveUser(admin, "ROLE_ADMIN");
-                log.info("User with ROLE_ADMIN saved successfully.");
-                return ResponseEntity.status(HttpStatus.CREATED).body(savedAdmin);
-            } catch (DuplicateKeyException | CEWebRequestError exception) {
-                log.error(String.format("Error saving new user: %s", exception));
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiError(
-                        HttpStatus.BAD_REQUEST,
-                        exception.getMessage()
-                ));
-            }
+            CEServiceResponse savedAdmin = userService.saveUser(admin, "ROLE_ADMIN");
+            if (savedAdmin.isSuccess())
+                return ResponseEntity.status(HttpStatus.CREATED).body(savedAdmin.getData());
+            return ResponseEntity.internalServerError().body(savedAdmin.getData());
         }
     }
 

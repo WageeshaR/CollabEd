@@ -37,7 +37,7 @@ public class ChannelServiceTests {
     @Test
     public void createChannelTest() {
         Channel channel = Mockito.mock(Channel.class);
-        Mockito.when(channelRepository.insert(channel)).thenReturn(channel);
+        Mockito.when(channelRepository.save(channel)).thenReturn(channel);
         Object result = channelService.saveChannel(channel);
         assertInstanceOf(Channel.class, result);
     }
@@ -45,7 +45,7 @@ public class ChannelServiceTests {
     @Test
     public void createChannelDuplicateErrorTest() {
         Channel channel1 = Mockito.mock(Channel.class);
-        Mockito.when(channelRepository.insert(channel1)).thenThrow(DuplicateKeyException.class);
+        Mockito.when(channelRepository.save(channel1)).thenThrow(DuplicateKeyException.class);
         Exception error1 = assertThrows(CEWebRequestError.class, () -> channelService.saveChannel(channel1));
         assertEquals(
                 error1.getMessage(),
@@ -53,7 +53,7 @@ public class ChannelServiceTests {
         );
 
         Channel channel2 = Mockito.mock(Channel.class);
-        Mockito.when(channelRepository.insert(channel2)).thenThrow(com.mongodb.DuplicateKeyException.class);
+        Mockito.when(channelRepository.save(channel2)).thenThrow(com.mongodb.DuplicateKeyException.class);
         Exception error2 = assertThrows(CEWebRequestError.class, () -> channelService.saveChannel(channel2));
         assertEquals(
                 error2.getMessage(),
@@ -61,7 +61,7 @@ public class ChannelServiceTests {
         );
 
         Channel channel3 = Mockito.mock(Channel.class);
-        Mockito.when(channelRepository.insert(channel3)).thenThrow(MongoException.class);
+        Mockito.when(channelRepository.save(channel3)).thenThrow(MongoException.class);
         assertThrows(CEServiceError.class, () -> channelService.saveChannel(channel3));
     }
 

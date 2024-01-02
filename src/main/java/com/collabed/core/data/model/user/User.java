@@ -99,27 +99,20 @@ public class User extends AuditMetadata implements UserDetails {
     }
 
     @JsonIgnore
-    public String getPassword() {
-        return password;
-    }
-
-    @JsonProperty
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    @JsonIgnore
     public boolean isHasAgreedTerms() {
         return hasAgreedTerms;
     }
+
     @JsonProperty
     public void setHasAgreedTerms(boolean hasAgreedTerms) {
         this.hasAgreedTerms = hasAgreedTerms;
     }
+
     @JsonIgnore
     public boolean isHasConsentForDataSharing() {
         return hasConsentForDataSharing;
     }
+
     @JsonProperty
     public void setHasConsentForDataSharing(boolean hasConsentForDataSharing) {
         this.hasConsentForDataSharing = hasConsentForDataSharing;

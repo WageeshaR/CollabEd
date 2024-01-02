@@ -41,7 +41,7 @@ public class ChannelController {
         } catch (CEServiceError e) {
             return ResponseEntity.internalServerError().body(new ApiError(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    e.fillInStackTrace()
+                    e
             ));
         }
     }
@@ -53,7 +53,7 @@ public class ChannelController {
         } catch (CEServiceError e) {
             return ResponseEntity.internalServerError().body(new ApiError(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    e.fillInStackTrace()
+                    e
             ));
         }
     }
@@ -74,12 +74,12 @@ public class ChannelController {
         } catch (CEWebRequestError e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiError(
                     HttpStatus.NOT_FOUND,
-                    e.getMessage()
+                    e
             ));
         } catch (RuntimeException e) {
             return ResponseEntity.internalServerError().body(new ApiError(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    e.fillInStackTrace()
+                    e
             ));
         }
         log.info(String.format(CEUserErrorMessage.NO_MATCHING_ELEMENTS_FOUND, "channels"));

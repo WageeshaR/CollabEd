@@ -2,9 +2,11 @@ package com.collabed.core.api.contorller.auth;
 
 import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.data.model.user.User;
+import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.InstitutionService;
 import com.collabed.core.service.UserService;
+import com.collabed.core.service.util.CEServiceResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
@@ -70,8 +73,9 @@ public class RegistrationControllerTests {
         String userString = mapToJson(user);
         User copiedUser = mapFromJson(userString, User.class);
         copiedUser.addRole(role);
-
-        Mockito.when(userService.saveUser(Mockito.any(User.class), Mockito.eq(role))).thenReturn(copiedUser);
+        Mockito.when(userService.saveUser(Mockito.any(User.class), Mockito.eq(role))).thenReturn(
+                CEServiceResponse.success().data(copiedUser)
+        );
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/register/" + param)
@@ -92,7 +96,8 @@ public class RegistrationControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").value("username: must not be null"));
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("[username: must not be null]"));
     }
 
     @Test
@@ -104,7 +109,7 @@ public class RegistrationControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").value("password: must not be null"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("[password: must not be null]"));
     }
 
     @Test
@@ -116,7 +121,7 @@ public class RegistrationControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").value("email: must not be null"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("[email: must not be null]"));
     }
 
     @Test
@@ -125,15 +130,19 @@ public class RegistrationControllerTests {
         User copiedUser = mapFromJson(userString, User.class);
         copiedUser.addRole("ROLE_STUDENT");
 
-        Mockito.when(userService.saveUser(Mockito.any(User.class), Mockito.eq("ROLE_STUDENT"))).thenThrow(DuplicateKeyException.class);
+        Mockito.when(userService.saveUser(Mockito.any(User.class), Mockito.eq("ROLE_STUDENT"))).thenReturn(
+                CEServiceResponse
+                        .error()
+                        .data(String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "role"))
+        );
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/register/student")
                         .content(mapToJson(user))
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").value(DuplicateKeyException.class.getName()));
+                .andExpect(status().is5xxServerError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value(String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "role")));
     }
 
     // institutions
@@ -150,7 +159,6 @@ public class RegistrationControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.name").value(param));
     }
 
@@ -163,7 +171,8 @@ public class RegistrationControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").value("name: must not be null"));
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value("[name: must not be null]"));
     }
 
     @Test
@@ -176,6 +185,6 @@ public class RegistrationControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is4xxClientError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$").value(CEWebRequestError.class.getName()));;
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("BAD_REQUEST"));;
     }
 }

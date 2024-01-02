@@ -54,7 +54,7 @@ public class PostController {
         } catch (RuntimeException e) {
             return ResponseEntity.internalServerError().body(new ApiError(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    e.fillInStackTrace()
+                    e
             ));
         }
     }
@@ -83,7 +83,7 @@ public class PostController {
         } catch (RuntimeException e) {
             return ResponseEntity.internalServerError().body(new ApiError(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    e.fillInStackTrace()
+                    e
             ));
         }
     }
@@ -103,7 +103,7 @@ public class PostController {
         } catch (RuntimeException e) {
             return ResponseEntity.internalServerError().body(new ApiError(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    e.fillInStackTrace()
+                    e
             ));
         }
     }
