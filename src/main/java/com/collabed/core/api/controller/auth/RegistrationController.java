@@ -113,7 +113,7 @@ public class RegistrationController {
                 return ResponseEntity.status(HttpStatus.CREATED).body(response.getData());
             return ResponseEntity.internalServerError().body(new ApiError(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    (CEWebRequestError) response.getData()
+                    (Exception) response.getData()
             ));
         }
     }

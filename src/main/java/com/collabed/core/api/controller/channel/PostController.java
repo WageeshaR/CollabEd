@@ -5,10 +5,10 @@ import com.collabed.core.data.model.ApiError;
 import com.collabed.core.data.model.channel.Post;
 import com.collabed.core.data.model.channel.Reaction;
 import com.collabed.core.data.repository.channel.ChannelRepository;
-import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.channel.PostService;
+import com.collabed.core.service.util.CEServiceResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -17,8 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
@@ -43,32 +41,25 @@ public class PostController {
                     HttpStatus.BAD_REQUEST,
                     String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel")
             ));
-        try {
-            String username = (String) authentication.getPrincipal();
-            return ResponseEntity.status(HttpStatus.CREATED).body(postService.savePost(username, post));
-        } catch (CEWebRequestError e) {
-            return ResponseEntity.badRequest().body(new ApiError(
-                    HttpStatus.BAD_REQUEST,
-                    e.getMessage()
-            ));
-        } catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().body(new ApiError(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    e
-            ));
-        }
+        String username = (String) authentication.getPrincipal();
+        CEServiceResponse response = postService.savePost(username, post);
+        return response.isSuccess() ?
+                ResponseEntity.status(HttpStatus.CREATED).body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        response.getMessage(),
+                        (Exception) response.getData()
+        ));
     }
 
     @GetMapping
     public ResponseEntity<?> getPostById(@RequestParam(name = "id") String postId) {
-        try {
-            return ResponseEntity.ok().body(postService.getPostById(postId));
-        } catch (CEWebRequestError e) {
-            return ResponseEntity.badRequest().body(new ApiError(
-                    HttpStatus.BAD_REQUEST,
-                    e.getMessage()
-            ));
-        }
+        CEServiceResponse response = postService.getPostById(postId);
+        return response.isSuccess() ?
+                ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        response.getMessage(),
+                        (Exception) response.getData()
+        ));
     }
 
     @GetMapping("/filter")
@@ -76,16 +67,14 @@ public class PostController {
                                          @RequestParam(name = "channel") String channelId,
                                          @RequestParam(name = "personnel", required = false) boolean personnel) {
         String username = (String) authentication.getPrincipal();
-        try {
-            List<Post> posts = personnel ?
-                    postService.getAllPosts(username, channelId) : postService.getAllPosts(channelId);
-            return ResponseEntity.ok().body(posts);
-        } catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().body(new ApiError(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    e
-            ));
-        }
+        CEServiceResponse response = personnel ?
+                postService.getAllPosts(username, channelId) : postService.getAllPosts(channelId);
+        return response.isSuccess() ?
+                ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        response.getMessage(),
+                        (Exception) response.getData()
+        ));
     }
 
     @PostMapping("/reaction")
@@ -97,14 +86,13 @@ public class PostController {
                     HTTPResponseErrorFormatter.format(errors)
             ));
         }
-        try {
-            String username = (String) authentication.getPrincipal();
-            return ResponseEntity.status(HttpStatus.CREATED).body(postService.saveReaction(username, reaction));
-        } catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().body(new ApiError(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    e
-            ));
-        }
+        String username = (String) authentication.getPrincipal();
+        CEServiceResponse response = postService.saveReaction(username, reaction);
+        return response.isSuccess() ?
+                ResponseEntity.status(HttpStatus.CREATED).body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        response.getMessage(),
+                        (Exception) response.getData()
+        ));
     }
 }

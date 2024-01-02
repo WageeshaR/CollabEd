@@ -10,7 +10,10 @@ import com.collabed.core.runtime.exception.CEInternalErrorMessage;
 import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.runtime.exception.CEWebRequestError;
+import com.collabed.core.service.util.CEServiceResponse;
+import com.collabed.core.util.LoggingMessage;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,97 +26,101 @@ import java.util.*;
 
 @Service
 @AllArgsConstructor
+@Log4j2
 public class PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final MongoTemplate mongoTemplate;
     private static final int DEFAULT_FETCH_LIMIT = 10;
 
-    public List<Post> getAllPosts(String username, String channelId) {
+    public CEServiceResponse getAllPosts(String username, String channelId) {
         try {
             User user = userRepository.findByUsername(username).orElseThrow();
             Pageable pageable = PageRequest.of(0, DEFAULT_FETCH_LIMIT, Sort.Direction.DESC, "createdDate");
-            return summarisePosts(
+            List<Post> summarisedPosts = summarisePosts(
                     postRepository.findAllByAuthorAndChannelId(user, channelId, pageable).getContent()
             );
+            return CEServiceResponse.success().data(summarisedPosts);
         } catch (NoSuchElementException e) {
-            throw new CEWebRequestError(String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "user"));
+            log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
+            return CEServiceResponse.error(String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "user")).data(e);
         } catch (Exception e) {
-            throw new CEServiceError(e.getMessage());
+            log.error(LoggingMessage.Error.SERVICE + e);
+            return CEServiceResponse.error().data(e);
         }
     }
 
-    public List<Post> getAllPosts(String channelId) {
+    public CEServiceResponse getAllPosts(String channelId) {
         try {
             Pageable pageable = PageRequest.of(0, DEFAULT_FETCH_LIMIT, Sort.Direction.DESC, "createdDate");
-            return summarisePosts(
+            List<Post> summarisedPosts = summarisePosts(
                     postRepository.findAllByChannelId(channelId, pageable).getContent()
             );
+            return CEServiceResponse.success().data(summarisedPosts);
         } catch (Exception e) {
-            throw new CEServiceError(e.getMessage());
+            log.error(LoggingMessage.Error.SERVICE + e);
+            return CEServiceResponse.error().data(e);
         }
     }
 
-    public Post getPostById(String id) {
+    public CEServiceResponse getPostById(String id) {
         String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try {
             Post post = postRepository.findById(id).orElseThrow();
             if (!Objects.equals(post.getAuthor().getUsername(), username))
-                return new PostProxy(post);
-            return post;
+                return CEServiceResponse.success().data(new PostProxy(post));
+            return CEServiceResponse.success().data(post);
         } catch (NoSuchElementException e) {
-            throw new CEWebRequestError(
-                    String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "post")
-            );
+            log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
+            return CEServiceResponse.error().data(e);
         }
     }
 
-    public List<Post> getAllChildrenSummary(String id) {
+    public CEServiceResponse getAllChildrenSummary(String id) {
         try {
             Post parent = postRepository.findById(id).orElseThrow();
             Optional<List<Post>> optionalChildren = postRepository.findAllByParentEquals(parent);
-            return optionalChildren.map(this::summarisePosts).orElseGet(() -> optionalChildren.orElseGet(List::of));
+            List<Post> posts = optionalChildren.map(this::summarisePosts).orElseGet(() -> optionalChildren.orElseGet(List::of));
+            return CEServiceResponse.success().data(posts);
         } catch (NoSuchElementException e) {
-            throw new CEWebRequestError(e.getMessage());
+            log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
+            return CEServiceResponse.error().data(e);
         }
     }
 
-    public Post savePost(String username, Post post) {
+    public CEServiceResponse savePost(String username, Post post) {
         try {
             User user = userRepository.findByUsername(username).orElseThrow();
             post.setAuthor(user);
-            return postRepository.save(post);
+            Post savedPost = postRepository.save(post);
+            return CEServiceResponse.success().data(savedPost);
         } catch (DuplicateKeyException e) {
-            throw new CEWebRequestError(
-                    String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "post") + ":\n" + e.getMessage()
-            );
+            log.error(LoggingMessage.Error.DUPLICATE_KEY);
+            return CEServiceResponse.error(String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "post")).data(e);
         } catch (Exception e) {
-            throw new CEServiceError(
-                    String.format(CEInternalErrorMessage.SERVICE_UPDATE_FAILED, "post")
-            );
+            log.error(LoggingMessage.Error.SERVICE + e);
+            return CEServiceResponse.error(String.format(CEInternalErrorMessage.SERVICE_UPDATE_FAILED, "post")).data(e);
         }
     }
 
-    public Reaction saveReaction(String username, Reaction reaction) {
+    public CEServiceResponse saveReaction(String username, Reaction reaction) {
         try {
             User user = userRepository.findByUsername(username).orElseThrow();
             Post post = postRepository.findById(reaction.getPost().getId()).orElseThrow();
             if (!post.getAuthor().getId().equals(user.getId()))
                 throw new IllegalAccessException();
             reaction.setUser(user);
-            return mongoTemplate.save(reaction, "reaction");
+            Reaction saved = mongoTemplate.save(reaction, "reaction");
+            return CEServiceResponse.success().data(saved);
         } catch (IllegalAccessException e) {
-            throw new CEWebRequestError(
-                    String.format(CEUserErrorMessage.ENTITY_NOT_BELONG_TO_USER, "post")
-            );
+            log.error(LoggingMessage.Error.ILLEGAL_ACCESS + e);
+            return CEServiceResponse.error(String.format(CEUserErrorMessage.ENTITY_NOT_BELONG_TO_USER, "post")).data(e);
         } catch (NoSuchElementException e) {
-            throw new CEWebRequestError(
-                    String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "post")
-            );
+            log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
+            return CEServiceResponse.error(String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "post")).data(e);
         } catch (Exception e) {
-            throw new CEServiceError(
-                    String.format(CEInternalErrorMessage.SERVICE_UPDATE_FAILED, "reaction")
-            );
+            log.error(LoggingMessage.Error.SERVICE + e);
+            return CEServiceResponse.error(String.format(CEInternalErrorMessage.SERVICE_UPDATE_FAILED, "post")).data(e);
         }
     }
 

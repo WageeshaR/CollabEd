@@ -50,6 +50,7 @@ public class ApiError {
         this();
         this.status = status;
         this.message = message;
+        this.exception = (Exception) ex;
         this.debugMessage = ex.getLocalizedMessage();
     }
 }
