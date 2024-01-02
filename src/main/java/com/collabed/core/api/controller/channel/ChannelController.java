@@ -7,6 +7,7 @@ import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.channel.ChannelService;
+import com.collabed.core.service.util.CEServiceResponse;
 import com.collabed.core.util.LoggingMessage;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -31,31 +32,25 @@ public class ChannelController {
                     HTTPResponseErrorFormatter.format(errors)
             ));
         }
-        try {
-            return ResponseEntity.ok().body(channelService.saveChannel(channel));
-        } catch (CEWebRequestError e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiError(
-                    HttpStatus.BAD_REQUEST,
-                    e.getMessage()
-            ));
-        } catch (CEServiceError e) {
-            return ResponseEntity.internalServerError().body(new ApiError(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    e
-            ));
-        }
+        CEServiceResponse response = channelService.saveChannel(channel);
+        return response.isSuccess() ?
+                ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                response.getMessage(),
+                (Exception) response.getData()
+        ));
     }
 
     @GetMapping
     public ResponseEntity<?> getAll() {
-        try {
-            return ResponseEntity.ok().body(channelService.getAllChannels());
-        } catch (CEServiceError e) {
-            return ResponseEntity.internalServerError().body(new ApiError(
+        CEServiceResponse response = channelService.getAllChannels();
+        return response.isSuccess() ?
+                ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
                     HttpStatus.INTERNAL_SERVER_ERROR,
-                    e
-            ));
-        }
+                    response.getMessage(),
+                    (Exception) response.getData()
+                )
+        );
     }
 
     @GetMapping("/filter")
@@ -64,25 +59,21 @@ public class ChannelController {
             @RequestParam(required = false, name = "name") String name,
             @RequestParam(required = false, name = "topic") String topic
     ) {
-        try {
-            if (id != null)
-                return ResponseEntity.ok().body(channelService.findChannelById(id));
-            if (name != null)
-                return ResponseEntity.ok().body(channelService.findChannelByName(name));
-            if (topic != null)
-                return ResponseEntity.ok().body(channelService.getAllChannelsByTopic(topic));
-        } catch (CEWebRequestError e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiError(
-                    HttpStatus.NOT_FOUND,
-                    e
-            ));
-        } catch (RuntimeException e) {
-            return ResponseEntity.internalServerError().body(new ApiError(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    e
-            ));
-        }
-        log.info(String.format(CEUserErrorMessage.NO_MATCHING_ELEMENTS_FOUND, "channels"));
-        return ResponseEntity.ok().build();
+        CEServiceResponse response = null;
+        if (id != null)
+            response = channelService.findChannelById(id);
+        if (name != null)
+            response = channelService.findChannelByName(name);
+        if (topic != null)
+            response = channelService.getAllChannelsByTopic(topic);
+        if (response != null) {
+            return response.isSuccess() ?
+                    ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
+                            HttpStatus.INTERNAL_SERVER_ERROR,
+                            response.getMessage(),
+                            (Exception) response.getData()
+                    )
+            );
+        } else return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 }

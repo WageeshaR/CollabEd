@@ -6,6 +6,7 @@ import com.collabed.core.runtime.exception.CEInternalErrorMessage;
 import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.runtime.exception.CEWebRequestError;
+import com.collabed.core.service.util.CEServiceResponse;
 import com.collabed.core.util.LoggingMessage;
 import com.mongodb.MongoException;
 import lombok.AllArgsConstructor;
@@ -22,65 +23,66 @@ import java.util.NoSuchElementException;
 public class ChannelService {
     private final ChannelRepository channelRepository;
 
-    public Channel saveChannel(Channel channel) {
+    public CEServiceResponse saveChannel(Channel channel) {
         try {
             Channel savedChannel = channelRepository.save(channel);
             log.info(LoggingMessage.Success.SAVE);
-            return savedChannel;
+            return CEServiceResponse.success().data(savedChannel);
         } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException e) {
             log.error(LoggingMessage.Error.DUPLICATE_KEY + e);
-            throw new CEWebRequestError(
-                    String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "channel")
-            );
-        } catch (MongoException e) {
+            return CEServiceResponse
+                    .error(String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "channel"))
+                    .data(e);
+        } catch (RuntimeException e) {
             log.error(LoggingMessage.Error.SERVICE + e);
-            throw new CEServiceError(
-                    String.format(CEInternalErrorMessage.SERVICE_UPDATE_FAILED, "channel")
-            );
+            return CEServiceResponse.error().data(e);
         }
     }
 
-    public List<Channel> getAllChannels() {
+    public CEServiceResponse getAllChannels() {
         try {
-            return channelRepository.findAll();
-        } catch (MongoException e) {
+            List<Channel> channels = channelRepository.findAll();
+            return CEServiceResponse.success().data(channels);
+        } catch (RuntimeException e) {
             log.error(LoggingMessage.Error.SERVICE + e);
-            throw new CEServiceError(String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "channel"));
+            return CEServiceResponse.error(String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "channel")).data(e);
         }
     }
 
-    public List<Channel> getAllChannelsByTopic(String topicName) {
+    public CEServiceResponse getAllChannelsByTopic(String topicName) {
         try {
-            return channelRepository.findAllByTopic(topicName);
-        } catch (MongoException e) {
+            List<Channel> channels = channelRepository.findAllByTopic(topicName);
+            return CEServiceResponse.success().data(channels);
+        } catch (RuntimeException e) {
             log.error(LoggingMessage.Error.SERVICE + e);
-            throw new CEServiceError(String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "channel"));
+            return CEServiceResponse.error(String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "channel")).data(e);
         }
     }
 
-    public Channel findChannelById(String id) {
+    public CEServiceResponse findChannelById(String id) {
         try {
-            return channelRepository.findById(id).orElseThrow();
+            Channel channel = channelRepository.findById(id).orElseThrow();
+            return CEServiceResponse.success().data(channel);
         } catch (NoSuchElementException e) {
             log.info(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
-            throw new CEWebRequestError(
-                    String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel")
-            );
-        } catch (MongoException e) {
+            return CEServiceResponse
+                    .error(String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel")).data(e);
+        } catch (RuntimeException e) {
             log.error(LoggingMessage.Error.SERVICE + e);
-            throw new CEServiceError(String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "channel"));
+            return CEServiceResponse.error().data(e);
         }
     }
 
-    public Channel findChannelByName(String name) {
+    public CEServiceResponse findChannelByName(String name) {
         try {
-            return channelRepository.findByName(name).orElseThrow();
+            Channel channel = channelRepository.findByName(name).orElseThrow();
+            return CEServiceResponse.success().data(channel);
         } catch (NoSuchElementException e) {
             log.info(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
-            throw new CEWebRequestError(String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel"));
-        } catch (MongoException e) {
+            return CEServiceResponse.error(String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel")).data(e);
+        } catch (RuntimeException e) {
             log.error(LoggingMessage.Error.SERVICE + e);
-            throw new CEServiceError(String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "channel"));
+            return CEServiceResponse.error().data(e);
         }
     }
 }

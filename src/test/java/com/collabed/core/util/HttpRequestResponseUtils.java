@@ -131,4 +131,30 @@ public class HttpRequestResponseUtils {
             }
         };
     }
+
+    public static Matcher<? super LinkedHashMap<String, String>> isApiError() {
+        return new Matcher<>() {
+            @Override
+            public void describeTo(Description description) {
+            }
+
+            @Override
+            public boolean matches(Object o) {
+                return o instanceof LinkedHashMap &&
+                        ((LinkedHashMap<?, ?>) o).containsKey("status") &&
+                        ((LinkedHashMap<?, ?>) o).containsKey("debugMessage") &&
+                        ((LinkedHashMap<?, ?>) o).containsKey("message") &&
+                        ((LinkedHashMap<?, ?>) o).containsKey("exception") &&
+                        ((LinkedHashMap<?, ?>) o).containsKey("timestamp");
+            }
+
+            @Override
+            public void describeMismatch(Object o, Description description) {
+            }
+
+            @Override
+            public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {
+            }
+        };
+    }
 }
