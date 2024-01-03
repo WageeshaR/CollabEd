@@ -11,6 +11,6 @@ public class LoggingMessage {
         public static final String SERVICE = "Service error: ";
         public static final String DUPLICATE_KEY = "Duplicate key error: ";
         public static final String NO_SUCH_ELEMENT = "No such element error: ";
-        public static final String ILLEGAL_ACCESS = "Illegal access attempt: ";
+        public static final String ILLEGAL_MODIFICATION = "Illegal modification attempt on %s by user %s";
     }
 }

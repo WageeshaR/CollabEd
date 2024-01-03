@@ -1,5 +1,6 @@
 package com.collabed.core.data.model.channel;
 
+import com.collabed.core.api.controller.channel.VisibilityEnum;
 import com.collabed.core.data.model.AuditMetadata;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -21,6 +22,7 @@ public class Channel extends AuditMetadata {
     private String id;
     @NotNull
     private String name;
+    private VisibilityEnum visibility = VisibilityEnum.PUBLIC;
     @DocumentReference
     @NotNull
     private Topic topic;

@@ -2,6 +2,7 @@ package com.collabed.core.service;
 
 import com.collabed.core.data.model.channel.Channel;
 import com.collabed.core.data.repository.channel.ChannelRepository;
+import com.collabed.core.data.repository.channel.TopicRepository;
 import com.collabed.core.runtime.exception.CEInternalErrorMessage;
 import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
@@ -28,11 +29,13 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ChannelServiceTests {
     private ChannelService channelService;
     private ChannelRepository channelRepository;
+    private TopicRepository topicRepository;
 
     @BeforeEach
     public void setup() {
         channelRepository = Mockito.mock(ChannelRepository.class);
-        channelService = new ChannelService(channelRepository);
+        topicRepository = Mockito.mock(TopicRepository.class);
+        channelService = new ChannelService(channelRepository, topicRepository);
     }
 
     @Test

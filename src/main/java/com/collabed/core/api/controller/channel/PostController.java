@@ -26,7 +26,7 @@ public class PostController {
     private final ChannelRepository channelRepository;
 
     @PostMapping
-    public ResponseEntity<?> savePost(Authentication authentication, @Valid @RequestBody Post post, Errors errors) {
+    public ResponseEntity<?> savePost(@Valid @RequestBody Post post, Errors errors) {
         if (errors.hasErrors())
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HTTPResponseErrorFormatter.format(errors));
         if (post.getChannel().getId() == null) {
@@ -40,8 +40,7 @@ public class PostController {
                     HttpStatus.BAD_REQUEST,
                     String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel")
             ));
-        String username = (String) authentication.getPrincipal();
-        CEServiceResponse response = postService.savePost(username, post);
+        CEServiceResponse response = postService.savePost(post);
         return response.isSuccess() ?
                 ResponseEntity.status(HttpStatus.CREATED).body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
                         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -62,12 +61,9 @@ public class PostController {
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<?> getAllPosts(Authentication authentication,
-                                         @RequestParam(name = "channel") String channelId,
+    public ResponseEntity<?> getAllPosts(@RequestParam(name = "channel") String channelId,
                                          @RequestParam(name = "personnel", required = false) boolean personnel) {
-        String username = (String) authentication.getPrincipal();
-        CEServiceResponse response = personnel ?
-                postService.getAllPosts(username, channelId) : postService.getAllPosts(channelId);
+        CEServiceResponse response = postService.getAllPosts(channelId, personnel);
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
                         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -77,16 +73,14 @@ public class PostController {
     }
 
     @PostMapping("/reaction")
-    public ResponseEntity<?> updateReaction(Authentication authentication,
-                                            @Valid @RequestBody Reaction reaction, Errors errors) {
+    public ResponseEntity<?> updateReaction(@Valid @RequestBody Reaction reaction, Errors errors) {
         if (errors.hasErrors()) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(new ApiError(
                     HttpStatus.NOT_ACCEPTABLE,
                     HTTPResponseErrorFormatter.format(errors)
             ));
         }
-        String username = (String) authentication.getPrincipal();
-        CEServiceResponse response = postService.saveReaction(username, reaction);
+        CEServiceResponse response = postService.saveReaction(reaction);
         return response.isSuccess() ?
                 ResponseEntity.status(HttpStatus.CREATED).body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
                         HttpStatus.INTERNAL_SERVER_ERROR,

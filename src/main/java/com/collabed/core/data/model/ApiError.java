@@ -43,7 +43,7 @@ public class ApiError {
         this.status = status;
         this.message = "Unexpected error";
         this.exception = (Exception) ex;
-        this.debugMessage = ex.getLocalizedMessage();
+        this.debugMessage = ex == null ? null : ex.getLocalizedMessage();
     }
 
     public ApiError(HttpStatus status, String message, Throwable ex) {
@@ -51,6 +51,6 @@ public class ApiError {
         this.status = status;
         this.message = message;
         this.exception = (Exception) ex;
-        this.debugMessage = ex.getLocalizedMessage();
+        this.debugMessage = ex == null ? null : ex.getLocalizedMessage();
     }
 }

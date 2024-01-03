@@ -7,9 +7,7 @@ import com.collabed.core.data.proxy.PostProxy;
 import com.collabed.core.data.repository.channel.PostRepository;
 import com.collabed.core.data.repository.user.UserRepository;
 import com.collabed.core.runtime.exception.CEInternalErrorMessage;
-import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
-import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.util.CEServiceResponse;
 import com.collabed.core.util.LoggingMessage;
 import lombok.AllArgsConstructor;
@@ -33,30 +31,25 @@ public class PostService {
     private final MongoTemplate mongoTemplate;
     private static final int DEFAULT_FETCH_LIMIT = 10;
 
-    public CEServiceResponse getAllPosts(String username, String channelId) {
+    public CEServiceResponse getAllPosts(String channelId, boolean personnel) {
+        List<Post> summarisedPosts = null;
         try {
-            User user = userRepository.findByUsername(username).orElseThrow();
             Pageable pageable = PageRequest.of(0, DEFAULT_FETCH_LIMIT, Sort.Direction.DESC, "createdDate");
-            List<Post> summarisedPosts = summarisePosts(
-                    postRepository.findAllByAuthorAndChannelId(user, channelId, pageable).getContent()
-            );
+            if (personnel) {
+                User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                summarisedPosts = summarisePosts(
+                        postRepository.findAllByAuthorAndChannelId(user, channelId, pageable).getContent()
+                );
+            }
+            else {
+                summarisedPosts = summarisePosts(
+                        postRepository.findAllByChannelId(channelId, pageable).getContent()
+                );
+            }
             return CEServiceResponse.success().data(summarisedPosts);
         } catch (NoSuchElementException e) {
             log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
-            return CEServiceResponse.error(String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "user")).data(e);
-        } catch (Exception e) {
-            log.error(LoggingMessage.Error.SERVICE + e);
-            return CEServiceResponse.error().data(e);
-        }
-    }
-
-    public CEServiceResponse getAllPosts(String channelId) {
-        try {
-            Pageable pageable = PageRequest.of(0, DEFAULT_FETCH_LIMIT, Sort.Direction.DESC, "createdDate");
-            List<Post> summarisedPosts = summarisePosts(
-                    postRepository.findAllByChannelId(channelId, pageable).getContent()
-            );
-            return CEServiceResponse.success().data(summarisedPosts);
+            return CEServiceResponse.error(String.format(CEUserErrorMessage.NO_MATCHING_ELEMENTS_FOUND, "posts")).data(e);
         } catch (Exception e) {
             log.error(LoggingMessage.Error.SERVICE + e);
             return CEServiceResponse.error().data(e);
@@ -64,10 +57,11 @@ public class PostService {
     }
 
     public CEServiceResponse getPostById(String id) {
-        String username = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         try {
             Post post = postRepository.findById(id).orElseThrow();
-            if (!Objects.equals(post.getAuthor().getUsername(), username))
+            if (!Objects.equals(post.getAuthor().getUsername(), user.getUsername()))
                 return CEServiceResponse.success().data(new PostProxy(post));
             return CEServiceResponse.success().data(post);
         } catch (NoSuchElementException e) {
@@ -88,9 +82,10 @@ public class PostService {
         }
     }
 
-    public CEServiceResponse savePost(String username, Post post) {
+    public CEServiceResponse savePost(Post post) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         try {
-            User user = userRepository.findByUsername(username).orElseThrow();
             post.setAuthor(user);
             Post savedPost = postRepository.save(post);
             return CEServiceResponse.success().data(savedPost);
@@ -103,9 +98,9 @@ public class PostService {
         }
     }
 
-    public CEServiceResponse saveReaction(String username, Reaction reaction) {
+    public CEServiceResponse saveReaction(Reaction reaction) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try {
-            User user = userRepository.findByUsername(username).orElseThrow();
             Post post = postRepository.findById(reaction.getPost().getId()).orElseThrow();
             if (!post.getAuthor().getId().equals(user.getId()))
                 throw new IllegalAccessException();
@@ -113,7 +108,7 @@ public class PostService {
             Reaction saved = mongoTemplate.save(reaction, "reaction");
             return CEServiceResponse.success().data(saved);
         } catch (IllegalAccessException e) {
-            log.error(LoggingMessage.Error.ILLEGAL_ACCESS + e);
+            log.error(LoggingMessage.Error.ILLEGAL_MODIFICATION + e);
             return CEServiceResponse.error(String.format(CEUserErrorMessage.ENTITY_NOT_BELONG_TO_USER, "post")).data(e);
         } catch (NoSuchElementException e) {
             log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
