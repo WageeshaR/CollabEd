@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("institutions")
 @AllArgsConstructor
 public class InstitutionController {
-    private InstitutionService institutionService;
+    private final InstitutionService institutionService;
     @GetMapping
     @RolesAllowed({"ADMIN", "SUPER_ADMIN"})
     public ResponseEntity<?> all() {

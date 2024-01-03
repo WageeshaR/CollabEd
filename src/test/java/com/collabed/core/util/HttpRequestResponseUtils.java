@@ -1,6 +1,6 @@
 package com.collabed.core.util;
 
-import com.collabed.core.api.util.LicenseUtil;
+import com.collabed.core.api.util.SessionUtil;
 import com.collabed.core.data.model.license.LicenseType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +45,7 @@ public class HttpRequestResponseUtils {
 
             @Override
             public boolean matches(Object o) {
-                return LicenseUtil.isValid((String) o);
+                return SessionUtil.isValid((String) o);
             }
 
             @Override

@@ -6,7 +6,6 @@ import com.collabed.core.data.model.channel.Post;
 import com.collabed.core.data.model.channel.Reaction;
 import com.collabed.core.data.repository.channel.ChannelRepository;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
-import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.channel.PostService;
 import com.collabed.core.service.util.CEServiceResponse;
 import jakarta.validation.Valid;

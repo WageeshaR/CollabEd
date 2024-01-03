@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class LicenseUtil {
+public class SessionUtil {
     private static final int SESSION_KEY_LEN = 14;
     private static final Base64 base64 = new Base64();
     public static String generateSessionKey(String currentKey) {

@@ -18,8 +18,8 @@ import java.util.List;
 @AllArgsConstructor
 @Log4j2
 public class InstitutionService {
-    private InstitutionRepository institutionRepository;
-    private AddressRepository addressRepository;
+    private final InstitutionRepository institutionRepository;
+    private final AddressRepository addressRepository;
 
     public CEServiceResponse save(Institution institution) {
         try {
