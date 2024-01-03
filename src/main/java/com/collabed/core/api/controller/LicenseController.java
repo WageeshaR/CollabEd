@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.collabed.core.api.util.SessionUtil.generateSessionKey;
+import static com.collabed.core.util.SessionUtil.generateSessionKey;
 
 @RestController
 @RequestMapping("license")

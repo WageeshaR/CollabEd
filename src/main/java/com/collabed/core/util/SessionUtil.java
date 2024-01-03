@@ -1,4 +1,4 @@
-package com.collabed.core.api.util;
+package com.collabed.core.util;
 
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.util.RandomUtil;

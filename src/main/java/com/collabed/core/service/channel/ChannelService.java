@@ -8,6 +8,7 @@ import com.collabed.core.data.repository.channel.ChannelRepository;
 import com.collabed.core.data.repository.channel.TopicRepository;
 import com.collabed.core.runtime.exception.CEInternalErrorMessage;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
+import com.collabed.core.service.intel.CEIntelService;
 import com.collabed.core.service.util.CEServiceResponse;
 import com.collabed.core.util.LoggingMessage;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,7 @@ import java.util.NoSuchElementException;
 public class ChannelService {
     private final ChannelRepository channelRepository;
     private final TopicRepository topicRepository;
+    private final CEIntelService intelService;
 
     public CEServiceResponse saveChannel(Channel channel) {
         try {
@@ -137,6 +139,30 @@ public class ChannelService {
             return CEServiceResponse.error(
                     String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "topic")
             ).data(e);
+        }
+    }
+
+    public CEServiceResponse curatedUserChannels() {
+        try {
+            boolean setup = intelService.setupGateway();
+
+            if (setup) {
+                List<?> curatedList = intelService.getCuratedListOfType(Channel.class);
+                if (!curatedList.isEmpty())
+                    return CEServiceResponse.success().data(curatedList);
+
+                return CEServiceResponse.error(
+                        String.format(CEInternalErrorMessage.SERVICE_OPERATION_FAILED, "Intel", "fetch curated list of channels")
+                ).build();
+            }
+
+            return CEServiceResponse.error(
+                    String.format(CEInternalErrorMessage.GATEWAY_OPERATION_FAILED, "setup", "intel")
+            ).build();
+
+        } catch (Exception e) {
+            log.error(e);
+            return CEServiceResponse.error().data(e);
         }
     }
 }

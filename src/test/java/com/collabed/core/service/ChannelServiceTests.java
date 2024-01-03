@@ -8,6 +8,7 @@ import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.channel.ChannelService;
+import com.collabed.core.service.intel.CEIntelService;
 import com.collabed.core.service.util.CEServiceResponse;
 import com.mongodb.MongoException;
 import com.mongodb.MongoQueryException;
@@ -30,12 +31,14 @@ public class ChannelServiceTests {
     private ChannelService channelService;
     private ChannelRepository channelRepository;
     private TopicRepository topicRepository;
+    private CEIntelService intelService;
 
     @BeforeEach
     public void setup() {
         channelRepository = Mockito.mock(ChannelRepository.class);
         topicRepository = Mockito.mock(TopicRepository.class);
-        channelService = new ChannelService(channelRepository, topicRepository);
+        intelService = Mockito.mock(CEIntelService.class);
+        channelService = new ChannelService(channelRepository, topicRepository, intelService);
     }
 
     @Test
