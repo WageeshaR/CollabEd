@@ -1,5 +1,6 @@
 package com.collabed.core.service.intel;
 
+import com.collabed.core.data.model.channel.Channel;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.model.user.profile.Profile;
 import com.collabed.core.internal.CEGateway;
@@ -14,6 +15,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.net.URISyntaxException;
 import java.util.List;
 
 @Service
@@ -27,7 +29,7 @@ public class CEIntelService {
         boolean initDone = intelGateway.initialise();
         if (initDone) {
             log.info("Successfully initialised bean " + SimpleIntelGateway.class.getName() + " for thread " + Thread.currentThread().getId());
-
+            return true;
         }
         log.error("Error initialising bean " + SimpleIntelGateway.class.getName() + " for thread " + Thread.currentThread().getId());
         return false;
@@ -58,8 +60,13 @@ public class CEIntelService {
         }
 
         Criteria intelCriteria = criteriaBuilder.build();
-
-
-        return intelGateway.returnListResult();
+        try {
+            intelGateway.config(intelCriteria);
+            if (intelGateway.fetchSync(List.class))
+                return intelGateway.returnListResult();
+        } catch (URISyntaxException e) {
+            log.error("Invalid URI syntax provided: " + e);
+        }
+        return List.of();
     }
 }

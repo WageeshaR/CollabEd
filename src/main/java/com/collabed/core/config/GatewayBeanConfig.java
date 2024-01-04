@@ -11,7 +11,7 @@ import org.springframework.web.context.WebApplicationContext;
 public class GatewayBeanConfig {
 
     @Bean
-    @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.INTERFACES)
+    @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
     public SimpleIntelGateway requestScopedIntelGateway() {
         return new SimpleIntelGateway();
     }

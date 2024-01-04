@@ -16,3 +16,5 @@ springdoc:
     path: /api-docs
 client:
   host: http://localhost:5173
+intel-gateway:
+  host: http://localhost:5000
