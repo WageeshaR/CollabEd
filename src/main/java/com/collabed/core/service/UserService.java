@@ -10,8 +10,11 @@ import com.collabed.core.data.repository.user.UserRepository;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.service.util.CEServiceResponse;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,19 +26,13 @@ import java.util.Objects;
 
 @Service
 @Log4j2
+@AllArgsConstructor
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final UserGroupRepository userGroupRepository;
     private final ProfileRepository profileRepository;
-
-    public UserService(UserRepository userRepository,
-                       UserGroupRepository userGroupRepository,
-                       ProfileRepository profileRepository) {
-        this.userRepository = userRepository;
-        this.userGroupRepository = userGroupRepository;
-        this.profileRepository = profileRepository;
-    }
+    private final MongoTemplate mongoTemplate;
 
     // users
     @Override
@@ -97,6 +94,20 @@ public class UserService implements UserDetailsService {
             return CEServiceResponse.success().build();
         } catch (Exception e) {
             log.error("Error deleting the user: " + e);
+            return CEServiceResponse.error().data(e);
+        }
+    }
+
+    public CEServiceResponse createUserProfile(Profile profile) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+            Profile savedProfile = mongoTemplate.save(profile);
+            user.setProfile(savedProfile);
+            mongoTemplate.save(user);
+            log.info("Successfully saved user profile.");
+            return CEServiceResponse.success().data(savedProfile);
+        } catch (RuntimeException e) {
+            log.error("Error saving user profile: " + e);
             return CEServiceResponse.error().data(e);
         }
     }

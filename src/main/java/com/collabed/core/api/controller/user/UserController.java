@@ -3,6 +3,7 @@ package com.collabed.core.api.controller.user;
 import com.collabed.core.data.model.ApiError;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.model.user.UserGroup;
+import com.collabed.core.data.model.user.profile.Profile;
 import com.collabed.core.service.UserService;
 import com.collabed.core.service.util.CEServiceResponse;
 import jakarta.annotation.security.RolesAllowed;
@@ -92,6 +93,22 @@ public class UserController {
         ));
     }
 
+    @PostMapping("profile")
+    public ResponseEntity<?> createProfile(@Valid @RequestBody Profile profile, Errors errors) {
+        if (errors.hasErrors()) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
+                    errors.getAllErrors().stream().map(ObjectError::getDefaultMessage)
+            );
+        }
+        CEServiceResponse response = userService.createUserProfile(profile);
+        return response.isSuccess() ?
+                ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                response.getMessage(),
+                (Exception) response.getData()
+        ));
+    }
+
     // user groups
     @PostMapping("/groups")
     public ResponseEntity<?> createUserGroup(@Valid @RequestBody UserGroup group, Errors errors) {
@@ -99,12 +116,11 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
                     errors.getAllErrors().stream().map(ObjectError::getDefaultMessage)
             );
-        } else {
-            CEServiceResponse saved = userService.saveUserGroup(group);
-            if (saved.isSuccess())
-                return ResponseEntity.status(HttpStatus.CREATED).body(saved.getData());
-            return ResponseEntity.internalServerError().body(saved.getData());
         }
+        CEServiceResponse saved = userService.saveUserGroup(group);
+        if (saved.isSuccess())
+            return ResponseEntity.status(HttpStatus.CREATED).body(saved.getData());
+        return ResponseEntity.internalServerError().body(saved.getData());
     }
 
     @PostMapping("/groups/add-user")

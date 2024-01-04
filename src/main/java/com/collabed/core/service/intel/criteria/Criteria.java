@@ -1,8 +1,12 @@
 package com.collabed.core.service.intel.criteria;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
+
+import java.io.Serializable;
 
 @AllArgsConstructor
+@Data
 public class Criteria {
     private final CriteriaScope scope;
     private final CriteriaTarget input;

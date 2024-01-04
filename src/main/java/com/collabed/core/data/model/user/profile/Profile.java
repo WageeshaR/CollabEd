@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 import java.util.List;
 
-@Document
+@Document(collection = "userProfile")
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Profile {
