@@ -14,7 +14,6 @@ import com.collabed.core.util.LoggingMessage;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -94,12 +93,15 @@ public class ChannelService {
 
     public CEServiceResponse deleteChannel(String id) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         try {
             channelRepository.updateAndSoftDelete(id, user.getUsername());
             log.info(String.format("Channel %s deleted successfully.", id));
+
             return CEServiceResponse.success().build();
         } catch (NoSuchElementException e) {
             log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
+
             return CEServiceResponse.error(
                     String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel created by " + user.getUsername())
             ).build();
@@ -115,12 +117,11 @@ public class ChannelService {
             int updated = channelRepository.updateVisibility(channelId, user.getUsername(), visibility);
             if (updated == 0)
                 throw new NoSuchElementException();
+
             log.info(String.format("Visibility of channel %s updated successfully", channelId));
             return CEServiceResponse.success().build();
         } catch (NoSuchElementException e) {
-            log.error(
-                    String.format(LoggingMessage.Error.ILLEGAL_MODIFICATION, "channel " + channelId, user.getId())
-            );
+            log.error(String.format(LoggingMessage.Error.ILLEGAL_MODIFICATION, "channel " + channelId, user.getId()));
             return CEServiceResponse.error(
                     String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel and owner combination")
             ).data(e);

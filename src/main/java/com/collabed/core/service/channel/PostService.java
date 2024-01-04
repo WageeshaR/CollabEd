@@ -33,8 +33,10 @@ public class PostService {
 
     public CEServiceResponse getAllPosts(String channelId, boolean personnel) {
         List<Post> summarisedPosts = null;
+
         try {
             Pageable pageable = PageRequest.of(0, DEFAULT_FETCH_LIMIT, Sort.Direction.DESC, "createdDate");
+
             if (personnel) {
                 User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                 summarisedPosts = summarisePosts(
@@ -46,6 +48,7 @@ public class PostService {
                         postRepository.findAllByChannelId(channelId, pageable).getContent()
                 );
             }
+
             return CEServiceResponse.success().data(summarisedPosts);
         } catch (NoSuchElementException e) {
             log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
@@ -57,12 +60,15 @@ public class PostService {
     }
 
     public CEServiceResponse getPostById(String id) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
         try {
             Post post = postRepository.findById(id).orElseThrow();
-            if (!Objects.equals(post.getAuthor().getUsername(), user.getUsername()))
+
+            String currentUser = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+            String author = post.getAuthor().getUsername();
+
+            if (!Objects.equals(author, currentUser))
                 return CEServiceResponse.success().data(new PostProxy(post));
+
             return CEServiceResponse.success().data(post);
         } catch (NoSuchElementException e) {
             log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
@@ -73,9 +79,11 @@ public class PostService {
     public CEServiceResponse getAllChildrenSummary(String id) {
         try {
             Post parent = postRepository.findById(id).orElseThrow();
+
             Optional<List<Post>> optionalChildren = postRepository.findAllByParentEquals(parent);
-            List<Post> posts = optionalChildren.map(this::summarisePosts).orElseGet(() -> optionalChildren.orElseGet(List::of));
-            return CEServiceResponse.success().data(posts);
+
+            List<Post> summarisedChildPosts = optionalChildren.map(this::summarisePosts).orElseGet(() -> optionalChildren.orElseGet(List::of));
+            return CEServiceResponse.success().data(summarisedChildPosts);
         } catch (NoSuchElementException e) {
             log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
             return CEServiceResponse.error().data(e);
@@ -88,6 +96,7 @@ public class PostService {
         try {
             post.setAuthor(user);
             Post savedPost = postRepository.save(post);
+
             return CEServiceResponse.success().data(savedPost);
         } catch (DuplicateKeyException e) {
             log.error(LoggingMessage.Error.DUPLICATE_KEY);
@@ -102,9 +111,12 @@ public class PostService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try {
             Post post = postRepository.findById(reaction.getPost().getId()).orElseThrow();
+
             if (!post.getAuthor().getId().equals(user.getId()))
                 throw new IllegalAccessException();
+
             reaction.setUser(user);
+
             Reaction saved = mongoTemplate.save(reaction, "reaction");
             return CEServiceResponse.success().data(saved);
         } catch (IllegalAccessException e) {
@@ -123,8 +135,10 @@ public class PostService {
         List<Post> summarisedPosts = new ArrayList<>(posts);
         for (Post post : summarisedPosts) {
             post.setAuthor(null);
+
             if (!post.getTitle().isEmpty())
                 post.setContent(null);
+
             post.getChannel().clearAudits();
         }
         return summarisedPosts;

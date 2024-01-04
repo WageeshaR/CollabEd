@@ -1,9 +1,7 @@
 package com.collabed.core.service.intel;
 
-import com.collabed.core.data.model.channel.Channel;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.model.user.profile.Profile;
-import com.collabed.core.internal.CEGateway;
 import com.collabed.core.internal.SimpleIntelGateway;
 import com.collabed.core.service.intel.criteria.Criteria;
 import com.collabed.core.service.intel.criteria.CriteriaTarget;

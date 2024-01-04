@@ -24,13 +24,17 @@ public class InstitutionService {
     public CEServiceResponse save(Institution institution) {
         try {
             if (institution.getAddress() == null) {
+                log.error(String.format(CEUserErrorMessage.ENTITY_PROPERTY_MUST_NOT_BE_NULL, "Institution", "address"));
                 throw new CEWebRequestError(
                         String.format(CEUserErrorMessage.ENTITY_PROPERTY_MUST_NOT_BE_NULL, "Institution", "address")
                 );
             }
+
             Address address = addressRepository.save(institution.getAddress());
+
             institution.setAddress(address);
             Institution savedInstitution = institutionRepository.save(institution);
+
             log.info("Institution saved successfully");
             return CEServiceResponse.success().data(savedInstitution);
         } catch (RuntimeException e){

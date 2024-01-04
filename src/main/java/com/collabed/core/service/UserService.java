@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Log4j2
@@ -68,13 +69,17 @@ public class UserService implements UserDetailsService {
                             .error()
                             .data(String.format(CEUserErrorMessage.ENTITY_MUST_NOT_BE_NULL, "Institution"));
                 }
+
                 user.addRole(role);
+
                 if (user.getProfile() != null) {
                     Profile userProfile = user.getProfile();
                     profileRepository.save(userProfile);
                 }
+
                 User savedUser = userRepository.insert(user);
                 log.info(String.format("User %s is saved successfully", user.getUsername()));
+
                 return CEServiceResponse.success().data(savedUser);
             } else {
                 log.info(String.format("Specified role %s already exists in the user %s", role, user.getId()));
@@ -102,8 +107,10 @@ public class UserService implements UserDetailsService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         try {
             Profile savedProfile = mongoTemplate.save(profile);
+
             user.setProfile(savedProfile);
             mongoTemplate.save(user);
+
             log.info("Successfully saved user profile.");
             return CEServiceResponse.success().data(savedProfile);
         } catch (RuntimeException e) {
@@ -116,6 +123,7 @@ public class UserService implements UserDetailsService {
     public CEServiceResponse saveUserGroup(UserGroup group) {
         try {
             UserGroup savedGroup = userGroupRepository.save(group);
+
             log.info(String.format("User Group %s saved successfully", group.getName()));
             return CEServiceResponse.success().data(savedGroup);
         } catch (RuntimeException e) {
@@ -126,16 +134,25 @@ public class UserService implements UserDetailsService {
 
     public CEServiceResponse addToGroup(String userId, String groupId) {
         try {
-            if (userRepository.findById(userId).isEmpty())
+            Optional<UserGroup> optionalGroup = userGroupRepository.findById(groupId);
+            Optional<User> optionalUser = userRepository.findById(userId);
+
+            if (optionalGroup.isEmpty() || optionalUser.isEmpty()) {
+                log.error(String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "user or userGroup"));
                 throw new CEWebRequestError(
-                        String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "user")
+                        String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "user or userGroup")
                 );
-            UserGroup userGroup = userGroupRepository.findById(groupId).orElseThrow();
-            User user = userRepository.findById(userId).get();
-            List<Role> userRoles = user.getRoles();
+            }
+
+            UserGroup userGroup = optionalGroup.get();
+            User user = optionalUser.get();
+
+            List<Role> userRoles = optionalUser.get().getRoles();
             if (userRoles.stream().noneMatch(r -> r.getAuthority() != null && r.getAuthority().equals(userGroup.getRole())))
                 throw new CEWebRequestError(CEUserErrorMessage.GROUP_ROLE_NOT_MATCHED_WITH_USER);
+
             userGroup.addUsers(user);
+
             return CEServiceResponse.error().data(userGroup);
         } catch (RuntimeException e) {
             return CEServiceResponse.error().data(e);

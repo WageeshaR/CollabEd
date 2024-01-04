@@ -1,7 +1,6 @@
 package com.collabed.core.api.controller.user;
 
 import com.collabed.core.data.model.ApiError;
-import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.model.user.UserGroup;
 import com.collabed.core.data.model.user.profile.Profile;
 import com.collabed.core.service.UserService;
@@ -16,7 +15,6 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("users")
@@ -100,7 +98,9 @@ public class UserController {
                     errors.getAllErrors().stream().map(ObjectError::getDefaultMessage)
             );
         }
+
         CEServiceResponse response = userService.createUserProfile(profile);
+
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
                         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -117,9 +117,11 @@ public class UserController {
                     errors.getAllErrors().stream().map(ObjectError::getDefaultMessage)
             );
         }
+
         CEServiceResponse saved = userService.saveUserGroup(group);
         if (saved.isSuccess())
             return ResponseEntity.status(HttpStatus.CREATED).body(saved.getData());
+
         return ResponseEntity.internalServerError().body(saved.getData());
     }
 
@@ -131,6 +133,7 @@ public class UserController {
         if (request.get("group_id") == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("group_id must be specified");
         }
+
         CEServiceResponse group = userService.addToGroup(request.get("user_id"), request.get("group_id"));
         return group.isSuccess() ?
                 ResponseEntity.ok().body(group.getData()) : ResponseEntity.internalServerError().body(group.getData());

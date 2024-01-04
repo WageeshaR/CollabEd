@@ -42,9 +42,11 @@ public class RegistrationController {
             ));
         } else {
             student.setPassword(passwordEncoder.encode(student.getPassword()));
+
             CEServiceResponse savedStudent = userService.saveUser(student, "ROLE_STUDENT");
             if (savedStudent.isSuccess())
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedStudent.getData());
+
             return ResponseEntity.internalServerError().body(savedStudent.getData());
         }
     }
@@ -64,9 +66,11 @@ public class RegistrationController {
             ));
         } else {
             facilitator.setPassword(passwordEncoder.encode(facilitator.getPassword()));
+
             CEServiceResponse savedFacilitator = userService.saveUser(facilitator, "ROLE_FACILITATOR");
             if (savedFacilitator.isSuccess())
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedFacilitator.getData());
+
             return ResponseEntity.internalServerError().body(savedFacilitator.getData());
         }
     }
@@ -86,9 +90,11 @@ public class RegistrationController {
             ));
         } else {
             admin.setPassword(passwordEncoder.encode(admin.getPassword()));
+
             CEServiceResponse savedAdmin = userService.saveUser(admin, "ROLE_ADMIN");
             if (savedAdmin.isSuccess())
                 return ResponseEntity.status(HttpStatus.CREATED).body(savedAdmin.getData());
+
             return ResponseEntity.internalServerError().body(savedAdmin.getData());
         }
     }
@@ -111,6 +117,7 @@ public class RegistrationController {
             CEServiceResponse response = institutionService.save(institution);
             if (response.isSuccess())
                 return ResponseEntity.status(HttpStatus.CREATED).body(response.getData());
+
             return ResponseEntity.internalServerError().body(new ApiError(
                     HttpStatus.INTERNAL_SERVER_ERROR,
                     (Exception) response.getData()
