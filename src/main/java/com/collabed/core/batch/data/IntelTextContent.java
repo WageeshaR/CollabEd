@@ -21,5 +21,6 @@ public class IntelTextContent {
     private ContentType contentType;
     private String content;
     // which parent datasource (collection) the content is referred to
-    private String parentRef;
+    private String parentRefType;
+    private String parentRefId;
 }

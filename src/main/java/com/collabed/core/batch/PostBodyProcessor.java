@@ -42,7 +42,8 @@ public class PostBodyProcessor implements ItemProcessor<Post, IntelTextContent> 
             textContent.setContentType(ContentType.TEXT_DOCUMENT);
         else textContent.setContentType(ContentType.TEXT_SHORT);
 
-        textContent.setParentRef(Post.class.getName());
+        textContent.setParentRefId(post.getId());
+        textContent.setParentRefType(Post.class.getName());
 
         log.info("Post body processing finished");
         return textContent;
