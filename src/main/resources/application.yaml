@@ -9,12 +9,15 @@ spring:
       host: ${DB_HOST:localhost}
       auto-index-creation: true
       uuid-representation: standard
-#  cassandra:
-#    contactPoints: ${DB_HOST:localhost}
-#    port: 9042
-#    schemaAction: CREATE_IF_NOT_EXISTS
-#    keyspace-name: "ceintel"
-#    local-datacenter: datacenter1
+    cassandra:
+      repositories:
+        type: auto
+  cassandra:
+    contactPoints: ${DB_HOST:localhost}
+    port: 9042
+    schemaAction: CREATE_IF_NOT_EXISTS
+    keyspace-name: "ceintel"
+    local-datacenter: datacenter1
   datasource:
     url: jdbc:h2:file:./data/jobs
     username: sa

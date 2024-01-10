@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = true)
 @Data
-@JsonIgnoreProperties
+//@JsonIgnoreProperties
 public class BatchProcessed extends AuditMetadata {
     private boolean batchProcessed = false;
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")

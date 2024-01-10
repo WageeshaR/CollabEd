@@ -18,7 +18,7 @@ public class ScheduledPostProcessor {
     @Qualifier("postProcessJob")
     Job postProcessor;
 
-    @Scheduled(cron = "10 * * * *")
+    @Scheduled(cron = "0 44 * * * *")
     public void launch() throws Exception {
         JobParameters params = new JobParametersBuilder()
                 .addString("JobID", String.valueOf(System.currentTimeMillis()))

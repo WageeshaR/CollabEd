@@ -10,6 +10,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.springframework.batch.item.ItemProcessor;
 
+import java.util.UUID;
+
 @Log4j2
 public class PostBodyProcessor implements ItemProcessor<Post, IntelTextContent> {
     @Override
@@ -33,6 +35,7 @@ public class PostBodyProcessor implements ItemProcessor<Post, IntelTextContent> 
         }
 
         IntelTextContent textContent = new IntelTextContent();
+        textContent.setId(UUID.randomUUID());
         textContent.setContent(plainText);
 
         if (plainText.length() > 20)
