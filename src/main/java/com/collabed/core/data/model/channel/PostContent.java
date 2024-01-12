@@ -9,6 +9,7 @@ import java.util.Map;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostContent {
     @NotNull
-    private String richTextContent;
+    private String content;
+    private boolean rtf = false;
     private Map<String, String> urls;
 }
