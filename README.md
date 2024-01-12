@@ -12,9 +12,24 @@ This repository contains the core backend Java application, built with the power
 
 ### Disclaimer: A core database switch is expected to happen in the foreseeable future.
 
-I expect to migrate the current Mongo database to a Spring Batch compatible SQL DB because of burden of maintaining 3 databases.
-Currently, major candidates are MySQL and Postgres.
+Expect to migrate the current Mongo database to a Spring Batch compatible SQL DB because of burden of maintaining 3 databases.
+Currently, major candidates are MySQL and Postgres. Following code snippet shows the officially supported list of databases:
 
+```java
+public enum DatabaseType {
+
+    DERBY("Apache Derby"), DB2("DB2"), DB2VSE("DB2VSE"), DB2ZOS("DB2ZOS"), DB2AS400("DB2AS400"),
+    HSQL("HSQL Database Engine"), SQLSERVER("Microsoft SQL Server"), MYSQL("MySQL"), ORACLE("Oracle"),
+    POSTGRES("PostgreSQL"), SYBASE("Sybase"), H2("H2"), SQLITE("SQLite"), HANA("HDB"), MARIADB("MariaDB");
+  
+    /**
+    * copied from package org.springframework.batch.support
+    * version: spring-batch-core 5.0.3
+    */
+}
+```
+
+## System Architecture
 (currently working on system architecture documentation and will be updated here once it's upto date)
 
 ## CollabEd Eco-system ##
