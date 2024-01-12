@@ -1,6 +1,7 @@
 package com.collabed.core.data.model.channel;
 
 import com.collabed.core.data.model.AuditMetadata;
+import com.collabed.core.data.model.BatchProcessed;
 import com.collabed.core.data.model.user.User;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +17,7 @@ import java.util.List;
 @Document
 @Data
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class Post extends AuditMetadata {
+public class Post extends BatchProcessed {
     @Id
     protected String id;
     @DocumentReference

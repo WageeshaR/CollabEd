@@ -2,11 +2,11 @@
   "properties": [
     {
       "name": "client.host",
-      "type": "java.lang.Integer"
+      "type": "java.lang.String"
     },
     {
       "name": "intel-gateway.host",
-      "type": "java.lang.Integer"
+      "type": "java.lang.String"
     }
   ]
 }

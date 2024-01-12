@@ -9,8 +9,33 @@ spring:
       host: ${DB_HOST:localhost}
       auto-index-creation: true
       uuid-representation: standard
+    cassandra:
+      repositories:
+        type: auto
+  cassandra:
+    contactPoints: ${DB_HOST:localhost}
+    port: 9042
+    schemaAction: CREATE_IF_NOT_EXISTS
+    keyspace-name: "ceintel"
+    local-datacenter: datacenter1
+  datasource:
+    url: jdbc:h2:file:./data/jobs
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+  h2:
+    console:
+      enabled: false
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    open-in-view: false
   profiles:
     active: ${SPRING_ACTIVE_PROFILE:production}
+  batch:
+    jdbc:
+      initialize-schema: always
+      platform: h2
 springdoc:
   api-docs:
     path: /api-docs
