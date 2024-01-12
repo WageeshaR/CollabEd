@@ -22,12 +22,14 @@ public class LicenseService {
     public List<LicenseOption> getAllOptions() {
         List<LicenseOption> options = new ArrayList<>();
         List<LicenseModel> models = licenseRepository.findAll();
+
         for (int i=0; i<models.size(); i++) {
             LicenseOption option = new LicenseOption();
             option.setId(Integer.toString(i));
             option.setModel(models.get(i));
             options.add(option);
         }
+
         return options;
     }
 
@@ -35,6 +37,7 @@ public class LicenseService {
         LicenseSession session = new LicenseSession();
         session.setLicenseModel(option.getModel());
         session.setSessionKey(sessionKey);
+
         try {
             sessionRepository.save(session);
             session.setSessionKey(null);

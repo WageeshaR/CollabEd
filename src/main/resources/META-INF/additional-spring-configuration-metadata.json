@@ -3,6 +3,10 @@
     {
       "name": "client.host",
       "type": "java.lang.Integer"
+    },
+    {
+      "name": "intel-gateway.host",
+      "type": "java.lang.Integer"
     }
   ]
 }

@@ -1,6 +1,5 @@
 package com.collabed.core.util;
 
-import com.collabed.core.api.util.LicenseUtil;
 import com.collabed.core.data.model.license.LicenseType;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -45,7 +44,7 @@ public class HttpRequestResponseUtils {
 
             @Override
             public boolean matches(Object o) {
-                return LicenseUtil.isValid((String) o);
+                return SessionUtil.isValid((String) o);
             }
 
             @Override
@@ -91,9 +90,9 @@ public class HttpRequestResponseUtils {
 
             @Override
             public boolean matches(Object o) {
-                return o instanceof List<?> &&
-                        ((List<?>) o).size() == messages.size() &&
-                        ((List<?>) o).stream().allMatch(obj -> messages.stream().anyMatch(m -> m.equals(obj)));
+                return o instanceof String &&
+                        ((String) o).contains(messages.get(0)) &&
+                        ((String) o).contains(messages.get(1));
             }
 
             @Override
@@ -120,6 +119,32 @@ public class HttpRequestResponseUtils {
                         ((LinkedHashMap<?, ?>) o).containsKey("message") &&
                         ((LinkedHashMap<?, ?>) o).containsKey("localizedMessage") &&
                         ((LinkedHashMap<?, ?>) o).containsKey("suppressed");
+            }
+
+            @Override
+            public void describeMismatch(Object o, Description description) {
+            }
+
+            @Override
+            public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {
+            }
+        };
+    }
+
+    public static Matcher<? super LinkedHashMap<String, String>> isApiError() {
+        return new Matcher<>() {
+            @Override
+            public void describeTo(Description description) {
+            }
+
+            @Override
+            public boolean matches(Object o) {
+                return o instanceof LinkedHashMap &&
+                        ((LinkedHashMap<?, ?>) o).containsKey("status") &&
+                        ((LinkedHashMap<?, ?>) o).containsKey("debugMessage") &&
+                        ((LinkedHashMap<?, ?>) o).containsKey("message") &&
+                        ((LinkedHashMap<?, ?>) o).containsKey("exception") &&
+                        ((LinkedHashMap<?, ?>) o).containsKey("timestamp");
             }
 
             @Override

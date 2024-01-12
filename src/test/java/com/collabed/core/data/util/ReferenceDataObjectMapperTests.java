@@ -1,6 +1,6 @@
 package com.collabed.core.data.util;
 
-import com.collabed.core.data.model.Institution;
+import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.data.repository.InstitutionRepository;
 import com.collabed.core.runtime.exception.CEInternalErrorMessage;
 import com.collabed.core.runtime.exception.CEReferenceObjectMappingError;

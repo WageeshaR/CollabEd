@@ -51,3 +51,8 @@ replay_pid*
 # profiling
 /profile/develop/output.jfr
 /docker/.env
+
+# DSStore
+
+profile/.DS_Store
+.DS_Store

@@ -22,21 +22,15 @@ public class LoginController {
     @PostMapping
     public ResponseEntity<?> login(@RequestBody User request) {
         try {
-            Authentication authenticate = authenticationManager
-                    .authenticate(
+            Authentication authenticate = authenticationManager.authenticate(
                             new UsernamePasswordAuthenticationToken(
                                     request.getUsername(), request.getPassword()
-                            )
-                    );
-
+                            ));
             User user = (User) authenticate.getPrincipal();
-
-            return ResponseEntity.ok()
-                    .header(
+            return ResponseEntity.ok().header(
                             HttpHeaders.AUTHORIZATION,
                             jwtTokenUtil.generateToken(user)
-                    )
-                    .body("Successfully authenticated");
+                    ).body("Successfully authenticated");
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

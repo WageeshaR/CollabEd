@@ -1,4 +1,4 @@
-package com.collabed.core.api.util;
+package com.collabed.core.util;
 
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.util.RandomUtil;
@@ -10,7 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class LicenseUtil {
+public class SessionUtil {
     private static final int SESSION_KEY_LEN = 14;
     private static final Base64 base64 = new Base64();
     public static String generateSessionKey(String currentKey) {

@@ -1,6 +1,6 @@
 package com.collabed.core.service;
 
-import com.collabed.core.data.model.Institution;
+import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.model.user.UserGroup;
 import com.collabed.core.data.repository.user.ProfileRepository;
@@ -9,6 +9,7 @@ import com.collabed.core.data.repository.user.UserRepository;
 import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
+import com.collabed.core.service.util.CEServiceResponse;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -90,16 +91,20 @@ public class UserServiceTests {
 
     @Test
     public void userServiceSaveUserTest() {
-        User savedUser = userService.saveUser(this.user, "ROLE_STUDENT");
-        assertNotNull(savedUser);
-        assertEquals(savedUser.getUsername(), "testUser");
+        CEServiceResponse savedUser = userService.saveUser(this.user, "ROLE_STUDENT");
+        assertNotNull(savedUser.getData());
+        assertEquals(((User) savedUser.getData()).getUsername(), "testUser");
     }
 
     @Test
     public void userServiceSaveUserWithExistingRoleTest() {
         user.addRole("ROLE_STUDENT");
-        CEWebRequestError error = assertThrows(CEWebRequestError.class, () -> userService.saveUser(this.user, "ROLE_STUDENT"));
-        assertEquals(error.getMessage(), CEUserErrorMessage.ROLE_ALREADY_EXISTS);
+        CEServiceResponse response = userService.saveUser(this.user, "ROLE_STUDENT");
+        assertTrue(response.isError());
+        assertEquals(
+                response.getData(),
+                String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "role")
+        );
     }
 
     @Test
@@ -111,14 +116,16 @@ public class UserServiceTests {
     @Test
     public void deleteUserErrorTest() {
         Mockito.doThrow(new CEServiceError("")).when(userRepository).updateAndSoftDelete(Mockito.anyString());
-        assertThrows(CEServiceError.class, () -> userService.deleteUser(new ObjectId().toHexString()));
+        CEServiceResponse response = userService.deleteUser(new ObjectId().toHexString());
+        assertTrue(response.isError());
     }
 
     @Test
     public void userServiceSaveUserGroupTest() {
-        UserGroup userGroup = userService.saveUserGroup(this.userGroup);
-        assertNotNull(userGroup);
-        assertEquals(userGroup.getName(), "testUserGroup");
+        Mockito.when(userGroupRepository.save(this.userGroup)).thenReturn(this.userGroup);
+        CEServiceResponse userGroup = userService.saveUserGroup(this.userGroup);
+        assertNotNull(userGroup.getData());
+        assertEquals(((UserGroup) userGroup.getData()).getName(), "testUserGroup");
     }
 
     @Test
@@ -131,15 +138,19 @@ public class UserServiceTests {
         userGroup.setRole("ROLE_STUDENT");
         Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         Mockito.when(userGroupRepository.findById(groupId)).thenReturn(Optional.of(userGroup));
-        UserGroup group = userService.addToGroup(userId, groupId);
+        CEServiceResponse group = userService.addToGroup(userId, groupId);
         assertNotNull(group);
-        assertEquals(group.getName(), "testUserGroup");
+        assertEquals(((UserGroup) group.getData()).getName(), "testUserGroup");
     }
 
     @Test
     public void userServiceAddToGroupNoUserTest() {
-        CEWebRequestError error = assertThrows(CEWebRequestError.class, () -> userService.addToGroup(new ObjectId().toHexString(), new ObjectId().toHexString()));
-        assertEquals(error.getMessage(), CEUserErrorMessage.USER_NOT_EXIST);
+        CEServiceResponse response = userService.addToGroup(new ObjectId().toHexString(), new ObjectId().toHexString());
+        assertTrue(response.isError());
+        assertEquals(
+                ((CEWebRequestError) response.getData()).getMessage(),
+                String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "user")
+        );
     }
 
     @Test
@@ -152,8 +163,11 @@ public class UserServiceTests {
         userGroup.setRole("ROLE_FACILITATOR");
         Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
         Mockito.when(userGroupRepository.findById(groupId)).thenReturn(Optional.of(userGroup));
-        CEWebRequestError error = assertThrows(CEWebRequestError.class, () -> userService.addToGroup(userId, groupId));
-        assertEquals(error.getMessage(), CEUserErrorMessage.GROUP_ROLE_NOT_MATCHED_WITH_USER);
+        CEServiceResponse response = userService.addToGroup(userId, groupId);
+        assertTrue(response.isError());
+        assertEquals(
+                ((CEWebRequestError) response.getData()).getMessage(),
+                CEUserErrorMessage.GROUP_ROLE_NOT_MATCHED_WITH_USER);
     }
 
     @Test
@@ -165,8 +179,8 @@ public class UserServiceTests {
         userGroup.setUsers(List.of(user));
         Mockito.when(userGroupRepository.findById(groupId)).thenReturn(Optional.of(userGroup));
         Mockito.when(userRepository.findById(userId)).thenReturn(Optional.of(user));
-        UserGroup group = userService.loadGroupById(groupId);
+        CEServiceResponse group = userService.loadGroupById(groupId);
         assertNotNull(group);
-        assertEquals(group.getName(), "testUserGroup");
+        assertEquals(((UserGroup) group.getData()).getName(), "testUserGroup");
     }
 }
