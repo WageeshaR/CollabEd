@@ -134,9 +134,11 @@ public class ChannelService {
     public CEServiceResponse topics() {
         try {
             List<Topic> allTopics = topicRepository.findAll();
+
             return CEServiceResponse.success().data(allTopics);
         } catch (Exception e) {
             log.error(LoggingMessage.Error.SERVICE + e);
+
             return CEServiceResponse.error(
                     String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "topic")
             ).data(e);

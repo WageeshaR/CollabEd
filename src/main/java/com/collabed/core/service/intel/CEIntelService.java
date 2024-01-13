@@ -21,8 +21,13 @@ import java.util.List;
 public class CEIntelService {
     @Resource(name = "requestScopedIntelGateway")
     SimpleIntelGateway intelGateway;
+    private final MongoTemplate mongoTemplate;
+
     @Autowired
-    private MongoTemplate mongoTemplate;
+    public CEIntelService(MongoTemplate mongoTemplate) {
+        this.mongoTemplate = mongoTemplate;
+    }
+
     public boolean setupGateway() {
         boolean initDone = intelGateway.initialise();
         if (initDone) {

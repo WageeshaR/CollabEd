@@ -37,10 +37,14 @@ import java.util.HashMap;
 @Log4j2
 @Profile({"develop", "uat", "staging", "production"})
 public class BatchJobsDefinitionConfig {
+    private final MongoTemplate mongoTemplate;
+    private final IntelTextContentRepository textContentRepository;
+
     @Autowired
-    MongoTemplate mongoTemplate;
-    @Autowired
-    IntelTextContentRepository textContentRepository;
+    public BatchJobsDefinitionConfig(MongoTemplate template, IntelTextContentRepository repository) {
+        this.mongoTemplate = template;
+        this.textContentRepository = repository;
+    }
 
     @Bean
     public MongoItemReader<Post> mongoPostReader() {
