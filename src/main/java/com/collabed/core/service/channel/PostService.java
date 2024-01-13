@@ -11,6 +11,7 @@ import com.collabed.core.service.util.CEServiceResponse;
 import com.collabed.core.util.LoggingMessage;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.aspectj.weaver.Utils;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +20,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.lang.reflect.Method;
 import java.util.*;
 
 @Service
@@ -92,10 +94,17 @@ public class PostService {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         try {
-            post.setAuthor(user);
+            if (post.getAuthor() != null && !post.getAuthor().getId().equals(user.getId()))
+                throw new IllegalAccessException();
+
+            else post.setAuthor(user);
+
             Post savedPost = postRepository.save(post);
 
             return CEServiceResponse.success().data(savedPost);
+        } catch (IllegalAccessException e) {
+            log.error(LoggingMessage.Error.ILLEGAL_MODIFICATION + e);
+            return CEServiceResponse.error(String.format(CEUserErrorMessage.ENTITY_NOT_BELONG_TO_USER, "post")).data(e);
         } catch (DuplicateKeyException e) {
             log.error(LoggingMessage.Error.DUPLICATE_KEY);
             return CEServiceResponse.error(String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "post")).data(e);
@@ -134,11 +143,17 @@ public class PostService {
         for (Post post : summarisedPosts) {
             post.setAuthor(null);
 
-            if (!post.getTitle().isEmpty())
+            if (post.getTitle() != null && !post.getTitle().isEmpty())
                 post.setContent(null);
 
             post.getChannel().clearAudits();
         }
+        return summarisedPosts;
+    }
+
+    public Method returnSummarisedPostsWithAccess() throws NoSuchMethodException {
+        Method summarisedPosts = this.getClass().getDeclaredMethod("summarisePosts", List.class);
+        summarisedPosts.setAccessible(true);
         return summarisedPosts;
     }
 }

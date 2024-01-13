@@ -29,18 +29,22 @@ public class PostController {
     public ResponseEntity<?> savePost(@Valid @RequestBody Post post, Errors errors) {
         if (errors.hasErrors())
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HTTPResponseErrorFormatter.format(errors));
-        if (post.getChannel().getId() == null) {
+
+        if (post.getChannel() == null || post.getChannel().getId() == null) {
             return ResponseEntity.badRequest().body(new ApiError(
                     HttpStatus.BAD_REQUEST,
                     String.format(CEUserErrorMessage.ENTITY_PROPERTY_MUST_NOT_BE_NULL, "channel", "id")
             ));
         }
+
         if (channelRepository.findById(post.getChannel().getId()).isEmpty())
             return ResponseEntity.badRequest().body(new ApiError(
                     HttpStatus.BAD_REQUEST,
                     String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel")
             ));
+
         CEServiceResponse response = postService.savePost(post);
+
         return response.isSuccess() ?
                 ResponseEntity.status(HttpStatus.CREATED).body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
                         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -52,6 +56,7 @@ public class PostController {
     @GetMapping
     public ResponseEntity<?> getPostById(@RequestParam(name = "id") String postId) {
         CEServiceResponse response = postService.getPostById(postId);
+
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
                         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -64,6 +69,7 @@ public class PostController {
     public ResponseEntity<?> getAllPosts(@RequestParam(name = "channel") String channelId,
                                          @RequestParam(name = "personnel", required = false) boolean personnel) {
         CEServiceResponse response = postService.getAllPosts(channelId, personnel);
+
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
                         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -80,7 +86,9 @@ public class PostController {
                     HTTPResponseErrorFormatter.format(errors)
             ));
         }
+
         CEServiceResponse response = postService.saveReaction(reaction);
+
         return response.isSuccess() ?
                 ResponseEntity.status(HttpStatus.CREATED).body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
                         HttpStatus.INTERNAL_SERVER_ERROR,
