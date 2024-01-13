@@ -5,7 +5,9 @@ import com.collabed.core.api.util.JwtTokenUtil;
 import com.collabed.core.config.SecurityConfig;
 import com.collabed.core.data.model.channel.Channel;
 import com.collabed.core.data.model.channel.Topic;
+import com.collabed.core.runtime.exception.CEInternalErrorMessage;
 import com.collabed.core.runtime.exception.CEServiceError;
+import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.UserService;
 import com.collabed.core.service.channel.ChannelService;
@@ -216,5 +218,103 @@ public class ChannelControllerTests {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$").value(isApiError()));
+    }
+
+    @Test
+    @WithMockUser
+    public void deleteChannelTest() throws Exception {
+        Mockito.when(channelService.deleteChannel("myrandomchannelid")).thenReturn(CEServiceResponse.success().build());
+        Channel channel = new Channel();
+        channel.setId("myrandomchannelid");
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/channels/delete")
+                .content(mapToJson(channel))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    public void deleteChannelErrorTest() throws Exception {
+        Mockito.when(channelService.deleteChannel("myrandomchannelid")).thenReturn(CEServiceResponse.error(
+                String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel created by " + "username")
+        ).build());
+        Channel channel = new Channel();
+        channel.setId("myrandomchannelid");
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/channels/delete")
+                .content(mapToJson(channel))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andExpect(MockMvcResultMatchers
+                        .jsonPath("$.message")
+                        .value(String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel created by " + "username"))
+                );
+    }
+
+    @Test
+    @WithMockUser
+    public void getAllTopicsTest() throws Exception {
+        Mockito.when(channelService.topics()).thenReturn(CEServiceResponse.success().build());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/channels/topics")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    public void getAllTopicsErrorTest() throws Exception {
+        Mockito.when(channelService.topics()).thenReturn(CEServiceResponse.error(
+                String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "topic")
+        ).build());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/channels/topics")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    @WithMockUser
+    public void getCuratedChannelsTest() throws Exception {
+        Mockito.when(channelService.curatedUserChannels()).thenReturn(CEServiceResponse.success().data(List.of(Mockito.mock(Channel.class))));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .get("/channels/curated")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").isArray());
+    }
+
+    @Test
+    @WithMockUser
+    public void getCuratedChannelsErrorTest() throws Exception {
+        Mockito.when(channelService.curatedUserChannels()).thenReturn(CEServiceResponse.error(
+                String.format(CEInternalErrorMessage.SERVICE_OPERATION_FAILED, "Intel", "fetch curated list of channels")
+        ).build());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/channels/curated")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(
+                        String.format(CEInternalErrorMessage.SERVICE_OPERATION_FAILED, "Intel", "fetch curated list of channels")
+                ));
+
+        Mockito.when(channelService.curatedUserChannels()).thenReturn(CEServiceResponse.error(
+                String.format(CEInternalErrorMessage.GATEWAY_OPERATION_FAILED, "setup", "intel")
+        ).build());
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/channels/curated")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isInternalServerError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(
+                        String.format(CEInternalErrorMessage.GATEWAY_OPERATION_FAILED, "setup", "intel")
+                ));
     }
 }

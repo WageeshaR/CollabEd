@@ -83,6 +83,7 @@ public class LoginControllerTests {
     public void failedAuthenticationTest() throws Exception {
         Mockito.when(authenticationManager.authenticate(Mockito.any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(BadCredentialsException.class);
+
         mockMvc.perform(MockMvcRequestBuilders
                     .post("/login")
                     .content(new JSONObject()
