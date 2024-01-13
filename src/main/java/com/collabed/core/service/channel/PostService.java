@@ -5,7 +5,6 @@ import com.collabed.core.data.model.channel.Reaction;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.proxy.PostProxy;
 import com.collabed.core.data.repository.channel.PostRepository;
-import com.collabed.core.data.repository.user.UserRepository;
 import com.collabed.core.runtime.exception.CEInternalErrorMessage;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.service.util.CEServiceResponse;
@@ -27,7 +26,6 @@ import java.util.*;
 @Log4j2
 public class PostService {
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
     private final MongoTemplate mongoTemplate;
     private static final int DEFAULT_FETCH_LIMIT = 10;
 

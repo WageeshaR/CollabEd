@@ -1,4 +1,4 @@
-package com.collabed.core.service;
+package com.collabed.core.service.channel;
 
 import com.collabed.core.data.model.channel.Channel;
 import com.collabed.core.data.repository.channel.ChannelRepository;

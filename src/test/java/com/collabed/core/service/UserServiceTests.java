@@ -1,8 +1,10 @@
 package com.collabed.core.service;
 
+import com.collabed.core.config.SecurityConfig;
 import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.model.user.UserGroup;
+import com.collabed.core.data.model.user.profile.Profile;
 import com.collabed.core.data.repository.user.ProfileRepository;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
@@ -10,11 +12,19 @@ import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.service.util.CEServiceResponse;
+import com.collabed.core.service.util.SecurityUtil;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.security.test.context.support.WithSecurityContext;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -22,11 +32,13 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Import(SecurityConfig.class)
 public class UserServiceTests {
 
     private UserRepository userRepository;
     private UserGroupRepository userGroupRepository;
     private ProfileRepository profileRepository;
+    private MongoTemplate mongoTemplate;
     private UserService userService;
     private User user;
     private UserGroup userGroup;
@@ -35,7 +47,9 @@ public class UserServiceTests {
     public void setup() {
         userRepository = Mockito.mock(UserRepository.class);
         userGroupRepository = Mockito.mock(UserGroupRepository.class);
-        userService = new UserService(userRepository, userGroupRepository, profileRepository);
+        profileRepository = Mockito.mock(ProfileRepository.class);
+        mongoTemplate = Mockito.mock(MongoTemplate.class);
+        userService = new UserService(userRepository, userGroupRepository, profileRepository, mongoTemplate);
     }
 
     @BeforeEach
@@ -121,6 +135,34 @@ public class UserServiceTests {
     }
 
     @Test
+    public void createUserProfileTest() {
+        Mockito.when(SecurityUtil.withAuthentication().getPrincipal()).thenReturn(user);
+
+        Profile profile = Mockito.mock(Profile.class);
+        Mockito.when(mongoTemplate.save(profile)).thenReturn(profile);
+        Mockito.when(mongoTemplate.save(user)).thenReturn(user);
+
+        CEServiceResponse response = userService.createUserProfile(profile);
+        assertTrue(response.isSuccess());
+        assertInstanceOf(Profile.class, response.getData());
+    }
+
+    @Test
+    public void createUserProfileErrorTest() {
+        Mockito.when(SecurityUtil.withAuthentication().getPrincipal()).thenReturn(user);
+        Mockito.when(mongoTemplate.save(Mockito.any(Profile.class))).thenThrow(RuntimeException.class);
+
+        CEServiceResponse response1 = userService.createUserProfile(Mockito.mock(Profile.class));
+        assertTrue(response1.isError());
+
+        Mockito.when(mongoTemplate.save(Mockito.any(Profile.class))).thenReturn(Mockito.mock(Profile.class));
+        Mockito.when(mongoTemplate.save(user)).thenThrow(RuntimeException.class);
+
+        CEServiceResponse response2 = userService.createUserProfile(Mockito.mock(Profile.class));
+        assertTrue(response2.isError());
+    }
+
+    @Test
     public void userServiceSaveUserGroupTest() {
         Mockito.when(userGroupRepository.save(this.userGroup)).thenReturn(this.userGroup);
         CEServiceResponse userGroup = userService.saveUserGroup(this.userGroup);
@@ -149,7 +191,7 @@ public class UserServiceTests {
         assertTrue(response.isError());
         assertEquals(
                 ((CEWebRequestError) response.getData()).getMessage(),
-                String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "user")
+                String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "user or userGroup")
         );
     }
 
