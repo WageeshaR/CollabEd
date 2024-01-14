@@ -8,6 +8,7 @@ import com.collabed.core.service.intel.criteria.CriteriaTarget;
 import jakarta.annotation.Resource;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,14 +42,14 @@ public class CEIntelService {
     public List<?> getCuratedListOfType(Class<?> type) {
         // init criteria builder
         Criteria.CriteriaBuilder criteriaBuilder = Criteria.filter();
+
         try {
             String collectionName = mongoTemplate.getCollectionName(type);
-
             // set input
             CriteriaTarget input = new CriteriaTarget(CriteriaTarget.TargetType.DB_FETCH);
             input.addTargets(collectionName);
             criteriaBuilder.input(input);
-        } catch (MappingException e) {
+        } catch (MappingException | InvalidDataAccessApiUsageException e) {
             log.error(e);
             return List.of();
         }
@@ -65,7 +66,10 @@ public class CEIntelService {
         Criteria intelCriteria = criteriaBuilder.build();
         try {
             intelGateway.config(intelCriteria);
-            if (intelGateway.fetchSync(List.class))
+
+            boolean fetched = intelGateway.fetchSync(List.class);
+
+            if (fetched)
                 return intelGateway.returnListResult();
         } catch (URISyntaxException e) {
             log.error("Invalid URI syntax provided: " + e);

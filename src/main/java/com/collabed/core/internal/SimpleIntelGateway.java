@@ -32,9 +32,11 @@ public class SimpleIntelGateway implements CEGateway {
     @Override
     public void authenticate() {
         try {
+            // TODO: implement authentication
             System.out.println(connectionConfig.httpClient.toString());
          } catch (Exception e) {
-
+            // TODO: handle and log errors properly
+            log.error(e);
         }
      }
 
@@ -84,8 +86,9 @@ public class SimpleIntelGateway implements CEGateway {
 
     /**
      * Submit intel criteria "asynchronously"
-     * @param criteria Intel criteria to be submitted
+     * @param resultType The class type of result to determine which variable to be filled
      * @return Boolean indicating success/failure of operation
+     * @param <T> Generic type holder
      */
     public <T> boolean fetchAsync(Class<T> resultType) {
         return false;
