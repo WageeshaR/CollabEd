@@ -1,4 +1,6 @@
 spring:
+  profiles:
+    active: ${SPRING_ACTIVE_PROFILE:production}
   data:
     mongodb:
       authentication-database: admin
@@ -30,8 +32,6 @@ spring:
     database-platform: org.hibernate.dialect.H2Dialect
     defer-datasource-initialization: true
     open-in-view: false
-  profiles:
-    active: ${SPRING_ACTIVE_PROFILE:production}
   batch:
     jdbc:
       initialize-schema: always

@@ -103,6 +103,8 @@ public class BatchJobsDefinitionConfig {
                             "Error updating %s objects via reflection: %s",
                             chunk.getItems().get(0).getClass().getName(), e)
                     );
+                } catch (NullPointerException e) {
+                    log.error(e);
                 }
             }
         }

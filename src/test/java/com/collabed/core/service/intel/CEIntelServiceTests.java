@@ -13,6 +13,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
 
@@ -67,5 +68,30 @@ public class CEIntelServiceTests {
         Object result = intelService.getCuratedListOfType(Channel.class);
 
         assertInstanceOf(List.class, result);
+    }
+
+    @Test
+    public void getCuratedListOfTypeMongoErrorTest() {
+        Mockito.when(mongoTemplate.getCollectionName(Channel.class)).thenThrow(MappingException.class);
+
+        Object result = intelService.getCuratedListOfType(Channel.class);
+        assertInstanceOf(List.class, result);
+        assertEquals(((List<?>) result).size(), 0);
+    }
+
+    @Test
+    public void getCuratedListOfTypeUriSyntaxErrorTest() throws URISyntaxException {
+        Profile profile = new Profile();
+        User user = new User();
+        user.setProfile(profile);
+
+        Mockito.when(mongoTemplate.getCollectionName(Channel.class)).thenReturn("channel");
+        Mockito.when(withAuthentication().getPrincipal()).thenReturn(user);
+
+        Mockito.doThrow(URISyntaxException.class).when(intelGateway).config(Mockito.any(Criteria.class));
+
+        Object result = intelService.getCuratedListOfType(Channel.class);
+        assertInstanceOf(List.class, result);
+        assertEquals(((List<?>) result).size(), 0);
     }
 }

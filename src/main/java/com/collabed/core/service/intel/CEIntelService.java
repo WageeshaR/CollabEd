@@ -58,6 +58,10 @@ public class CEIntelService {
             // set subject
             CriteriaTarget subject = new CriteriaTarget(CriteriaTarget.TargetType.SUPPLIED);
             Profile userProfile = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getProfile();
+            if (userProfile == null) {
+                log.error("User profile not found. Operation stopped.");
+                return List.of();
+            }
             String primaryInterest = userProfile.getPrimaryInterest();
             subject.addTargets(primaryInterest);
             criteriaBuilder.subject(subject);
