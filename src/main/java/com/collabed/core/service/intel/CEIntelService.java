@@ -8,6 +8,8 @@ import com.collabed.core.service.intel.criteria.CriteriaTarget;
 import jakarta.annotation.Resource;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,10 +21,16 @@ import java.util.List;
 @Service
 @Log4j2
 public class CEIntelService {
-    @Resource(name = "requestScopedIntelGateway")
-    SimpleIntelGateway intelGateway;
+    @Qualifier("requestScopedIntelGateway")
+    private final SimpleIntelGateway intelGateway;
+    private final MongoTemplate mongoTemplate;
+
     @Autowired
-    private MongoTemplate mongoTemplate;
+    public CEIntelService(MongoTemplate mongoTemplate, SimpleIntelGateway intelGateway) {
+        this.mongoTemplate = mongoTemplate;
+        this.intelGateway = intelGateway;
+    }
+
     public boolean setupGateway() {
         boolean initDone = intelGateway.initialise();
         if (initDone) {
@@ -36,14 +44,14 @@ public class CEIntelService {
     public List<?> getCuratedListOfType(Class<?> type) {
         // init criteria builder
         Criteria.CriteriaBuilder criteriaBuilder = Criteria.filter();
+
         try {
             String collectionName = mongoTemplate.getCollectionName(type);
-
             // set input
             CriteriaTarget input = new CriteriaTarget(CriteriaTarget.TargetType.DB_FETCH);
             input.addTargets(collectionName);
             criteriaBuilder.input(input);
-        } catch (MappingException e) {
+        } catch (MappingException | InvalidDataAccessApiUsageException e) {
             log.error(e);
             return List.of();
         }
@@ -52,6 +60,10 @@ public class CEIntelService {
             // set subject
             CriteriaTarget subject = new CriteriaTarget(CriteriaTarget.TargetType.SUPPLIED);
             Profile userProfile = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getProfile();
+            if (userProfile == null) {
+                log.error("User profile not found. Operation stopped.");
+                return List.of();
+            }
             String primaryInterest = userProfile.getPrimaryInterest();
             subject.addTargets(primaryInterest);
             criteriaBuilder.subject(subject);
@@ -60,7 +72,10 @@ public class CEIntelService {
         Criteria intelCriteria = criteriaBuilder.build();
         try {
             intelGateway.config(intelCriteria);
-            if (intelGateway.fetchSync(List.class))
+
+            boolean fetched = intelGateway.fetchSync(List.class);
+
+            if (fetched)
                 return intelGateway.returnListResult();
         } catch (URISyntaxException e) {
             log.error("Invalid URI syntax provided: " + e);

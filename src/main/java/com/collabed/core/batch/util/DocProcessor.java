@@ -14,7 +14,7 @@ public class DocProcessor {
 
     public static String getPlainText(Element element) {
         FormattingVisitor formatter = new FormattingVisitor();
-        NodeTraversor.traverse(formatter, element); // walk the DOM, and call .head() and .tail() for each node
+        NodeTraversor.traverse(formatter, element);
 
         return formatter.toString();
     }
@@ -23,13 +23,12 @@ public class DocProcessor {
     private static class FormattingVisitor implements NodeVisitor {
         private static final int maxWidth = 80;
         private int width = 0;
-        private StringBuilder accum = new StringBuilder(); // holds the accumulated text
+        private StringBuilder accum = new StringBuilder();
 
-        // hit when the node is first seen
         public void head(Node node, int depth) {
             String name = node.nodeName();
             if (node instanceof TextNode)
-                append(((TextNode) node).text()); // TextNodes carry all user-readable text in the DOM.
+                append(((TextNode) node).text());
             else if (name.equals("li"))
                 append("\n * ");
             else if (name.equals("dt"))
@@ -38,7 +37,6 @@ public class DocProcessor {
                 append("\n");
         }
 
-        // hit when all the node's children (if any) have been visited
         public void tail(Node node, int depth) {
             String name = node.nodeName();
             if (StringUtil.in(name, "br", "dd", "dt", "p", "h1", "h2", "h3", "h4", "h5"))
@@ -47,22 +45,21 @@ public class DocProcessor {
                 append(String.format(" <%s>", node.absUrl("href")));
         }
 
-        // appends text to the string builder with a simple word wrap method
         private void append(String text) {
             if (text.startsWith("\n"))
-                width = 0; // reset counter if starts with a newline. only from formats above, not in natural text
+                width = 0;
             if (text.equals(" ") &&
                     (accum.isEmpty() || StringUtil.in(accum.substring(accum.length() - 1), " ", "\n")))
-                return; // don't accumulate long runs of empty spaces
+                return;
 
-            if (text.length() + width > maxWidth) { // won't fit, needs to wrap
+            if (text.length() + width > maxWidth) {
                 String[] words = text.split("\\s+");
                 for (int i = 0; i < words.length; i++) {
                     String word = words[i];
                     boolean last = i == words.length - 1;
-                    if (!last) // insert a space if not the last word
+                    if (!last)
                         word = word + " ";
-                    if (word.length() + width > maxWidth) { // wrap and reset counter
+                    if (word.length() + width > maxWidth) {
                         accum.append("\n").append(word);
                         width = word.length();
                     } else {
@@ -70,7 +67,7 @@ public class DocProcessor {
                         width += word.length();
                     }
                 }
-            } else { // fits as is, without need to wrap text
+            } else {
                 accum.append(text);
                 width += text.length();
             }

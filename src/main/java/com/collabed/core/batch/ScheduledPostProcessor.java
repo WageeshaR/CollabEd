@@ -11,12 +11,16 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class ScheduledPostProcessor {
-    @Autowired
-    JobLauncher launcher;
+    private final JobLauncher launcher;
+
+    @Qualifier("postProcessJob")
+    private final Job postProcessor;
 
     @Autowired
-    @Qualifier("postProcessJob")
-    Job postProcessor;
+    public ScheduledPostProcessor(JobLauncher launcher, Job postProcessor) {
+        this.launcher = launcher;
+        this.postProcessor = postProcessor;
+    }
 
     @Scheduled(cron = "0 0 * * * *")
     public void launch() throws Exception {

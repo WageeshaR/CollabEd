@@ -2,10 +2,12 @@ package com.collabed.core.api.controller;
 
 import com.collabed.core.api.util.CustomHttpHeaders;
 import com.collabed.core.api.util.HTTPResponseErrorFormatter;
+import com.collabed.core.data.model.ApiError;
 import com.collabed.core.data.model.Session;
 import com.collabed.core.data.model.license.LicenseOption;
 import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.service.license.LicenseService;
+import com.collabed.core.service.util.CEServiceResponse;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -29,8 +31,15 @@ public class LicenseController {
 
     @GetMapping("/options")
     public ResponseEntity<?> getOptions() {
-        List<LicenseOption> licenseOptions = licenseService.getAllOptions();
-        return ResponseEntity.ok().body(licenseOptions);
+        CEServiceResponse response = licenseService.getAllOptions();
+
+        return response.isSuccess() ? ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(
+                new ApiError(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        response.getMessage(),
+                        (Exception) response.getData()
+                )
+        );
     }
 
     @PostMapping("/select-option")
@@ -39,13 +48,14 @@ public class LicenseController {
         if (errors.hasErrors()) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HTTPResponseErrorFormatter.format(errors));
         }
-        try {
-            Session licenseSession = licenseService.initSession(option, sessionKey);
-            return ResponseEntity.ok().body(licenseSession);
-        } catch (CEServiceError e) {
-            return ResponseEntity.internalServerError().body(e);
-        }
-
+        CEServiceResponse response = licenseService.initSession(option, sessionKey);
+        return response.isSuccess() ? ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(
+                new ApiError(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        response.getMessage(),
+                        (Exception) response.getData()
+                )
+        );
     }
 
     // TODO: add controller endpoint to update unitCount for user license object (validation: LicenseType.GROUP only)

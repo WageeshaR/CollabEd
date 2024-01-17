@@ -2,22 +2,24 @@ package com.collabed.core.data.repository.channel;
 
 import com.collabed.core.api.controller.channel.VisibilityEnum;
 import com.collabed.core.data.model.channel.Channel;
-import com.collabed.core.data.model.channel.Topic;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface ChannelRepository extends MongoRepository<Channel, String> {
     @Query("{ deleted: false }")
+    @Nonnull
     List<Channel> findAll();
 
     @Query("{ deleted: false, _id: ?0 }")
-    Optional<Channel> findById(String id);
+    @Nonnull
+    Optional<Channel> findById(@Nonnull String id);
 
     @Query("{ deleted: false, name: ?0 }")
     Optional<Channel> findByName(String name);

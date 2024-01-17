@@ -19,6 +19,7 @@ import org.springframework.batch.item.data.builder.MongoItemReaderBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -34,11 +35,16 @@ import java.util.HashMap;
 
 @Configuration
 @Log4j2
+@Profile({"develop", "uat", "staging", "production"})
 public class BatchJobsDefinitionConfig {
+    private final MongoTemplate mongoTemplate;
+    private final IntelTextContentRepository textContentRepository;
+
     @Autowired
-    MongoTemplate mongoTemplate;
-    @Autowired
-    IntelTextContentRepository textContentRepository;
+    public BatchJobsDefinitionConfig(MongoTemplate template, IntelTextContentRepository repository) {
+        this.mongoTemplate = template;
+        this.textContentRepository = repository;
+    }
 
     @Bean
     public MongoItemReader<Post> mongoPostReader() {
@@ -97,6 +103,8 @@ public class BatchJobsDefinitionConfig {
                             "Error updating %s objects via reflection: %s",
                             chunk.getItems().get(0).getClass().getName(), e)
                     );
+                } catch (NullPointerException e) {
+                    log.error(e);
                 }
             }
         }

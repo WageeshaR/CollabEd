@@ -1,16 +1,15 @@
-package com.collabed.core.service;
+package com.collabed.core.service.channel;
 
+import com.collabed.core.api.controller.channel.VisibilityEnum;
 import com.collabed.core.data.model.channel.Channel;
+import com.collabed.core.data.model.channel.Topic;
+import com.collabed.core.data.model.user.User;
 import com.collabed.core.data.repository.channel.ChannelRepository;
 import com.collabed.core.data.repository.channel.TopicRepository;
 import com.collabed.core.runtime.exception.CEInternalErrorMessage;
-import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
-import com.collabed.core.runtime.exception.CEWebRequestError;
-import com.collabed.core.service.channel.ChannelService;
 import com.collabed.core.service.intel.CEIntelService;
 import com.collabed.core.service.util.CEServiceResponse;
-import com.mongodb.MongoException;
 import com.mongodb.MongoQueryException;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,11 +19,9 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.dao.DuplicateKeyException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
+import static com.collabed.core.service.util.SecurityUtil.withAuthentication;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class ChannelServiceTests {
@@ -162,5 +159,117 @@ public class ChannelServiceTests {
                 response.getMessage(),
                 String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "channel")
         );
+    }
+
+    @Test
+    public void deleteChannelTest() {
+        User user = Mockito.mock(User.class);
+        Mockito.when(withAuthentication().getPrincipal()).thenReturn(user);
+
+        Mockito.doNothing().when(channelRepository).updateAndSoftDelete("myrandomid", "username");
+        CEServiceResponse response = channelService.deleteChannel("myrandomid");
+        assertTrue(response.isSuccess());
+    }
+
+    @Test
+    public void deleteChannelNoSuchElementErrorTest() {
+        User user = new User();
+        user.setUsername("username");
+        Mockito.when(withAuthentication().getPrincipal()).thenReturn(user);
+
+        Mockito.doThrow(NoSuchElementException.class).when(channelRepository).updateAndSoftDelete("myrandomid", "username");
+        CEServiceResponse response = channelService.deleteChannel("myrandomid");
+        assertTrue(response.isError());
+        assertEquals(response.getMessage(), String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel created by " + user.getUsername()));
+    }
+
+    @Test
+    public void changeVisibilityTest() {
+        User user = new User();
+        user.setUsername("username");
+        Mockito.when(withAuthentication().getPrincipal()).thenReturn(user);
+
+        Mockito.when(channelRepository.updateVisibility("myrandomchannelid", user.getUsername(), VisibilityEnum.PUBLIC)).thenReturn(1);
+
+        CEServiceResponse response = channelService.changeVisibility("myrandomchannelid", VisibilityEnum.PUBLIC);
+
+        assertTrue(response.isSuccess());
+
+    }
+
+    @Test
+    public void changeVisibilityErrorTest() {
+        User user = new User();
+        user.setUsername("username");
+        Mockito.when(withAuthentication().getPrincipal()).thenReturn(user);
+
+        Mockito.when(channelRepository.updateVisibility("myrandomchannelid", user.getUsername(), VisibilityEnum.PUBLIC)).thenThrow(NoSuchElementException.class);
+
+        CEServiceResponse response = channelService.changeVisibility("myrandomchannelid", VisibilityEnum.PUBLIC);
+
+        assertTrue(response.isError());
+        assertEquals(response.getMessage(), String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel and owner combination"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {3,10,50})
+    public void topicsTest(int count) {
+        List<Topic> topics = new ArrayList<>();
+        for (int i = 0; i <count ; i++) {
+            topics.add(Mockito.mock(Topic.class));
+        }
+
+        Mockito.when(topicRepository.findAll()).thenReturn(topics);
+
+        CEServiceResponse response = channelService.topics();
+
+        assertTrue(response.isSuccess());
+        assertEquals(((List<?>)response.getData()).size(), topics.size());
+    }
+
+    @Test
+    public void topicsErrorTest() {
+        Mockito.when(topicRepository.findAll()).thenThrow(MongoQueryException.class);
+
+        CEServiceResponse response = channelService.topics();
+        assertTrue(response.isError());
+        assertEquals(response.getMessage(), String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "topic"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {3,10,50})
+    public void curatedUserChannelsTest(int count) {
+        Mockito.when(intelService.setupGateway()).thenReturn(true);
+
+        List<Channel> list = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            list.add(Mockito.mock(Channel.class));
+        }
+
+        Mockito.doReturn(list).when(intelService).getCuratedListOfType(Channel.class);
+
+        CEServiceResponse response = channelService.curatedUserChannels();
+
+        assertTrue(response.isSuccess());
+        assertEquals(((List<?>)response.getData()).size(), count);
+    }
+
+    @Test
+    public void curatedUserChannelsSetupErrorTest() {
+        Mockito.when(intelService.setupGateway()).thenReturn(false);
+
+        CEServiceResponse response = channelService.curatedUserChannels();
+        assertTrue(response.isError());
+        assertEquals(response.getMessage(), String.format(CEInternalErrorMessage.GATEWAY_OPERATION_FAILED, "setup", "intel"));
+    }
+
+    @Test
+    public void curatedUserChannelsEmptyResultsErrorTest() {
+        Mockito.when(intelService.setupGateway()).thenReturn(true);
+        Mockito.doReturn(List.of()).when(intelService).getCuratedListOfType(Channel.class);
+
+        CEServiceResponse response = channelService.curatedUserChannels();
+        assertTrue(response.isError());
+        assertEquals(response.getMessage(), String.format(CEInternalErrorMessage.SERVICE_OPERATION_FAILED, "Intel", "fetch curated list of channels"));
     }
 }

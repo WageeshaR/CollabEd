@@ -15,6 +15,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
 
+/**
+ * A simple, request scoped implementation of CEGateway for CEIntel.
+ * This class is instantiated at least once per web request, thus all state variables are encapsulated per-request basis.
+ */
 @Log4j2
 public class SimpleIntelGateway implements CEGateway {
     private ConnectionConfig connectionConfig;
@@ -25,21 +29,25 @@ public class SimpleIntelGateway implements CEGateway {
 
     @Override
     public boolean initialise() {
-        connectionConfig = new ConnectionConfig();
+        if (connectionConfig == null)
+            connectionConfig = new ConnectionConfig();
         return true;
     }
 
     @Override
     public void authenticate() {
         try {
+            // TODO: implement authentication
             System.out.println(connectionConfig.httpClient.toString());
          } catch (Exception e) {
-
+            // TODO: handle and log errors properly
+            log.error(e);
         }
      }
 
      public void config(Criteria criteria) throws URISyntaxException {
-         connectionConfig.configure(hostUri, criteria);
+        if (!connectionConfig.configured)
+            connectionConfig.configure(hostUri, criteria);
      }
 
     /**
@@ -84,8 +92,9 @@ public class SimpleIntelGateway implements CEGateway {
 
     /**
      * Submit intel criteria "asynchronously"
-     * @param criteria Intel criteria to be submitted
+     * @param resultType The class type of result to determine which variable to be filled
      * @return Boolean indicating success/failure of operation
+     * @param <T> Generic type holder
      */
     public <T> boolean fetchAsync(Class<T> resultType) {
         return false;
@@ -107,8 +116,9 @@ public class SimpleIntelGateway implements CEGateway {
     }
 
     private static class ConnectionConfig {
-        private HttpClient httpClient;
-        private HttpRequest httpRequest;
+        HttpClient httpClient;
+        HttpRequest httpRequest;
+        boolean configured = false;
 
         ConnectionConfig() {
             this.httpClient = HttpClient.newBuilder().build();
@@ -126,6 +136,8 @@ public class SimpleIntelGateway implements CEGateway {
                         .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                         .header("custom", "header")
                         .build();
+
+                configured = true;
             } catch (JsonProcessingException e) {
                 log.error("Connection configuration failed. Error mapping object to JSON: " + e);
             }

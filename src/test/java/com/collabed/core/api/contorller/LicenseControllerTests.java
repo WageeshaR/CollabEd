@@ -4,13 +4,12 @@ import com.collabed.core.api.controller.LicenseController;
 import com.collabed.core.api.util.CustomHttpHeaders;
 import com.collabed.core.api.util.JwtTokenUtil;
 import com.collabed.core.config.SecurityConfig;
-import com.collabed.core.data.model.Session;
 import com.collabed.core.data.model.license.LicenseModel;
 import com.collabed.core.data.model.license.LicenseOption;
 import com.collabed.core.data.model.license.LicenseType;
-import com.collabed.core.runtime.exception.CEServiceError;
-import com.collabed.core.service.license.LicenseService;
 import com.collabed.core.service.UserService;
+import com.collabed.core.service.license.LicenseService;
+import com.collabed.core.service.util.CEServiceResponse;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +70,10 @@ public class LicenseControllerTests {
             option.setId(Integer.toString(i));
             options.add(option);
         }
-        Mockito.when(licenseService.getAllOptions()).thenReturn(options);
+
+        CEServiceResponse response = CEServiceResponse.success().data(options);
+        Mockito.when(licenseService.getAllOptions()).thenReturn(response);
+
         mockMvc.perform(MockMvcRequestBuilders
                     .get("/license/options")
                     .accept(MediaType.APPLICATION_JSON))
@@ -87,7 +89,7 @@ public class LicenseControllerTests {
         LicenseOption option = new LicenseOption();
         option.setId("0");
         option.setModel(Mockito.mock(LicenseModel.class));
-        Mockito.when(licenseService.initSession(option, "myrandomsessionkey")).thenReturn(Mockito.mock(Session.class));
+        Mockito.when(licenseService.initSession(Mockito.any(LicenseOption.class), Mockito.anyString())).thenReturn(CEServiceResponse.success().build());
         mockMvc.perform(MockMvcRequestBuilders
                     .post("/license/select-option")
                     .header(CustomHttpHeaders.SESSION_KEY, "myrandomsessionkey")
@@ -103,7 +105,7 @@ public class LicenseControllerTests {
         LicenseOption option = new LicenseOption();
         option.setId("0");
         option.setModel(Mockito.mock(LicenseModel.class));
-        Mockito.when(licenseService.initSession(Mockito.any(LicenseOption.class), Mockito.anyString())).thenThrow(CEServiceError.class);
+        Mockito.when(licenseService.initSession(Mockito.any(LicenseOption.class), Mockito.anyString())).thenReturn(CEServiceResponse.error().build());
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/license/select-option")
                         .header(CustomHttpHeaders.SESSION_KEY, "myrandomsessionkey")

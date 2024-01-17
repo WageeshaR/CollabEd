@@ -1,5 +1,8 @@
 package com.collabed.core.api.contorller.auth;
 
+import com.collabed.core.api.controller.auth.RegistrationController;
+import com.collabed.core.api.util.JwtTokenUtil;
+import com.collabed.core.config.SecurityConfig;
 import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.data.model.user.User;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
@@ -13,41 +16,37 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Profile;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.http.HttpStatus;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
 import static com.collabed.core.util.HttpRequestResponseUtils.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@Profile({"test"})
+@WebMvcTest(controllers = RegistrationController.class)
+@Import(SecurityConfig.class)
 public class RegistrationControllerTests {
-    @MockBean
-    UserService userService;
     @MockBean
     InstitutionService institutionService;
     @MockBean
     BCryptPasswordEncoder passwordEncoder;
-    private MockMvc mockMvc;
     @Autowired
-    private WebApplicationContext webApplicationContext;
+    private MockMvc mockMvc;
+    @MockBean
+    JwtTokenUtil jwtTokenUtil;
+    @MockBean
+    UserService userService;
     private User user;
     private Institution institution;
 
     @BeforeEach
     public void setup() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         // setup institution
         institution = new Institution();
         institution.setName("The University of York");
