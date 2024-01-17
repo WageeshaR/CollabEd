@@ -8,6 +8,7 @@ import com.collabed.core.service.intel.criteria.CriteriaTarget;
 import jakarta.annotation.Resource;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -20,13 +21,14 @@ import java.util.List;
 @Service
 @Log4j2
 public class CEIntelService {
-    @Resource(name = "requestScopedIntelGateway")
-    SimpleIntelGateway intelGateway;
+    @Qualifier("requestScopedIntelGateway")
+    private final SimpleIntelGateway intelGateway;
     private final MongoTemplate mongoTemplate;
 
     @Autowired
-    public CEIntelService(MongoTemplate mongoTemplate) {
+    public CEIntelService(MongoTemplate mongoTemplate, SimpleIntelGateway intelGateway) {
         this.mongoTemplate = mongoTemplate;
+        this.intelGateway = intelGateway;
     }
 
     public boolean setupGateway() {

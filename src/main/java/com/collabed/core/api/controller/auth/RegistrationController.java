@@ -1,6 +1,7 @@
 package com.collabed.core.api.controller.auth;
 
 import com.collabed.core.api.util.HTTPResponseErrorFormatter;
+import com.collabed.core.api.util.JwtTokenUtil;
 import com.collabed.core.data.model.ApiError;
 import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.data.model.user.User;
@@ -12,6 +13,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -26,6 +28,7 @@ public class RegistrationController {
     private final UserService userService;
     private InstitutionService institutionService;
     private BCryptPasswordEncoder passwordEncoder;
+    private final JwtTokenUtil jwtTokenUtil;
 
     /**
      * Endpoint to enter new students into the system
@@ -45,7 +48,13 @@ public class RegistrationController {
 
             CEServiceResponse savedStudent = userService.saveUser(student, "ROLE_STUDENT");
             if (savedStudent.isSuccess())
-                return ResponseEntity.status(HttpStatus.CREATED).body(savedStudent.getData());
+                return ResponseEntity
+                        .status(HttpStatus.CREATED)
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                jwtTokenUtil.generateToken(student)
+                        )
+                        .body(savedStudent.getData());
 
             return ResponseEntity.internalServerError().body(savedStudent.getData());
         }
@@ -69,7 +78,13 @@ public class RegistrationController {
 
             CEServiceResponse savedFacilitator = userService.saveUser(facilitator, "ROLE_FACILITATOR");
             if (savedFacilitator.isSuccess())
-                return ResponseEntity.status(HttpStatus.CREATED).body(savedFacilitator.getData());
+                return ResponseEntity
+                        .status(HttpStatus.CREATED)
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                jwtTokenUtil.generateToken(facilitator)
+                        )
+                        .body(savedFacilitator.getData());
 
             return ResponseEntity.internalServerError().body(savedFacilitator.getData());
         }
@@ -93,7 +108,13 @@ public class RegistrationController {
 
             CEServiceResponse savedAdmin = userService.saveUser(admin, "ROLE_ADMIN");
             if (savedAdmin.isSuccess())
-                return ResponseEntity.status(HttpStatus.CREATED).body(savedAdmin.getData());
+                return ResponseEntity
+                        .status(HttpStatus.CREATED)
+                        .header(
+                                HttpHeaders.AUTHORIZATION,
+                                jwtTokenUtil.generateToken(admin)
+                        )
+                        .body(savedAdmin.getData());
 
             return ResponseEntity.internalServerError().body(savedAdmin.getData());
         }
