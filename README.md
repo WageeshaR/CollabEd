@@ -39,7 +39,7 @@ public enum DatabaseType {
   * Consisting of a monolithic, n-tier application with a set of service components
   * Simple JWT authentication - will be extended with OAuth2 for SSO
   * **CEGateway**, a generic interface for custom gateway implementations (e.g., a PaymentGateway)
-    * Implementation has started for _SimpleIntelGateway_, a simple HTTP gateway for _CEIntel AI_ engine (currently a private repo)
+    * Implementation has started for _SimpleIntelGateway_, a simple HTTP gateway for [CEIntel](https://github.com/wageeshar/ceintel.git) AI engine
   * **Spring Batch** runs data pre-processing jobs and pushes to a Cassandra cluster for analytics and training by CEIntel engine.
   * Documentation with Swagger + OpenAPI
   * This is aimed to be a TDD approach with a reasonable test case coverage so far - every feature PR is expected to be bug free with necessary Unit Test coverage
