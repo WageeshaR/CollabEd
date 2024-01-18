@@ -26,8 +26,8 @@ import org.springframework.web.bind.annotation.*;
 @Log4j2
 public class RegistrationController {
     private final UserService userService;
-    private InstitutionService institutionService;
-    private BCryptPasswordEncoder passwordEncoder;
+    private final InstitutionService institutionService;
+    private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenUtil jwtTokenUtil;
 
     /**

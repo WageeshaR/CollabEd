@@ -26,10 +26,10 @@ import static java.lang.String.format;
 @AllArgsConstructor
 @Profile({"develop", "uat", "staging", "production"})
 public class DBSeederConfig {
-    private CountryRepository countryRepository;
-    private LicenseRepository licenseRepository;
-    private TopicRepository topicRepository;
-    private ObjectMapper objectMapper;
+    private final CountryRepository countryRepository;
+    private final LicenseRepository licenseRepository;
+    private final TopicRepository topicRepository;
+    private final ObjectMapper objectMapper;
 
     @PostConstruct
     public void populateCountries() throws IOException {

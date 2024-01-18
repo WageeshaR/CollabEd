@@ -12,8 +12,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @EnableWebMvc
 public class WebConfig implements WebMvcConfigurer {
 
-    @Value("${client.host}")
-    private String clientHost;
+    private final String clientHost;
+
+    public WebConfig(@Value("${client.host}") String clientHost) {
+        this.clientHost = clientHost;
+    }
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
