@@ -18,6 +18,9 @@ public class OAuth2Config extends SavedRequestAwareAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
         this.setAlwaysUseDefaultTargetUrl(true);
         this.setDefaultTargetUrl(clientHost + "/home");
+
+        // TODO: handle auth context setting and user roles, etc.
+
         super.onAuthenticationSuccess(request, response, authentication);
     }
 }
