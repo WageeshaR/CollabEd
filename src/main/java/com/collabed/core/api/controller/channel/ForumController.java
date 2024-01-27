@@ -10,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("forums")
@@ -30,6 +27,20 @@ public class ForumController {
 
         if (response.isSuccess())
             return ResponseEntity.status(HttpStatus.CREATED).build();
+
+        return ResponseEntity.internalServerError().body(new ApiError(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                response.getMessage(),
+                (Exception) response.getData()
+        ));
+    }
+
+    @PutMapping("resolve/{id}")
+    public ResponseEntity<?> resolveForum(@PathVariable(name = "id") String forumId) {
+        CEServiceResponse response = forumService.resolve(forumId);
+
+        if (response.isSuccess())
+            return ResponseEntity.ok().build();
 
         return ResponseEntity.internalServerError().body(new ApiError(
                 HttpStatus.INTERNAL_SERVER_ERROR,

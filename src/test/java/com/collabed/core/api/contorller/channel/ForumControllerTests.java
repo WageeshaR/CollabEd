@@ -11,6 +11,7 @@ import com.collabed.core.service.channel.ChannelService;
 import com.collabed.core.service.channel.ForumService;
 import com.collabed.core.service.util.CEServiceResponse;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,6 +76,31 @@ public class ForumControllerTests {
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
         )
+                .andExpect(status().isInternalServerError())
+                .andExpect(MockMvcResultMatchers.jsonPath("$").value(isApiError()));
+    }
+
+    @Test
+    @WithMockUser
+    public void resolveForumTest() throws Exception {
+
+        Mockito.when(forumService.resolve(Mockito.anyString())).thenReturn(CEServiceResponse.success().build());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .put("/forums/resolve/{id}", new ObjectId().toHexString())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @WithMockUser
+    public void resolveForumErrorTest() throws Exception {
+
+        Mockito.when(forumService.resolve(Mockito.anyString())).thenReturn(CEServiceResponse.error().build());
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .put("/forums/resolve/{id}", new ObjectId().toHexString())
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$").value(isApiError()));
     }
