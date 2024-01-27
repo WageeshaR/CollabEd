@@ -57,3 +57,4 @@ replay_pid*
 profile/.DS_Store
 .DS_Store
 /data/
+/src/main/resources/.env

@@ -4,9 +4,9 @@ spring:
   data:
     mongodb:
       authentication-database: admin
-      username: rootuser
-      password: rootpass
-      database: collabed
+      username: ${MONGO_ROOT_USER:rootuser}
+      password: ${MONGO_ROOT_PASS:rootpass}
+      database: ${CORE_DB:collabed}
       port: 27017
       host: ${DB_HOST:localhost}
       auto-index-creation: true
@@ -18,8 +18,8 @@ spring:
     contactPoints: ${DB_HOST:localhost}
     port: 9042
     schemaAction: CREATE_IF_NOT_EXISTS
-    keyspace-name: "ceintel"
-    local-datacenter: datacenter1
+    keyspace-name: ${CASS_KEYSPACE:"ceintel"}
+    local-datacenter: ${CASS_LOCAL_DC:datacenter1}
   datasource:
     url: jdbc:h2:file:./data/jobs
     username: sa
@@ -40,6 +40,6 @@ springdoc:
   api-docs:
     path: /api-docs
 client:
-  host: http://localhost:5173
+  host: ${CLIENT_HOST:http://localhost:5173}
 intel-gateway:
-  host: http://localhost:5000
+  host: ${INTEL_GATEWAY:http://localhost:5000}
