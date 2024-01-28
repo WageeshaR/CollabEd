@@ -12,10 +12,13 @@ import java.util.List;
 
 @Document
 @Data
-public class Forum {
+public class Thread {
     @Id
     private String id;
-    @NotNull
     @DocumentReference
-    private Channel channel;
+    @Size(min = 2)
+    private List<User> members;
+    @NotNull
+    private String subject;
+    private boolean resolved = false;
 }

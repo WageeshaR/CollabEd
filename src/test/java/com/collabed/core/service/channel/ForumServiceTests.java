@@ -1,7 +1,8 @@
 package com.collabed.core.service.channel;
 
 import com.collabed.core.data.model.channel.Forum;
-import com.collabed.core.data.repository.channel.ForumRepository;
+import com.collabed.core.data.model.channel.Thread;
+import com.collabed.core.data.repository.channel.ThreadRepository;
 import com.collabed.core.runtime.exception.CEInternalErrorMessage;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.service.util.CEServiceResponse;
@@ -9,26 +10,28 @@ import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ForumServiceTests {
-    private ForumRepository forumRepository;
+    private MongoTemplate mongoTemplate;
+    private ThreadRepository threadRepository;
     private ForumService forumService;
 
     @BeforeEach
     public void setup() {
-        forumRepository = Mockito.mock(ForumRepository.class);
-        forumService = new ForumService(forumRepository);
+        mongoTemplate = Mockito.mock(MongoTemplate.class);
+        threadRepository = Mockito.mock(ThreadRepository.class);
+        forumService = new ForumService(mongoTemplate, threadRepository);
     }
 
     @Test
     public void saveForumTest() {
         Forum forum = new Forum();
-        Mockito.when(forumRepository.save(Mockito.any(Forum.class))).thenReturn(forum);
+        Mockito.when(mongoTemplate.save(Mockito.any(Forum.class))).thenReturn(forum);
 
         CEServiceResponse response = forumService.createForum(forum);
         assertTrue(response.isSuccess());
@@ -37,31 +40,50 @@ public class ForumServiceTests {
     @Test
     public void saveForumErrorTest() {
         Forum forum = new Forum();
-        Mockito.when(forumRepository.save(Mockito.any(Forum.class))).thenThrow(RuntimeException.class);
+        Mockito.when(mongoTemplate.save(Mockito.any(Forum.class))).thenThrow(RuntimeException.class);
 
         CEServiceResponse response = forumService.createForum(forum);
         assertTrue(response.isError());
     }
 
     @Test
+    public void resolveThreadTest() {
+        String threadId = new ObjectId().toHexString();
+
+        Thread resolveThread = new Thread();
+        resolveThread.setResolved(true);
+
+        Mockito.when(threadRepository.findById(threadId)).thenReturn(Optional.of(Mockito.mock(Thread.class)));
+        Mockito.when(threadRepository.save(Mockito.any(Thread.class))).thenReturn(resolveThread);
+
+        CEServiceResponse response = forumService.resolveThread(threadId);
+
+        assertTrue(response.isSuccess());
+        assertInstanceOf(Thread.class, response.getData());
+
+        assertTrue(((Thread) response.getData()).isResolved());
+    }
+
+    @Test
     public void resolveNoSuchElementErrorTest() {
 
-        String forumId = new ObjectId().toHexString();
+        String threadId = new ObjectId().toHexString();
 
-        CEServiceResponse response = forumService.resolve(forumId);
+        CEServiceResponse response = forumService.resolveThread(threadId);
+
         assertTrue(response.isError());
-        assertEquals(response.getMessage(), String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "forum"));
+        assertEquals(response.getMessage(), String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "thread"));
     }
 
     @Test
     public void resolveInternalErrorTest() {
-        String forumId = new ObjectId().toHexString();
+        String threadId = new ObjectId().toHexString();
 
-        Mockito.when(forumRepository.findById(forumId)).thenReturn(Optional.of(Mockito.mock(Forum.class)));
+        Mockito.when(threadRepository.findById(threadId)).thenReturn(Optional.of(Mockito.mock(Thread.class)));
 
-        Mockito.when(forumRepository.save(Mockito.any(Forum.class))).thenThrow(RuntimeException.class);
+        Mockito.when(threadRepository.save(Mockito.any(Thread.class))).thenThrow(RuntimeException.class);
 
-        CEServiceResponse response = forumService.resolve(forumId);
+        CEServiceResponse response = forumService.resolveThread(threadId);
 
         assertTrue(response.isError());
         assertEquals(response.getMessage(), String.format(CEInternalErrorMessage.SERVICE_RUNTIME_ERROR, "forum"));

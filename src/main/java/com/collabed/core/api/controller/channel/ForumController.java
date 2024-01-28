@@ -37,7 +37,7 @@ public class ForumController {
 
     @PutMapping("resolve/{id}")
     public ResponseEntity<?> resolveForum(@PathVariable(name = "id") String forumId) {
-        CEServiceResponse response = forumService.resolve(forumId);
+        CEServiceResponse response = forumService.resolveThread(forumId);
 
         if (response.isSuccess())
             return ResponseEntity.ok().build();

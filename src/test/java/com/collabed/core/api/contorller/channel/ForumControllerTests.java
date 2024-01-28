@@ -5,12 +5,9 @@ import com.collabed.core.api.util.JwtTokenUtil;
 import com.collabed.core.config.SecurityConfig;
 import com.collabed.core.data.model.channel.Channel;
 import com.collabed.core.data.model.channel.Forum;
-import com.collabed.core.data.model.user.User;
 import com.collabed.core.service.UserService;
-import com.collabed.core.service.channel.ChannelService;
 import com.collabed.core.service.channel.ForumService;
 import com.collabed.core.service.util.CEServiceResponse;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -23,8 +20,6 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import java.util.List;
 
 import static com.collabed.core.util.HttpRequestResponseUtils.isApiError;
 import static com.collabed.core.util.HttpRequestResponseUtils.mapToJson;
@@ -47,8 +42,6 @@ public class ForumControllerTests {
     public void createForumTest() throws Exception {
         Forum forum = new Forum();
         forum.setChannel(Mockito.mock(Channel.class));
-        forum.setMembers(List.of(Mockito.mock(User.class), Mockito.mock(User.class)));
-        forum.setSubject("Test forum subject");
 
         Mockito.when(forumService.createForum(Mockito.any(Forum.class))).thenReturn(CEServiceResponse.success().data(forum));
 
@@ -65,8 +58,6 @@ public class ForumControllerTests {
     public void createForumErrorTest() throws Exception {
         Forum forum = new Forum();
         forum.setChannel(Mockito.mock(Channel.class));
-        forum.setMembers(List.of(Mockito.mock(User.class), Mockito.mock(User.class)));
-        forum.setSubject("Test forum subject");
 
         Mockito.when(forumService.createForum(Mockito.any(Forum.class))).thenReturn(CEServiceResponse.error().build());
 
@@ -82,9 +73,9 @@ public class ForumControllerTests {
 
     @Test
     @WithMockUser
-    public void resolveForumTest() throws Exception {
+    public void resolveThreadTest() throws Exception {
 
-        Mockito.when(forumService.resolve(Mockito.anyString())).thenReturn(CEServiceResponse.success().build());
+        Mockito.when(forumService.resolveThread(Mockito.anyString())).thenReturn(CEServiceResponse.success().build());
 
         mockMvc.perform(MockMvcRequestBuilders
                 .put("/forums/resolve/{id}", new ObjectId().toHexString())
@@ -94,9 +85,9 @@ public class ForumControllerTests {
 
     @Test
     @WithMockUser
-    public void resolveForumErrorTest() throws Exception {
+    public void resolveThreadErrorTest() throws Exception {
 
-        Mockito.when(forumService.resolve(Mockito.anyString())).thenReturn(CEServiceResponse.error().build());
+        Mockito.when(forumService.resolveThread(Mockito.anyString())).thenReturn(CEServiceResponse.error().build());
 
         mockMvc.perform(MockMvcRequestBuilders
                 .put("/forums/resolve/{id}", new ObjectId().toHexString())
