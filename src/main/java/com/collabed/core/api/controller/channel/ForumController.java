@@ -3,6 +3,7 @@ package com.collabed.core.api.controller.channel;
 import com.collabed.core.api.util.HTTPResponseErrorFormatter;
 import com.collabed.core.data.model.ApiError;
 import com.collabed.core.data.model.channel.Forum;
+import com.collabed.core.data.model.channel.Thread;
 import com.collabed.core.service.channel.ForumService;
 import com.collabed.core.service.util.CEServiceResponse;
 import jakarta.validation.Valid;
@@ -27,6 +28,23 @@ public class ForumController {
 
         if (response.isSuccess())
             return ResponseEntity.status(HttpStatus.CREATED).build();
+
+        return ResponseEntity.internalServerError().body(new ApiError(
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                response.getMessage(),
+                (Exception) response.getData()
+        ));
+    }
+
+    @PostMapping("/thread")
+    public ResponseEntity<?> createThread(@Valid @RequestBody Thread thread, Errors errors) {
+        if (errors.hasErrors())
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HTTPResponseErrorFormatter.format(errors));
+
+        CEServiceResponse response = forumService.createThread(thread);
+
+        if (response.isSuccess())
+            return ResponseEntity.status(HttpStatus.CREATED).body(response.getData());
 
         return ResponseEntity.internalServerError().body(new ApiError(
                 HttpStatus.INTERNAL_SERVER_ERROR,

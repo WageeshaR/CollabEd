@@ -5,11 +5,14 @@ import com.collabed.core.api.util.JwtTokenUtil;
 import com.collabed.core.config.SecurityConfig;
 import com.collabed.core.data.model.channel.Channel;
 import com.collabed.core.data.model.channel.Forum;
+import com.collabed.core.data.model.channel.Thread;
+import com.collabed.core.data.model.user.User;
 import com.collabed.core.service.UserService;
 import com.collabed.core.service.channel.ForumService;
 import com.collabed.core.service.util.CEServiceResponse;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -20,6 +23,8 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.List;
 
 import static com.collabed.core.util.HttpRequestResponseUtils.isApiError;
 import static com.collabed.core.util.HttpRequestResponseUtils.mapToJson;
@@ -69,6 +74,27 @@ public class ForumControllerTests {
         )
                 .andExpect(status().isInternalServerError())
                 .andExpect(MockMvcResultMatchers.jsonPath("$").value(isApiError()));
+    }
+
+    @Test
+    @WithMockUser
+    public void createThreadTest() throws Exception {
+        Thread thread = new Thread();
+        thread.setId(new ObjectId().toHexString());
+        thread.setForum(Mockito.mock(Forum.class));
+        thread.setSubject("Test thread subject");
+        thread.setMembers(List.of(Mockito.mock(User.class), Mockito.mock(User.class)));
+
+        Mockito.when(forumService.createThread(Mockito.any(Thread.class))).thenReturn(CEServiceResponse.success().data(thread));
+
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/forums/thread")
+                .content(mapToJson(thread))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isCreated())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(thread.getId()));
+
     }
 
     @Test

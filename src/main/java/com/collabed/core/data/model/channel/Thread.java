@@ -16,9 +16,14 @@ public class Thread {
     @Id
     private String id;
     @DocumentReference
+    @NotNull
+    private Forum forum;
+    @DocumentReference
     @Size(min = 2)
     private List<User> members;
     @NotNull
     private String subject;
     private boolean resolved = false;
+    @DocumentReference
+    private Thread attachedTo;
 }

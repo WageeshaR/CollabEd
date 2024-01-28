@@ -41,6 +41,25 @@ public class ForumService {
         }
     }
 
+    public CEServiceResponse createThread(Thread thread) {
+        try {
+            // TODO: implementation for checks on chained threads
+            Thread savedThread = threadRepository.save(thread);
+            log.info("Thread saved successfully");
+
+            return CEServiceResponse.success().data(savedThread);
+
+        } catch (RuntimeException e) {
+            log.error(
+                    String.format(CEInternalErrorMessage.SERVICE_RUNTIME_ERROR, "forum")
+            );
+
+            return CEServiceResponse.error(
+                    String.format(CEInternalErrorMessage.SERVICE_RUNTIME_ERROR, "forum")
+            ).data(e);
+        }
+    }
+
     public CEServiceResponse resolveThread(String threadId) {
         try {
             Thread thread = threadRepository.findById(threadId).orElseThrow();

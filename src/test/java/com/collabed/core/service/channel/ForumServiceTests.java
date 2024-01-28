@@ -47,6 +47,20 @@ public class ForumServiceTests {
     }
 
     @Test
+    public void createThreadTest() {
+        Thread thread = new Thread();
+        thread.setId(new ObjectId().toHexString());
+
+        Mockito.when(threadRepository.save(Mockito.any(Thread.class))).thenReturn(thread);
+
+        CEServiceResponse response = forumService.createThread(thread);
+
+        assertTrue(response.isSuccess());
+        assertInstanceOf(Thread.class, response.getData());
+        assertEquals(((Thread) response.getData()).getId(), thread.getId());
+    }
+
+    @Test
     public void resolveThreadTest() {
         String threadId = new ObjectId().toHexString();
 
