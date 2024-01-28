@@ -4,10 +4,10 @@ import com.collabed.core.api.util.CustomHttpHeaders;
 import com.collabed.core.api.util.JwtTokenFilter;
 import com.collabed.core.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -23,7 +23,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Configuration
@@ -32,10 +31,13 @@ import java.util.List;
     securedEnabled = true,
     jsr250Enabled = true
 )
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class SecurityConfig {
     private final UserService userDetailsService;
     private final JwtTokenFilter jwtTokenFilter;
+
+    @Value("${client.host}")
+    private String clientHost;
 
     @Bean
     public AuthenticationManager customAuthenticationManager(HttpSecurity http) throws Exception {
@@ -52,7 +54,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(Customizer.withDefaults())
+            .cors(cors -> cors.configurationSource(configurationSource()))
             .csrf(AbstractHttpConfigurer::disable)
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests((requests) -> requests
@@ -77,5 +79,19 @@ public class SecurityConfig {
             )
         ;
         return http.build();
+    }
+
+    @Bean
+    CorsConfigurationSource configurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.addAllowedHeader("*");
+        configuration.setExposedHeaders(List.of(CustomHttpHeaders.SESSION_KEY, "Authorization"));
+        configuration.addAllowedMethod("*");
+        configuration.addAllowedOrigin(clientHost);
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
