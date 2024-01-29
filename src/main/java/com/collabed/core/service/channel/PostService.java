@@ -82,7 +82,7 @@ public class PostService {
 
             Optional<List<Post>> optionalChildren = postRepository.findAllByParentEquals(parent);
 
-            List<Post> summarisedChildPosts = optionalChildren.map(this::summarisePosts).orElseGet(() -> optionalChildren.orElseGet(List::of));
+            List<Post> summarisedChildPosts = optionalChildren.map(this::summarisePosts).orElseThrow();
             return CEServiceResponse.success().data(summarisedChildPosts);
         } catch (NoSuchElementException e) {
             log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
