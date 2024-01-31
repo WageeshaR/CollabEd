@@ -20,7 +20,8 @@ public class InstitutionController {
     @GetMapping
     @RolesAllowed({"ADMIN", "SUPER_ADMIN"})
     public ResponseEntity<?> all() {
-        CEServiceResponse response = institutionService.getAll();
+        var response = institutionService.getAll();
+
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(response.getData());
     }

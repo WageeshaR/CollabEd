@@ -16,24 +16,28 @@ public class SessionUtil {
     public static String generateSessionKey(String currentKey) {
         if (currentKey != null && isValid(currentKey))
             return currentKey;
+
         return new RandomUtil.RandomString(SESSION_KEY_LEN).nextString() + b64StringFromDate();
     }
 
     private static String b64StringFromDate() {
-        String pattern = "MM/dd/yyyy HH:mm:ss";
-        DateFormat df = new SimpleDateFormat(pattern);
-        Calendar expiry = Calendar.getInstance();
+        var pattern = "MM/dd/yyyy HH:mm:ss";
+        var dateFormat = new SimpleDateFormat(pattern);
+        var expiry = Calendar.getInstance();
+
         expiry.add(Calendar.DATE, 3);
-        String expiryAsString = df.format(expiry.getTime());
+        var expiryAsString = dateFormat.format(expiry.getTime());
+
         return new String(base64.encode(expiryAsString.getBytes()));
     }
 
     private static Date dateFromB64String(String dateString) {
-        String decoded = new String(base64.decode(dateString.getBytes()));
-        String pattern = "MM/dd/yyyy HH:mm:ss";
-        DateFormat df = new SimpleDateFormat(pattern);
+        var decoded = new String(base64.decode(dateString.getBytes()));
+        var pattern = "MM/dd/yyyy HH:mm:ss";
+        var dateFormat = new SimpleDateFormat(pattern);
+
         try {
-            return df.parse(decoded);
+            return dateFormat.parse(decoded);
         } catch (ParseException e) {
             throw new CEWebRequestError("Invalid session key.");
         }
@@ -41,9 +45,11 @@ public class SessionUtil {
 
     public static boolean isValid(String key) {
         try {
-            String b64Date = key.substring(SESSION_KEY_LEN);
-            Date expiry = dateFromB64String(b64Date);
+            var b64Date = key.substring(SESSION_KEY_LEN);
+            var expiry = dateFromB64String(b64Date);
+
             return expiry.after(Calendar.getInstance().getTime());
+
         } catch (Exception e) {
             return false;
         }

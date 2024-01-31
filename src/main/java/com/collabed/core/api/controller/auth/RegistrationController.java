@@ -46,17 +46,18 @@ public class RegistrationController {
         } else {
             student.setPassword(passwordEncoder.encode(student.getPassword()));
 
-            CEServiceResponse savedStudent = userService.saveUser(student, "ROLE_STUDENT");
-            if (savedStudent.isSuccess())
+            var response = userService.saveUser(student, "ROLE_STUDENT");
+
+            if (response.isSuccess())
                 return ResponseEntity
                         .status(HttpStatus.CREATED)
                         .header(
                                 HttpHeaders.AUTHORIZATION,
                                 jwtTokenUtil.generateToken(student)
                         )
-                        .body(savedStudent.getData());
+                        .body(response.getData());
 
-            return ResponseEntity.internalServerError().body(savedStudent.getData());
+            return ResponseEntity.internalServerError().body(response.getData());
         }
     }
 
@@ -76,17 +77,18 @@ public class RegistrationController {
         } else {
             facilitator.setPassword(passwordEncoder.encode(facilitator.getPassword()));
 
-            CEServiceResponse savedFacilitator = userService.saveUser(facilitator, "ROLE_FACILITATOR");
-            if (savedFacilitator.isSuccess())
+            var response = userService.saveUser(facilitator, "ROLE_FACILITATOR");
+
+            if (response.isSuccess())
                 return ResponseEntity
                         .status(HttpStatus.CREATED)
                         .header(
                                 HttpHeaders.AUTHORIZATION,
                                 jwtTokenUtil.generateToken(facilitator)
                         )
-                        .body(savedFacilitator.getData());
+                        .body(response.getData());
 
-            return ResponseEntity.internalServerError().body(savedFacilitator.getData());
+            return ResponseEntity.internalServerError().body(response.getData());
         }
     }
 
@@ -106,17 +108,18 @@ public class RegistrationController {
         } else {
             admin.setPassword(passwordEncoder.encode(admin.getPassword()));
 
-            CEServiceResponse savedAdmin = userService.saveUser(admin, "ROLE_ADMIN");
-            if (savedAdmin.isSuccess())
+            var response = userService.saveUser(admin, "ROLE_ADMIN");
+
+            if (response.isSuccess())
                 return ResponseEntity
                         .status(HttpStatus.CREATED)
                         .header(
                                 HttpHeaders.AUTHORIZATION,
                                 jwtTokenUtil.generateToken(admin)
                         )
-                        .body(savedAdmin.getData());
+                        .body(response.getData());
 
-            return ResponseEntity.internalServerError().body(savedAdmin.getData());
+            return ResponseEntity.internalServerError().body(response.getData());
         }
     }
 
@@ -135,7 +138,8 @@ public class RegistrationController {
                     HTTPResponseErrorFormatter.format(errors)
             ));
         } else {
-            CEServiceResponse response = institutionService.save(institution);
+            var response = institutionService.save(institution);
+
             if (response.isSuccess())
                 return ResponseEntity.status(HttpStatus.CREATED).body(response.getData());
 

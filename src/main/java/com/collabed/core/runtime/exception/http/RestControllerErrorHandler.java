@@ -15,8 +15,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class RestControllerErrorHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDenied(AccessDeniedException ex) {
-        ApiError error = new ApiError(HttpStatus.UNAUTHORIZED);
+        var error = new ApiError(HttpStatus.UNAUTHORIZED);
+
         error.setMessage(ex.getClass().getName());
+
         return buildResponseEntity(error);
     }
 

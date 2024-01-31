@@ -41,9 +41,10 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationManager customAuthenticationManager(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject
-                (AuthenticationManagerBuilder.class);
+        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
+
         authenticationManagerBuilder.userDetailsService(userDetailsService);
+
         return authenticationManagerBuilder.build();
     }
 
@@ -83,14 +84,14 @@ public class SecurityConfig {
 
     @Bean
     CorsConfigurationSource configurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
+        var configuration = new CorsConfiguration();
         configuration.addAllowedHeader("*");
         configuration.setExposedHeaders(List.of(CustomHttpHeaders.SESSION_KEY, "Authorization"));
         configuration.addAllowedMethod("*");
         configuration.addAllowedOrigin(clientHost);
         configuration.setAllowCredentials(true);
 
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        var source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }

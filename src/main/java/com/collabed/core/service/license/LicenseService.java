@@ -24,20 +24,19 @@ public class LicenseService {
     private final SessionRepository sessionRepository;
 
     public CEServiceResponse getAllOptions() {
-        List<LicenseOption> options = new ArrayList<>();
+        var options = new ArrayList<LicenseOption>();
+
         try {
             List<LicenseModel> models = licenseRepository.findAll();
 
             for (int i=0; i<models.size(); i++) {
-                LicenseOption option = new LicenseOption();
+                var option = new LicenseOption();
                 option.setId(Integer.toString(i));
                 option.setModel(models.get(i));
                 options.add(option);
             }
         } catch (RuntimeException e) {
-            log.error(String.format(
-                    CEInternalErrorMessage.SERVICE_QUERY_FAILED, "license"
-            ));
+            log.error(String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "license"));
             return CEServiceResponse.error(String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "license")).data(e);
         }
 
@@ -45,7 +44,7 @@ public class LicenseService {
     }
 
     public CEServiceResponse initSession(LicenseOption option, String sessionKey) {
-        LicenseSession session = new LicenseSession();
+        var session = new LicenseSession();
         session.setLicenseModel(option.getModel());
         session.setSessionKey(sessionKey);
 

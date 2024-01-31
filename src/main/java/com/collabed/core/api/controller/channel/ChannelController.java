@@ -37,23 +37,29 @@ public class ChannelController {
             ));
         }
 
-        CEServiceResponse response = channelService.saveChannel(channel);
+        var response = channelService.saveChannel(channel);
 
         return response.isSuccess() ?
-                ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
-                HttpStatus.INTERNAL_SERVER_ERROR,
-                response.getMessage(),
-                (Exception) response.getData()
+
+                ResponseEntity.ok().body(response.getData()) :
+
+                ResponseEntity.internalServerError().body(new ApiError(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    response.getMessage(),
+                    (Exception) response.getData()
         ));
     }
 
     @PutMapping("/change_visibility")
-    public ResponseEntity<?> changeVisibility(Authentication authentication, @RequestBody Channel channel) {
+    public ResponseEntity<?> changeVisibility(@RequestBody Channel channel) {
         if (channel.getId() == null)
             return ResponseEntity.badRequest().body("[id: must not be null]");
+
         if (channel.getVisibility() == null)
             return ResponseEntity.badRequest().body("[visibility: must not be null]");
-        CEServiceResponse response = channelService.changeVisibility(channel.getId(), channel.getVisibility());
+
+        var response = channelService.changeVisibility(channel.getId(), channel.getVisibility());
+
         return response.isSuccess() ?
                 ResponseEntity.ok().build() : ResponseEntity.internalServerError().body(
                         new ApiError(
@@ -66,7 +72,7 @@ public class ChannelController {
 
     @GetMapping
     public ResponseEntity<?> getAll() {
-        CEServiceResponse response = channelService.getAllChannels();
+        var response = channelService.getAllChannels();
 
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
@@ -108,7 +114,7 @@ public class ChannelController {
         if (channel.getId() == null)
             return ResponseEntity.badRequest().body("id: must not be null");
 
-        CEServiceResponse response = channelService.deleteChannel(channel.getId());
+        var response = channelService.deleteChannel(channel.getId());
 
         return response.isSuccess() ? ResponseEntity.ok().build() : ResponseEntity.internalServerError().body(
                 new ApiError(
@@ -121,7 +127,7 @@ public class ChannelController {
 
     @GetMapping("/topics")
     public ResponseEntity<?> getAllTopics() {
-        CEServiceResponse response = channelService.topics();
+        var response = channelService.topics();
 
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(
@@ -135,7 +141,8 @@ public class ChannelController {
 
     @GetMapping("/curated")
     public ResponseEntity<?> getCuratedChannels() {
-        CEServiceResponse response = channelService.curatedUserChannels();
+        var response = channelService.curatedUserChannels();
+
         if (response.isSuccess())
             return ResponseEntity.ok().body(response.getData());
 

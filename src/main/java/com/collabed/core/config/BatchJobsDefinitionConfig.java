@@ -48,7 +48,7 @@ public class BatchJobsDefinitionConfig {
 
     @Bean
     public MongoItemReader<Post> mongoPostReader() {
-        HashMap<String, Sort.Direction> sortMap = new HashMap<>();
+        var sortMap = new HashMap<String, Sort.Direction>();
         sortMap.put("lastModifiedDate", Sort.Direction.ASC);
 
         return new MongoItemReaderBuilder<Post>()
@@ -82,18 +82,18 @@ public class BatchJobsDefinitionConfig {
 
                     T t = chunk.getItems().get(0);
 
-                    Method getParentRefType = t.getClass().getDeclaredMethod("getParentRefType");
-                    Method getParentRefId = t.getClass().getDeclaredMethod("getParentRefId");
+                    var getParentRefType = t.getClass().getDeclaredMethod("getParentRefType");
+                    var getParentRefId = t.getClass().getDeclaredMethod("getParentRefId");
 
-                    String mongoEntityName = (String) getParentRefType.invoke(t);
-                    Class<?> mongoEntity = Class.forName(mongoEntityName);
+                    var mongoEntityName = (String) getParentRefType.invoke(t);
+                    var mongoEntity = Class.forName(mongoEntityName);
 
                     Collection<String> mongoEntityIds = new ArrayList<>();
 
                     for (T item : chunk.getItems())
                         mongoEntityIds.add((String) getParentRefId.invoke(item));
 
-                    Query query = new Query();
+                    var query = new Query();
                     query.addCriteria(Criteria.where("id").in(mongoEntityIds));
 
                     mongoTemplate.updateMulti(query, Update.update("batchProcessed", true), mongoEntity);

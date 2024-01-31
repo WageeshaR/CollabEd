@@ -26,12 +26,15 @@ public class LicenseController {
     private final LicenseService licenseService;
     @GetMapping("/get-key")
     public ResponseEntity<?> getKey() {
-        return ResponseEntity.ok().header(CustomHttpHeaders.SESSION_KEY, generateSessionKey(null)).build();
+        return ResponseEntity.ok().header(
+                CustomHttpHeaders.SESSION_KEY,
+                generateSessionKey(null)
+        ).build();
     }
 
     @GetMapping("/options")
     public ResponseEntity<?> getOptions() {
-        CEServiceResponse response = licenseService.getAllOptions();
+        var response = licenseService.getAllOptions();
 
         return response.isSuccess() ? ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(
                 new ApiError(
@@ -48,7 +51,9 @@ public class LicenseController {
         if (errors.hasErrors()) {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HTTPResponseErrorFormatter.format(errors));
         }
-        CEServiceResponse response = licenseService.initSession(option, sessionKey);
+
+        var response = licenseService.initSession(option, sessionKey);
+
         return response.isSuccess() ? ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(
                 new ApiError(
                         HttpStatus.INTERNAL_SERVER_ERROR,

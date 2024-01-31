@@ -43,7 +43,7 @@ public class PostController {
                     String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel")
             ));
 
-        CEServiceResponse response = postService.savePost(post);
+        var response = postService.savePost(post);
 
         return response.isSuccess() ?
                 ResponseEntity.status(HttpStatus.CREATED).body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
@@ -55,7 +55,7 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<?> getPostById(@RequestParam(name = "id") String postId) {
-        CEServiceResponse response = postService.getPostById(postId);
+        var response = postService.getPostById(postId);
 
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
@@ -68,7 +68,7 @@ public class PostController {
     @GetMapping("/filter")
     public ResponseEntity<?> getAllPosts(@RequestParam(name = "channel") String channelId,
                                          @RequestParam(name = "personnel", required = false) boolean personnel) {
-        CEServiceResponse response = postService.getAllPosts(channelId, personnel);
+        var response = postService.getAllPosts(channelId, personnel);
 
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
@@ -87,7 +87,7 @@ public class PostController {
             ));
         }
 
-        CEServiceResponse response = postService.saveReaction(reaction);
+        var response = postService.saveReaction(reaction);
 
         return response.isSuccess() ?
                 ResponseEntity.status(HttpStatus.CREATED).body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(

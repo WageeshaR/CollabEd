@@ -24,7 +24,7 @@ public class ForumController {
         if (errors.hasErrors())
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HTTPResponseErrorFormatter.format(errors));
 
-        CEServiceResponse response = forumService.createForum(forum);
+        var response = forumService.createForum(forum);
 
         if (response.isSuccess())
             return ResponseEntity.status(HttpStatus.CREATED).build();
@@ -41,7 +41,7 @@ public class ForumController {
         if (errors.hasErrors())
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(HTTPResponseErrorFormatter.format(errors));
 
-        CEServiceResponse response = forumService.createThread(thread);
+        var response = forumService.createThread(thread);
 
         if (response.isSuccess())
             return ResponseEntity.status(HttpStatus.CREATED).body(response.getData());
@@ -55,7 +55,7 @@ public class ForumController {
 
     @PutMapping("resolve/{id}")
     public ResponseEntity<?> resolveForum(@PathVariable(name = "id") String forumId) {
-        CEServiceResponse response = forumService.resolveThread(forumId);
+        var response = forumService.resolveThread(forumId);
 
         if (response.isSuccess())
             return ResponseEntity.ok().build();

@@ -43,14 +43,16 @@ public class CEIntelService {
 
     public List<?> getCuratedListOfType(Class<?> type) {
         // init criteria builder
-        Criteria.CriteriaBuilder criteriaBuilder = Criteria.filter();
+        var criteriaBuilder = Criteria.filter();
 
         try {
-            String collectionName = mongoTemplate.getCollectionName(type);
+            var collectionName = mongoTemplate.getCollectionName(type);
+
             // set input
-            CriteriaTarget input = new CriteriaTarget(CriteriaTarget.TargetType.DB_FETCH);
+            var input = new CriteriaTarget(CriteriaTarget.TargetType.DB_FETCH);
             input.addTargets(collectionName);
             criteriaBuilder.input(input);
+
         } catch (MappingException | InvalidDataAccessApiUsageException e) {
             log.error(e);
             return List.of();
@@ -58,18 +60,19 @@ public class CEIntelService {
 
         if (criteriaBuilder.hasInput()) {
             // set subject
-            CriteriaTarget subject = new CriteriaTarget(CriteriaTarget.TargetType.SUPPLIED);
-            Profile userProfile = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getProfile();
+            var subject = new CriteriaTarget(CriteriaTarget.TargetType.SUPPLIED);
+            var userProfile = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getProfile();
+
             if (userProfile == null) {
                 log.error("User profile not found. Operation stopped.");
                 return List.of();
             }
-            String primaryInterest = userProfile.getPrimaryInterest();
+            var primaryInterest = userProfile.getPrimaryInterest();
             subject.addTargets(primaryInterest);
             criteriaBuilder.subject(subject);
         }
 
-        Criteria intelCriteria = criteriaBuilder.build();
+        var intelCriteria = criteriaBuilder.build();
         try {
             intelGateway.config(intelCriteria);
 

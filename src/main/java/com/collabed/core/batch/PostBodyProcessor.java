@@ -18,8 +18,9 @@ public class PostBodyProcessor implements ItemProcessor<Post, IntelTextContent> 
     public IntelTextContent process(Post post) {
         log.info("Post body processing started for post: " + post.getId());
 
-        PostContent content = post.getContent();
+        var content = post.getContent();
         String plainText;
+
         if (content == null) {
             log.info("No content found for post, returning null");
             return null;
@@ -34,7 +35,7 @@ public class PostBodyProcessor implements ItemProcessor<Post, IntelTextContent> 
             plainText = content.getContent();
         }
 
-        IntelTextContent textContent = new IntelTextContent();
+        var textContent = new IntelTextContent();
         textContent.setId(UUID.randomUUID());
         textContent.setContent(plainText);
 

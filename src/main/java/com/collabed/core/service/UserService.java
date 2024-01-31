@@ -12,6 +12,7 @@ import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.service.util.CEServiceResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.javatuples.Pair;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 @Service
 @Log4j2
@@ -59,9 +61,7 @@ public class UserService implements UserDetailsService {
 
     public CEServiceResponse saveUser(User user, String role) {
         try {
-            if (user.getAuthorities().stream()
-                    .map(GrantedAuthority::getAuthority)
-                    .noneMatch(r -> Objects.equals(r, role)))
+            if (isNewRole.test(Pair.with(user, role)))
             {
                 if (!Objects.equals(role, "ROLE_ADMIN") && user.getInstitution() == null) {
                     log.info(String.format("Provided user %s 's institution is null", user.getId()));
@@ -168,4 +168,11 @@ public class UserService implements UserDetailsService {
             return CEServiceResponse.error().data(e);
         }
     }
+
+    /**
+     * Returning a predicate to check if a given role does not exist with the given user
+     */
+    static final Predicate<Pair<User, String>> isNewRole = pair -> pair.getValue0().getAuthorities().stream()
+            .map(GrantedAuthority::getAuthority)
+            .noneMatch(r -> Objects.equals(r, pair.getValue1()));
 }

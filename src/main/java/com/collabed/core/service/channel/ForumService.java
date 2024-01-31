@@ -44,7 +44,7 @@ public class ForumService {
     public CEServiceResponse createThread(Thread thread) {
         try {
             // TODO: implementation for checks on chained threads
-            Thread savedThread = threadRepository.save(thread);
+            var savedThread = threadRepository.save(thread);
             log.info("Thread saved successfully");
 
             return CEServiceResponse.success().data(savedThread);
@@ -62,10 +62,10 @@ public class ForumService {
 
     public CEServiceResponse resolveThread(String threadId) {
         try {
-            Thread thread = threadRepository.findById(threadId).orElseThrow();
+            var thread = threadRepository.findById(threadId).orElseThrow();
 
             thread.setResolved(true);
-            Thread resolvedThread = threadRepository.save(thread);
+            var resolvedThread = threadRepository.save(thread);
 
             log.info("Thread resolved successfully");
             return CEServiceResponse.success().data(resolvedThread);

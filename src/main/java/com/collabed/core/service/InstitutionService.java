@@ -30,7 +30,7 @@ public class InstitutionService {
                 );
             }
 
-            Address address = addressRepository.save(institution.getAddress());
+            var address = addressRepository.save(institution.getAddress());
 
             institution.setAddress(address);
             Institution savedInstitution = institutionRepository.save(institution);
@@ -45,8 +45,9 @@ public class InstitutionService {
 
     public CEServiceResponse getAll() {
         try {
-            List<Institution> institutions = institutionRepository.findAll();
+            var institutions = institutionRepository.findAll();
             return CEServiceResponse.success().data(institutions);
+
         } catch (RuntimeException e) {
             log.error(String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "institution"));
             return CEServiceResponse.error().data(e);
