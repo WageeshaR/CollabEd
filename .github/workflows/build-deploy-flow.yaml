@@ -16,8 +16,8 @@ on:
 env:
   AWS_REGION: eu-west-2
   ECR_REPOSITORY: ce-java-repo
-  ECS_SERVICE: ce-app-ecs-service
-  ECS_CLUSTER: CEDevelopCluster
+  ECS_SERVICE: service-connect-backend-service
+  ECS_CLUSTER: ce-develop-cluster
   ECS_TASK_DEFINITION: .github/workflows/ecs-task-definition.json
   CONTAINER_NAME: java
 
