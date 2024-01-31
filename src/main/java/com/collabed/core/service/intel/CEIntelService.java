@@ -18,6 +18,11 @@ import org.springframework.stereotype.Service;
 import java.net.URISyntaxException;
 import java.util.List;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Service
 @Log4j2
 public class CEIntelService {

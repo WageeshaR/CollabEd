@@ -14,6 +14,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Document

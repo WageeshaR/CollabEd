@@ -9,6 +9,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Component
 public class ScheduledPostProcessor {
     private final JobLauncher launcher;

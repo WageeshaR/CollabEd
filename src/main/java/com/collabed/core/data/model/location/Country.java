@@ -1,11 +1,15 @@
 package com.collabed.core.data.model.location;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
 
 @Data
 @Document

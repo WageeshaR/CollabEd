@@ -12,6 +12,11 @@ import org.springframework.batch.item.ItemProcessor;
 
 import java.util.UUID;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Log4j2
 public class PostBodyProcessor implements ItemProcessor<Post, IntelTextContent> {
     @Override

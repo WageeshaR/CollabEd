@@ -7,6 +7,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class PostProxy extends Post {

@@ -27,6 +27,11 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Service
 @Log4j2
 @AllArgsConstructor

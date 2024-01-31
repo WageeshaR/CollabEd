@@ -1,6 +1,5 @@
 package com.collabed.core.data.model.channel;
 
-import com.collabed.core.data.model.AuditMetadata;
 import com.collabed.core.data.model.BatchProcessed;
 import com.collabed.core.data.model.user.User;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -11,7 +10,10 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
-import java.util.List;
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
 
 @EqualsAndHashCode(callSuper = true)
 @Document

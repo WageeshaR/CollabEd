@@ -1,13 +1,11 @@
 package com.collabed.core.service.license;
 
-import com.collabed.core.data.model.Session;
 import com.collabed.core.data.model.license.LicenseModel;
 import com.collabed.core.data.model.license.LicenseOption;
 import com.collabed.core.data.model.license.LicenseSession;
 import com.collabed.core.data.repository.LicenseRepository;
 import com.collabed.core.data.repository.SessionRepository;
 import com.collabed.core.runtime.exception.CEInternalErrorMessage;
-import com.collabed.core.runtime.exception.CEServiceError;
 import com.collabed.core.service.util.CEServiceResponse;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -15,6 +13,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
 
 @Service
 @AllArgsConstructor

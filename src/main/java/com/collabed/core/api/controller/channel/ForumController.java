@@ -13,6 +13,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @RestController
 @RequestMapping("forums")
 @RequiredArgsConstructor

@@ -12,6 +12,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @RestController
 @RequestMapping("login")
 @AllArgsConstructor

@@ -8,6 +8,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.web.context.WebApplicationContext;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Configuration
 public class GatewayBeanConfig {
 

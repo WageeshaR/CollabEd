@@ -4,7 +4,11 @@ import java.util.List;
 
 /**
  * Base CollabEd gateway interface for all internal gateways e.g., payments, intel, etc.
+ *
+ * @author Wageesha Rasanjana
+ * @since 1.0
  */
+
 public interface CEGateway {
     /**
      * Initialise the gateway into required state

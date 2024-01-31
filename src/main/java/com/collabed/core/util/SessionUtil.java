@@ -1,14 +1,17 @@
 package com.collabed.core.util;
 
 import com.collabed.core.runtime.exception.CEWebRequestError;
-import com.collabed.core.util.RandomUtil;
 import org.apache.tomcat.util.codec.binary.Base64;
 
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
 
 public class SessionUtil {
     private static final int SESSION_KEY_LEN = 14;

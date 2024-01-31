@@ -6,6 +6,11 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class BatchProcessed extends AuditMetadata {

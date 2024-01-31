@@ -16,6 +16,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @RestController
 @RequestMapping("users")
 @AllArgsConstructor

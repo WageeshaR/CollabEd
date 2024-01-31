@@ -1,7 +1,6 @@
 package com.collabed.core.service;
 
 import com.collabed.core.data.model.institution.Institution;
-import com.collabed.core.data.model.location.Address;
 import com.collabed.core.data.repository.AddressRepository;
 import com.collabed.core.data.repository.InstitutionRepository;
 import com.collabed.core.runtime.exception.CEInternalErrorMessage;
@@ -12,7 +11,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
 
 @Service
 @AllArgsConstructor

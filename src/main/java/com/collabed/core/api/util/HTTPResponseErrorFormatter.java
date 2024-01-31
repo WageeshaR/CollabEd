@@ -12,6 +12,11 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Log4j2
 public final class HTTPResponseErrorFormatter {
     public static List<String> format(Errors errors) {

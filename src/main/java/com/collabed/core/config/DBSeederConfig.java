@@ -31,6 +31,11 @@ public class DBSeederConfig {
     private final TopicRepository topicRepository;
     private final ObjectMapper objectMapper;
 
+    /**
+     * @author Wageesha Rasanjana
+     * @since 1.0
+     */
+
     @PostConstruct
     public void populateCountries() throws IOException {
         var countryCollectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, Country.class);

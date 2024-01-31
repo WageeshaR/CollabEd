@@ -10,6 +10,11 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 
 import java.io.IOException;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Configuration
 public class OAuth2Config extends SavedRequestAwareAuthenticationSuccessHandler {
     @Value("${client.host}")

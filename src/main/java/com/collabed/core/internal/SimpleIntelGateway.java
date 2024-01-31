@@ -23,6 +23,9 @@ import java.util.List;
  * This bean is instantiated once per web request, thus all state variables are encapsulated per-request basis.
  * @property ConnectionConfig is guarded just to ensure atomicity, but we expect only a single thread is operating
  * on an instance of this class at a time, with the same connectionConfig.
+ *
+ * @author Wageesha Rasanjana
+ * @since 1.0
  */
 @Log4j2
 @ThreadSafe

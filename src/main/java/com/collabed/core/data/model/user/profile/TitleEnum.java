@@ -2,6 +2,11 @@ package com.collabed.core.data.model.user.profile;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 public enum TitleEnum {
     CHANCELLOR("Chancellor"),
     VICE_CHANCELLOR("Vice-Chancellor"),

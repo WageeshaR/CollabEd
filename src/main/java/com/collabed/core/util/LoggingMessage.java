@@ -1,5 +1,10 @@
 package com.collabed.core.util;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 public class LoggingMessage {
     public static class Success {
         public static final String SAVE = "Entity saved successfully.";

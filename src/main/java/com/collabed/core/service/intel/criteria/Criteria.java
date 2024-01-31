@@ -5,6 +5,11 @@ import lombok.Data;
 
 import java.io.Serializable;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @AllArgsConstructor
 @Data
 public class Criteria {

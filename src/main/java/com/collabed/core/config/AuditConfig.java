@@ -10,6 +10,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Configuration
 @EnableMongoAuditing
 public class AuditConfig {

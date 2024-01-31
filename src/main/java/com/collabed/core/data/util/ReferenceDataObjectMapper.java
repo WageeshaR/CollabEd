@@ -10,6 +10,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Objects;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 public class ReferenceDataObjectMapper<T> {
     private MongoRepository<T, String> repository;
 

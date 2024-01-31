@@ -13,6 +13,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Service
 @Log4j2
 public class ForumService {

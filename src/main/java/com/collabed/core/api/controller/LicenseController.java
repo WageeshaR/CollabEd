@@ -19,6 +19,11 @@ import java.util.List;
 
 import static com.collabed.core.util.SessionUtil.generateSessionKey;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @RestController
 @RequestMapping("license")
 @AllArgsConstructor

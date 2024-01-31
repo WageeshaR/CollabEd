@@ -2,6 +2,11 @@ package com.collabed.core.service.util;
 
 import lombok.Data;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Data
 public class CEServiceResponse {
     private boolean success;

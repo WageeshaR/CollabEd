@@ -5,6 +5,11 @@ import com.collabed.core.data.repository.InstitutionRepository;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 public class TypeResolverMap {
     public static class RepositoryTypeResolver {
         public static final String INSTITUTION_REPOSITORY = "InstitutionRepository";
