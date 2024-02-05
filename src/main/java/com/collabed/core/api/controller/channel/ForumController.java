@@ -8,6 +8,9 @@ import com.collabed.core.service.channel.ForumService;
 import com.collabed.core.service.util.CEServiceResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
@@ -54,7 +57,7 @@ public class ForumController {
     }
 
     @PutMapping("resolve/{id}")
-    public ResponseEntity<?> resolveForum(@PathVariable(name = "id") String forumId) {
+    public ResponseEntity<?> resolveThread(@PathVariable(name = "id") String forumId) {
         CEServiceResponse response = forumService.resolveThread(forumId);
 
         if (response.isSuccess())
@@ -64,6 +67,27 @@ public class ForumController {
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 response.getMessage(),
                 (Exception) response.getData()
+        ));
+    }
+
+    @PostMapping("add_participant")
+    public ResponseEntity<?> addParticipantToThread(@RequestBody Map<String, String> request) {
+        if (!request.containsKey("thread") || request.get("thread") == null || request.get("thread").length() == 0) {
+            return ResponseEntity.badRequest().body("thread must not be empty");
+        }
+
+        if (!request.containsKey("user") || request.get("user") == null || request.get("user").length() == 0) {
+            return ResponseEntity.badRequest().body("user must not be empty");
+        }
+
+        CEServiceResponse response = forumService.addUserToThread(request.get("thread"), request.get("user"));
+
+        if (response.isSuccess())
+            return ResponseEntity.ok().body(response.getData());
+        return ResponseEntity.internalServerError().body(new ApiError(
+            HttpStatus.INTERNAL_SERVER_ERROR,
+            response.getMessage(),
+            (Exception) response.getData()
         ));
     }
 }

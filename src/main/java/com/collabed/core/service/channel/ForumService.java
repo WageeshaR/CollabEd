@@ -85,4 +85,8 @@ public class ForumService {
             ).build();
         }
     }
+
+public CEServiceResponse addUserToThread(String threadId, String userId) {
+        return CEServiceResponse.success().build();
+    }
 }
