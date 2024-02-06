@@ -9,6 +9,11 @@ import org.springframework.data.cassandra.core.mapping.Table;
 
 import java.util.UUID;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Table("intel_text_content")
 @Data
 public class IntelTextContent {

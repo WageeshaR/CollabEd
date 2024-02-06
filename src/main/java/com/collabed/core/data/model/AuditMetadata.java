@@ -9,6 +9,11 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Document
 @Setter
 public class AuditMetadata {

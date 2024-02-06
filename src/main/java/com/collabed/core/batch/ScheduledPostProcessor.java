@@ -9,6 +9,11 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Component
 public class ScheduledPostProcessor {
     private final JobLauncher launcher;
@@ -24,7 +29,7 @@ public class ScheduledPostProcessor {
 
     @Scheduled(cron = "0 0 * * * *")
     public void launch() throws Exception {
-        JobParameters params = new JobParametersBuilder()
+        var params = new JobParametersBuilder()
                 .addString("JobID", String.valueOf(System.currentTimeMillis()))
                 .toJobParameters();
 

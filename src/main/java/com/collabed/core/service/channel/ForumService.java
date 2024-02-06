@@ -13,6 +13,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.NoSuchElementException;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Service
 @Log4j2
 public class ForumService {
@@ -44,7 +49,7 @@ public class ForumService {
     public CEServiceResponse createThread(Thread thread) {
         try {
             // TODO: implementation for checks on chained threads
-            Thread savedThread = threadRepository.save(thread);
+            var savedThread = threadRepository.save(thread);
             log.info("Thread saved successfully");
 
             return CEServiceResponse.success().data(savedThread);
@@ -62,10 +67,10 @@ public class ForumService {
 
     public CEServiceResponse resolveThread(String threadId) {
         try {
-            Thread thread = threadRepository.findById(threadId).orElseThrow();
+            var thread = threadRepository.findById(threadId).orElseThrow();
 
             thread.setResolved(true);
-            Thread resolvedThread = threadRepository.save(thread);
+            var resolvedThread = threadRepository.save(thread);
 
             log.info("Thread resolved successfully");
             return CEServiceResponse.success().data(resolvedThread);
@@ -84,5 +89,9 @@ public class ForumService {
                     String.format(CEInternalErrorMessage.SERVICE_RUNTIME_ERROR, "forum")
             ).build();
         }
+    }
+
+public CEServiceResponse addUserToThread(String threadId, String userId) {
+        return CEServiceResponse.success().build();
     }
 }

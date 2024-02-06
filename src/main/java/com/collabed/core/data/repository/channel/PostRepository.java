@@ -11,6 +11,11 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Repository
 public interface PostRepository extends MongoRepository<Post, String> {
     Optional<List<Post>> findAllByParentEquals(Post post);

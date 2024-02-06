@@ -5,6 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Data
 public class Reaction {
     String emoji;

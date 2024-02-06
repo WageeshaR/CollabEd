@@ -23,6 +23,11 @@ import org.springframework.stereotype.Service;
 import java.lang.reflect.Method;
 import java.util.*;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Service
 @AllArgsConstructor
 @Log4j2
@@ -38,7 +43,7 @@ public class PostService {
             Pageable pageable = PageRequest.of(0, DEFAULT_FETCH_LIMIT, Sort.Direction.DESC, "createdDate");
 
             if (personnel) {
-                User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+                var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
                 summarisedPosts = summarisePosts(
                         postRepository.findAllByAuthorAndChannelId(user, channelId, pageable).getContent()
                 );
@@ -61,15 +66,16 @@ public class PostService {
 
     public CEServiceResponse getPostById(String id) {
         try {
-            Post post = postRepository.findById(id).orElseThrow();
+            var post = postRepository.findById(id).orElseThrow();
 
-            String currentUser = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
-            String author = post.getAuthor().getUsername();
+            var currentUser = ((User) SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
+            var author = post.getAuthor().getUsername();
 
             if (!Objects.equals(author, currentUser))
                 return CEServiceResponse.success().data(new PostProxy(post));
 
             return CEServiceResponse.success().data(post);
+
         } catch (NoSuchElementException e) {
             log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
             return CEServiceResponse.error().data(e);
@@ -78,12 +84,13 @@ public class PostService {
 
     public CEServiceResponse getAllChildrenSummary(String id) {
         try {
-            Post parent = postRepository.findById(id).orElseThrow();
+            var parent = postRepository.findById(id).orElseThrow();
 
-            Optional<List<Post>> optionalChildren = postRepository.findAllByParentEquals(parent);
+            var optionalChildren = postRepository.findAllByParentEquals(parent);
 
-            List<Post> summarisedChildPosts = optionalChildren.map(this::summarisePosts).orElseThrow();
+            var summarisedChildPosts = optionalChildren.map(this::summarisePosts).orElseThrow();
             return CEServiceResponse.success().data(summarisedChildPosts);
+
         } catch (NoSuchElementException e) {
             log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
             return CEServiceResponse.error().data(e);
@@ -91,7 +98,7 @@ public class PostService {
     }
 
     public CEServiceResponse savePost(Post post) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         try {
             if (post.getAuthor() != null && !post.getAuthor().getId().equals(user.getId()))
@@ -99,15 +106,17 @@ public class PostService {
 
             else post.setAuthor(user);
 
-            Post savedPost = postRepository.save(post);
+            var savedPost = postRepository.save(post);
 
             return CEServiceResponse.success().data(savedPost);
         } catch (IllegalAccessException e) {
             log.error(LoggingMessage.Error.ILLEGAL_MODIFICATION + e);
             return CEServiceResponse.error(String.format(CEUserErrorMessage.ENTITY_NOT_BELONG_TO_USER, "post")).data(e);
+
         } catch (DuplicateKeyException e) {
             log.error(LoggingMessage.Error.DUPLICATE_KEY);
             return CEServiceResponse.error(String.format(CEUserErrorMessage.ENTITY_ALREADY_EXISTS, "post")).data(e);
+
         } catch (Exception e) {
             log.error(LoggingMessage.Error.SERVICE + e);
             return CEServiceResponse.error(String.format(CEInternalErrorMessage.SERVICE_UPDATE_FAILED, "post")).data(e);
@@ -115,23 +124,27 @@ public class PostService {
     }
 
     public CEServiceResponse saveReaction(Reaction reaction) {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        var user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
         try {
-            Post post = postRepository.findById(reaction.getPost().getId()).orElseThrow();
+            var post = postRepository.findById(reaction.getPost().getId()).orElseThrow();
 
             if (!post.getAuthor().getId().equals(user.getId()))
                 throw new IllegalAccessException();
 
             reaction.setUser(user);
 
-            Reaction saved = mongoTemplate.save(reaction, "reaction");
+            var saved = mongoTemplate.save(reaction, "reaction");
             return CEServiceResponse.success().data(saved);
+
         } catch (IllegalAccessException e) {
             log.error(LoggingMessage.Error.ILLEGAL_MODIFICATION + e);
             return CEServiceResponse.error(String.format(CEUserErrorMessage.ENTITY_NOT_BELONG_TO_USER, "post")).data(e);
+
         } catch (NoSuchElementException e) {
             log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
             return CEServiceResponse.error(String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "post")).data(e);
+
         } catch (Exception e) {
             log.error(LoggingMessage.Error.SERVICE + e);
             return CEServiceResponse.error(String.format(CEInternalErrorMessage.SERVICE_UPDATE_FAILED, "post")).data(e);
@@ -139,7 +152,7 @@ public class PostService {
     }
 
     private List<Post> summarisePosts(List<Post> posts) {
-        List<Post> summarisedPosts = new ArrayList<>(posts);
+        var summarisedPosts = new ArrayList<>(posts);
         for (Post post : summarisedPosts) {
             post.setAuthor(null);
 
@@ -152,8 +165,8 @@ public class PostService {
     }
 
     public Method returnSummarisedPostsWithAccess() throws NoSuchMethodException {
-        Method summarisedPosts = this.getClass().getDeclaredMethod("summarisePosts", List.class);
-        summarisedPosts.setAccessible(true);
-        return summarisedPosts;
+        var summarisedPostsMethod = this.getClass().getDeclaredMethod("summarisePosts", List.class);
+        summarisedPostsMethod.setAccessible(true);
+        return summarisedPostsMethod;
     }
 }

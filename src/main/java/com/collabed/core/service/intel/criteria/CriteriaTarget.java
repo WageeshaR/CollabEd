@@ -5,6 +5,11 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Data
 public class CriteriaTarget {
     private final TargetType targetType;

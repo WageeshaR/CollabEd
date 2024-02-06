@@ -9,7 +9,11 @@ import org.jsoup.select.NodeVisitor;
 
 /**
  * A simple utility class for processing documents, using the examples provided at <a href="https://github.com/jhy/jsoup">...</a>
+ *
+ * @author Wageesha Rasanjana
+ * @since 1.0
  */
+
 public class DocProcessor {
 
     public static String getPlainText(Element element) {

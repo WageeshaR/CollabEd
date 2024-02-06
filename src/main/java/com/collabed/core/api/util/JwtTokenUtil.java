@@ -13,6 +13,11 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.function.Function;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Component
 public class JwtTokenUtil implements Serializable {
     private static final int ACCESS_TOKEN_VALIDITY_SECONDS = 3600;

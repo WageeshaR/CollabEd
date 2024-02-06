@@ -1,5 +1,10 @@
 package com.collabed.core.service.intel.criteria;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 public enum CriteriaScope {
     FILTER, // produce a filtered collection based on a supplied criteria
     GENERATE, // generate a new outcome based on a supplied criteria

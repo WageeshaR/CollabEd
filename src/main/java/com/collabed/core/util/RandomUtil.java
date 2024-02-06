@@ -5,6 +5,11 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 public class RandomUtil {
     public static class RandomString {
 

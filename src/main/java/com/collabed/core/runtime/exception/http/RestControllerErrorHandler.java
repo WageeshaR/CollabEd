@@ -10,13 +10,20 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
 public class RestControllerErrorHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDenied(AccessDeniedException ex) {
-        ApiError error = new ApiError(HttpStatus.UNAUTHORIZED);
+        var error = new ApiError(HttpStatus.UNAUTHORIZED);
+
         error.setMessage(ex.getClass().getName());
+
         return buildResponseEntity(error);
     }
 

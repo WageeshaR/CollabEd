@@ -9,8 +9,8 @@ import com.collabed.core.data.repository.user.ProfileRepository;
 import com.collabed.core.data.repository.user.UserGroupRepository;
 import com.collabed.core.data.repository.user.UserRepository;
 import com.collabed.core.runtime.exception.CEServiceError;
-import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
+import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.util.CEServiceResponse;
 import com.collabed.core.service.util.SecurityUtil;
 import org.bson.types.ObjectId;
@@ -19,14 +19,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.security.test.context.support.WithSecurityContext;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -42,6 +38,12 @@ public class UserServiceTests {
     private UserService userService;
     private User user;
     private UserGroup userGroup;
+
+    private Predicate<User> roleFilter(String role) {
+        return u -> Objects.equals(
+                u.getAuthorities().stream().toList().get(0).getAuthority(), role
+        );
+    }
 
     @BeforeEach
     public void setup() {
@@ -98,9 +100,9 @@ public class UserServiceTests {
     public void userServiceGetAllTest() {
         List<User> allUsers = userService.getAll();
         assertNotNull(allUsers);
-        assertEquals(allUsers.stream().filter(u -> Objects.equals(u.getAuthorities().stream().toList().get(0).getAuthority(), "ROLE_STUDENT")).count(), 2);
-        assertEquals(allUsers.stream().filter(u -> Objects.equals(u.getAuthorities().stream().toList().get(0).getAuthority(), "ROLE_FACILITATOR")).count(), 2);
-        assertEquals(allUsers.stream().filter(u -> Objects.equals(u.getAuthorities().stream().toList().get(0).getAuthority(), "ROLE_ADMIN")).count(), 2);
+        assertEquals(allUsers.stream().filter(roleFilter("ROLE_STUDENT")).count(), 2);
+        assertEquals(allUsers.stream().filter(roleFilter("ROLE_FACILITATOR")).count(), 2);
+        assertEquals(allUsers.stream().filter(roleFilter("ROLE_ADMIN")).count(), 2);
     }
 
     @Test

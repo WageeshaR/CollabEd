@@ -5,6 +5,11 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.util.Map;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PostContent {

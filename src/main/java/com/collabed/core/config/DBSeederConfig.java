@@ -31,10 +31,17 @@ public class DBSeederConfig {
     private final TopicRepository topicRepository;
     private final ObjectMapper objectMapper;
 
+    /**
+     * @author Wageesha Rasanjana
+     * @since 1.0
+     */
+
     @PostConstruct
     public void populateCountries() throws IOException {
-        CollectionType countryCollectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, Country.class);
-        ClassPathResource countriesResource = new ClassPathResource(format("seeder%scountries.json", File.separator));
+        var countryCollectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, Country.class);
+
+        var countriesResource = new ClassPathResource(format("seeder%scountries.json", File.separator));
+
         try (InputStream inputStream = countriesResource.getInputStream()) {
             List<Country> countries = objectMapper.readValue(inputStream, countryCollectionType);
             countryRepository.saveAll(countries);
@@ -43,9 +50,11 @@ public class DBSeederConfig {
 
     @PostConstruct
     public void populateLicensingData() throws IOException {
-        CollectionType licenseModelsCollectionType
+        var licenseModelsCollectionType
                 = objectMapper.getTypeFactory().constructCollectionType(List.class, LicenseModel.class);
-        ClassPathResource licenseModelsResource = new ClassPathResource(format("seeder%slicense_models.json", File.separator));
+
+        var licenseModelsResource = new ClassPathResource(format("seeder%slicense_models.json", File.separator));
+
         try (InputStream inputStream = licenseModelsResource.getInputStream()) {
             List<LicenseModel> licenseModels = objectMapper.readValue(inputStream, licenseModelsCollectionType);
             licenseRepository.saveAll(licenseModels);
@@ -54,8 +63,10 @@ public class DBSeederConfig {
 
     @PostConstruct
     public void populateTopics() throws IOException {
-        CollectionType topicsCollectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, Topic.class);
-        ClassPathResource topicsResource = new ClassPathResource(format("seeder%stopics.json", File.separator));
+        var topicsCollectionType = objectMapper.getTypeFactory().constructCollectionType(List.class, Topic.class);
+
+        var topicsResource = new ClassPathResource(format("seeder%stopics.json", File.separator));
+
         try (InputStream inputStream = topicsResource.getInputStream()) {
             List<Topic> topics = objectMapper.readValue(inputStream, topicsCollectionType);
             topicRepository.saveAll(topics);

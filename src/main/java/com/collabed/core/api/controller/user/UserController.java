@@ -16,6 +16,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @RestController
 @RequestMapping("users")
 @AllArgsConstructor
@@ -25,7 +30,8 @@ public class UserController {
     // users
     @GetMapping("/{id}")
     public ResponseEntity<?> getUser(@PathVariable String id) {
-        CEServiceResponse user = userService.findUser(id);
+        var user = userService.findUser(id);
+
         return user.isSuccess() ?
                 ResponseEntity.ok().body(user.getData()) : ResponseEntity.internalServerError().body(user.getData());
     }
@@ -84,7 +90,8 @@ public class UserController {
     @PatchMapping("/delete/{id}")
     @RolesAllowed({"SUPER_ADMIN", "ADMIN"})
     public ResponseEntity<?> deleteUser(@PathVariable String id) {
-        CEServiceResponse deleted = userService.deleteUser(id);
+        var deleted = userService.deleteUser(id);
+
         return deleted.isSuccess() ? ResponseEntity.ok().build() : ResponseEntity.internalServerError().body(new ApiError(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 deleted.getData().toString()
@@ -99,7 +106,7 @@ public class UserController {
             );
         }
 
-        CEServiceResponse response = userService.createUserProfile(profile);
+        var response = userService.createUserProfile(profile);
 
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
@@ -118,7 +125,8 @@ public class UserController {
             );
         }
 
-        CEServiceResponse saved = userService.saveUserGroup(group);
+        var saved = userService.saveUserGroup(group);
+
         if (saved.isSuccess())
             return ResponseEntity.status(HttpStatus.CREATED).body(saved.getData());
 
@@ -134,14 +142,16 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("group_id must be specified");
         }
 
-        CEServiceResponse group = userService.addToGroup(request.get("user_id"), request.get("group_id"));
+        var group = userService.addToGroup(request.get("user_id"), request.get("group_id"));
+
         return group.isSuccess() ?
                 ResponseEntity.ok().body(group.getData()) : ResponseEntity.internalServerError().body(group.getData());
     }
 
     @GetMapping("/groups/{id}")
     public ResponseEntity<?> groupDetails(@PathVariable String id) {
-        CEServiceResponse group = userService.loadGroupById(id);
+        var group = userService.loadGroupById(id);
+
         return group.isSuccess() ?
                 ResponseEntity.ok().body(group.getData()) : ResponseEntity.internalServerError().body(group.getData());
     }

@@ -8,6 +8,11 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Data
 @Document
 @CompoundIndex(

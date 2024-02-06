@@ -23,6 +23,9 @@ import java.util.List;
  * This bean is instantiated once per web request, thus all state variables are encapsulated per-request basis.
  * @property ConnectionConfig is guarded just to ensure atomicity, but we expect only a single thread is operating
  * on an instance of this class at a time, with the same connectionConfig.
+ *
+ * @author Wageesha Rasanjana
+ * @since 1.0
  */
 @Log4j2
 @ThreadSafe
@@ -52,7 +55,6 @@ public class SimpleIntelGateway implements CEGateway {
     public void authenticate() {
         try {
             // TODO: implement authentication
-            System.out.println(connectionConfig.httpClient.toString());
          } catch (Exception e) {
             // TODO: handle and log errors properly
             log.error(e);
@@ -82,7 +84,7 @@ public class SimpleIntelGateway implements CEGateway {
 
              if (response.statusCode() == HttpStatus.OK.value()) {
                  try {
-                     ObjectMapper objectMapper = new ObjectMapper();
+                     var objectMapper = new ObjectMapper();
                      T value = objectMapper.readValue(response.body(), resultType);
 
                      if (value instanceof List<?>) {
@@ -136,7 +138,7 @@ public class SimpleIntelGateway implements CEGateway {
         return result;
     }
 
-    private static class ConnectionConfig {
+    private static final class ConnectionConfig {
         HttpClient httpClient;
         HttpRequest httpRequest;
 

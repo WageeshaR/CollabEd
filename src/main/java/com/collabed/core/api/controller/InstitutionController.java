@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @RestController
 @RequestMapping("institutions")
 @AllArgsConstructor
@@ -20,7 +25,8 @@ public class InstitutionController {
     @GetMapping
     @RolesAllowed({"ADMIN", "SUPER_ADMIN"})
     public ResponseEntity<?> all() {
-        CEServiceResponse response = institutionService.getAll();
+        var response = institutionService.getAll();
+
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(response.getData());
     }

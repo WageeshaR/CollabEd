@@ -1,5 +1,10 @@
 package com.collabed.core.data.model.pricing;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 public class Subject {
     public static final String INDIVIDUAL_LICENSE_MONTHLY_RATE = "Individual license monthly rate";
     public static final String INDIVIDUAL_LICENSE_ANNUAL_RATE = "Individual license annual rate";

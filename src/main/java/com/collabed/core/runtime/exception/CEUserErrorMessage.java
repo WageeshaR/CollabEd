@@ -1,5 +1,10 @@
 package com.collabed.core.runtime.exception;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 public class CEUserErrorMessage {
     public static final String ENTITY_ALREADY_EXISTS = "A %s with the same primary key data already exists.";
     public static final String ENTITY_NOT_EXIST = "The specified %s does not exist in our system.";

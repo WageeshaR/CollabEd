@@ -11,6 +11,11 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Repository
 public interface ChannelRepository extends MongoRepository<Channel, String> {
     @Query("{ deleted: false }")

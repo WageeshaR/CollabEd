@@ -7,6 +7,11 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+/**
+ * @author Wageesha Rasanjana
+ * @since 1.0
+ */
+
 @Document(collection = "topic")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record Topic(
