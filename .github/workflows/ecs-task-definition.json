@@ -1,17 +1,16 @@
 {
-  "taskDefinitionArn": "arn:aws:ecs:eu-west-2:289945415410:task-definition/ce-app-task-def:10",
+  "taskDefinitionArn": "arn:aws:ecs:eu-west-2:289945415410:task-definition/service-connect-backend-task:4",
   "containerDefinitions": [
     {
-      "name": "mongodb",
-      "image": "mongo",
-      "cpu": 512,
-      "memory": 1024,
-      "memoryReservation": 1024,
+      "name": "java",
+      "image": "289945415410.dkr.ecr.eu-west-2.amazonaws.com/ce-java-repo:a6006d2e976fcf54403dd16b13948146a17d3526",
+      "cpu": 256,
+      "memory": 512,
       "portMappings": [
         {
-          "name": "mongo-27017-tcp",
-          "containerPort": 27017,
-          "hostPort": 27017,
+          "name": "java-8080",
+          "containerPort": 8080,
+          "hostPort": 8080,
           "protocol": "tcp",
           "appProtocol": "http"
         }
@@ -19,55 +18,52 @@
       "essential": true,
       "environment": [
         {
-          "name": "MONGO_INITDB_ROOT_PASSWORD",
-          "value": "rootpass"
+          "name": "DB_HOST",
+          "value": "10.0.136.28"
         },
         {
-          "name": "MONGO_INITDB_ROOT_USERNAME",
-          "value": "rootuser"
+          "name": "SPRING_ACTIVE_PROFILE",
+          "value": "develop"
         }
       ],
-      "environmentFiles": [],
       "mountPoints": [],
       "volumesFrom": [],
-      "ulimits": [],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
           "awslogs-create-group": "true",
-          "awslogs-group": "/ecs/ce-app-task-def/mongo",
+          "awslogs-group": "/ecs/service-connect-java-backend",
           "awslogs-region": "eu-west-2",
-          "awslogs-stream-prefix": "ecs"
+          "awslogs-stream-prefix": "java"
         },
         "secretOptions": []
       },
       "healthCheck": {
         "command": [
           "CMD-SHELL",
-          "sleep 5 && echo hello"
+          "echo HealthOk"
         ],
         "interval": 5,
-        "timeout": 10,
+        "timeout": 2,
         "retries": 3,
-        "startPeriod": 30
+        "startPeriod": 10
       }
     },
     {
       "name": "mongo-express",
       "image": "mongo-express",
-      "cpu": 512,
-      "memory": 1024,
-      "memoryReservation": 1024,
+      "cpu": 256,
+      "memory": 512,
       "portMappings": [
         {
-          "name": "me-8081-tcp",
+          "name": "mongoexpress-8081",
           "containerPort": 8081,
           "hostPort": 8081,
           "protocol": "tcp",
           "appProtocol": "http"
         }
       ],
-      "essential": false,
+      "essential": true,
       "environment": [
         {
           "name": "ME_CONFIG_BASICAUTH_PASSWORD",
@@ -79,7 +75,7 @@
         },
         {
           "name": "ME_CONFIG_MONGODB_SERVER",
-          "value": "localhost"
+          "value": "10.0.136.28"
         },
         {
           "name": "ME_CONFIG_BASICAUTH_USERNAME",
@@ -94,77 +90,25 @@
           "value": "admin"
         }
       ],
-      "environmentFiles": [],
       "mountPoints": [],
       "volumesFrom": [],
-      "dependsOn": [
-        {
-          "containerName": "mongodb",
-          "condition": "HEALTHY"
-        }
-      ]
-    },
-    {
-      "name": "java",
-      "image": "test",
-      "cpu": 1024,
-      "memory": 2048,
-      "memoryReservation": 2048,
-      "portMappings": [
-        {
-          "name": "java-8080-http",
-          "containerPort": 8080,
-          "hostPort": 8080,
-          "protocol": "tcp",
-          "appProtocol": "http"
-        }
-      ],
-      "essential": false,
-      "environment": [
-        {
-          "name": "DB_HOST",
-          "value": "localhost"
-        },
-        {
-          "name": "SPRING_ACTIVE_PROFILE",
-          "value": "develop"
-        }
-      ],
-      "environmentFiles": [],
-      "mountPoints": [],
-      "volumesFrom": [],
-      "dependsOn": [
-        {
-          "containerName": "mongodb",
-          "condition": "HEALTHY"
-        }
-      ],
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
           "awslogs-create-group": "true",
-          "awslogs-group": "/ecs/ce-app-task-def/java",
+          "awslogs-group": "/ecs/service-connect-mongo-express",
           "awslogs-region": "eu-west-2",
-          "awslogs-stream-prefix": "ecs"
+          "awslogs-stream-prefix": "mongo-express"
         },
         "secretOptions": []
-      },
-      "healthCheck": {
-        "command": [
-          "CMD-SHELL",
-          "echo HealthOk"
-        ],
-        "interval": 5,
-        "timeout": 2,
-        "retries": 3,
-        "startPeriod": 10
       }
     }
   ],
-  "family": "ce-app-task-def",
+  "family": "service-connect-backend-task",
+  "taskRoleArn": "arn:aws:iam::289945415410:role/ecs-task-role",
   "executionRoleArn": "arn:aws:iam::289945415410:role/ecsTaskExecutionRole",
   "networkMode": "awsvpc",
-  "revision": 10,
+  "revision": 4,
   "volumes": [],
   "status": "ACTIVE",
   "requiresAttributes": [
@@ -175,16 +119,19 @@
       "name": "ecs.capability.execution-role-awslogs"
     },
     {
+      "name": "com.amazonaws.ecs.capability.ecr-auth"
+    },
+    {
       "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
     },
     {
-      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
+      "name": "com.amazonaws.ecs.capability.task-iam-role"
     },
     {
       "name": "ecs.capability.container-health-check"
     },
     {
-      "name": "ecs.capability.container-ordering"
+      "name": "ecs.capability.execution-role-ecr-pull"
     },
     {
       "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
@@ -201,16 +148,9 @@
     "EC2",
     "FARGATE"
   ],
-  "requiresCompatibilities": [
-    "FARGATE"
-  ],
-  "cpu": "2048",
-  "memory": "4096",
-  "runtimePlatform": {
-    "cpuArchitecture": "X86_64",
-    "operatingSystemFamily": "LINUX"
-  },
-  "registeredAt": "2023-12-27T11:30:40.375Z",
+  "cpu": "512",
+  "memory": "1024",
+  "registeredAt": "2023-12-29T14:58:44.338Z",
   "registeredBy": "arn:aws:iam::289945415410:root",
   "tags": []
 }
