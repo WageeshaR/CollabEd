@@ -11,18 +11,26 @@ import com.collabed.core.service.util.CEServiceResponse;
 import lombok.AllArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 public class LicenseServiceTests {
-    private final LicenseRepository licenseRepository;
-    private final SessionRepository sessionRepository;
+    @Mock
+    private LicenseRepository licenseRepository;
+    @Mock
+    private SessionRepository sessionRepository;
+    @InjectMocks
     private LicenseService licenseService;
 
     LicenseServiceTests() {

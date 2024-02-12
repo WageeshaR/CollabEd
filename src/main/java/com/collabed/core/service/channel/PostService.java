@@ -55,6 +55,7 @@ public class PostService {
             }
 
             return CEServiceResponse.success().data(summarisedPosts);
+
         } catch (NoSuchElementException e) {
             log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
             return CEServiceResponse.error(String.format(CEUserErrorMessage.NO_MATCHING_ELEMENTS_FOUND, "posts")).data(e);

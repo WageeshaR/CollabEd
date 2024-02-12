@@ -10,9 +10,13 @@ import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.service.util.CEServiceResponse;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,17 +30,14 @@ import java.util.*;
 import static com.collabed.core.service.util.SecurityUtil.withAuthentication;
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 public class PostServiceTests {
-    private final PostRepository postRepository;
-    private final MongoTemplate mongoTemplate;
-
-    private final PostService postService;
-
-    public PostServiceTests() {
-        this.postRepository = Mockito.mock(PostRepository.class);
-        this.mongoTemplate = Mockito.mock(MongoTemplate.class);
-        postService = new PostService(postRepository, mongoTemplate);
-    }
+    @Mock
+    private PostRepository postRepository;
+    @Mock
+    private MongoTemplate mongoTemplate;
+    @InjectMocks
+    private PostService postService;
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
@@ -44,11 +45,11 @@ public class PostServiceTests {
         User user = Mockito.mock(User.class);
         Page<?> postPage = Mockito.mock(Page.class);
 
-        Mockito.when(withAuthentication().getPrincipal()).thenReturn(user);
-
-        if (personnel)
+        if (personnel) {
+            Mockito.when(withAuthentication().getPrincipal()).thenReturn(user);
             Mockito.doReturn(postPage).when(postRepository)
                     .findAllByAuthorAndChannelId(Mockito.any(User.class), Mockito.anyString(), Mockito.any(Pageable.class));
+        }
         else
             Mockito.doReturn(postPage).when(postRepository)
                     .findAllByChannelId(Mockito.anyString(), Mockito.any(Pageable.class));
@@ -58,15 +59,19 @@ public class PostServiceTests {
         assertInstanceOf(List.class, response.getData());
     }
 
-    @Test
-    public void getAllPostsErrorTest() {
-        Mockito.doThrow(NoSuchElementException.class).when(postRepository)
-                .findAllByAuthorAndChannelId(Mockito.any(User.class), Mockito.anyString(), Mockito.any(Pageable.class));
-
-        Mockito.doThrow(NoSuchElementException.class).when(postRepository)
+    @ParameterizedTest
+    @ValueSource(booleans = {true, false})
+    public void getAllPostsErrorTest(boolean personnel) {
+        if (personnel) {
+            Mockito.when(withAuthentication().getPrincipal()).thenReturn(Mockito.mock(User.class));
+            Mockito.doThrow(NoSuchElementException.class).when(postRepository)
+                    .findAllByAuthorAndChannelId(Mockito.any(User.class), Mockito.anyString(), Mockito.any(Pageable.class));
+        }
+        else
+            Mockito.doThrow(NoSuchElementException.class).when(postRepository)
                 .findAllByChannelId(Mockito.anyString(), Mockito.any(Pageable.class));
 
-        CEServiceResponse response = postService.getAllPosts("myrandomchannelid", new Random().nextBoolean());
+        CEServiceResponse response = postService.getAllPosts("myrandomchannelid", personnel);
         assertTrue(response.isError());
         assertEquals(response.getMessage(), String.format(CEUserErrorMessage.NO_MATCHING_ELEMENTS_FOUND, "posts"));
     }
@@ -137,7 +142,11 @@ public class PostServiceTests {
 
         CEServiceResponse response1 = postService.getAllChildrenSummary("myrandompostid");
         assertTrue(response1.isError());
+    }
 
+    @Test
+    public void getAllChildrenSummaryError2Test() {
+        Mockito.when(postRepository.findById(Mockito.anyString())).thenReturn(Optional.of(Mockito.mock(Post.class)));
         Mockito.when(postRepository.findAllByParentEquals(Mockito.any(Post.class))).thenThrow(NoSuchElementException.class);
 
         CEServiceResponse response2 = postService.getAllChildrenSummary("myrandompostid");
@@ -206,7 +215,7 @@ public class PostServiceTests {
 
         Reaction reaction = Mockito.mock(Reaction.class, Mockito.RETURNS_DEEP_STUBS);
 
-        Mockito.when(postRepository.findById(Mockito.anyString())).thenThrow(NoSuchElementException.class);
+        Mockito.when(postRepository.findById(Mockito.any())).thenThrow(NoSuchElementException.class);
 
         CEServiceResponse response1 = postService.saveReaction(reaction);
         assertTrue(response1.isError());

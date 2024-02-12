@@ -13,6 +13,7 @@ public class RandomUtilTests {
     public void randomStringDefaultLengthTest() {
         assertEquals(new RandomString().nextString().length(), RandomString.DEFAULT_LENGTH);
     }
+
     @ParameterizedTest
     @ValueSource(ints = {10,50,100})
     public void randomStringWithLengthTest(int len) {

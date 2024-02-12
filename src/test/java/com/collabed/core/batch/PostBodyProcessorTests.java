@@ -5,18 +5,20 @@ import com.collabed.core.data.model.channel.Post;
 import com.collabed.core.data.model.channel.PostContent;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InjectMocks;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 public class PostBodyProcessorTests {
-    private final PostBodyProcessor processor;
+    @InjectMocks
+    private PostBodyProcessor processor;
 
-    public PostBodyProcessorTests() {
-        processor = new PostBodyProcessor();
-    }
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
     public void processTest(boolean isRtf) {

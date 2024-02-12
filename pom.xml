@@ -13,7 +13,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>core</name>
-	<description>Collaborative, insightful networking with your peers</description>
+	<description>Collaborative, insightful, educational networking with peers</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
