@@ -32,8 +32,8 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(
-    securedEnabled = true,
-    jsr250Enabled = true
+        securedEnabled = true,
+        jsr250Enabled = true
 )
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -56,32 +56,33 @@ public class SecurityConfig {
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(configurationSource()))
-            .csrf(AbstractHttpConfigurer::disable)
-            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests((requests) -> requests
-                    .requestMatchers(
-                            "/",
-                            "/register/*",
-                            "/login",
-                            "/api-docs",
-                            "/api-docs/*",
-                            "/swagger-ui/*")
-                    .permitAll()
-                    .anyRequest().authenticated()
-            )
-            .logout(logout -> logout.permitAll()
-                    .logoutSuccessHandler(
-                            (request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK)
-                    )
-            )
-            .addFilterBefore(
-                    jwtTokenFilter,
-                    UsernamePasswordAuthenticationFilter.class
-            )
+                .cors(cors -> cors.configurationSource(configurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests((requests) -> requests
+                        .requestMatchers(
+                                "/",
+                                "/register/*",
+                                "/login",
+                                "/api-docs",
+                                "/api-docs/*",
+                                "/swagger-ui/*")
+                        .permitAll()
+                        .anyRequest().authenticated()
+                )
+                .logout(logout -> logout.permitAll()
+                        .logoutSuccessHandler(
+                                (request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK)
+                        )
+                )
+                .addFilterBefore(
+                        jwtTokenFilter,
+                        UsernamePasswordAuthenticationFilter.class
+                )
         ;
         return http.build();
     }

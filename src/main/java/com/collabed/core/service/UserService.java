@@ -58,7 +58,9 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public List<User> getAll() { return userRepository.findAll(); }
+    public List<User> getAll() {
+        return userRepository.findAll();
+    }
 
     public List<User> getAll(String role) {
         return userRepository.findAllByAuthority(role).orElseGet(List::of);
@@ -66,8 +68,7 @@ public class UserService implements UserDetailsService {
 
     public CEServiceResponse saveUser(User user, String role) {
         try {
-            if (isNewRole.test(Pair.with(user, role)))
-            {
+            if (isNewRole.test(Pair.with(user, role))) {
                 if (!Objects.equals(role, "ROLE_ADMIN") && user.getInstitution() == null) {
                     log.info(String.format("Provided user %s 's institution is null", user.getId()));
                     return CEServiceResponse

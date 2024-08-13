@@ -35,6 +35,7 @@ public class UserController {
         return user.isSuccess() ?
                 ResponseEntity.ok().body(user.getData()) : ResponseEntity.internalServerError().body(user.getData());
     }
+
     @GetMapping
     @RolesAllowed({"SUPER_ADMIN", "ADMIN"})
     public ResponseEntity<?> getAll() {
@@ -110,7 +111,7 @@ public class UserController {
 
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
-                        HttpStatus.INTERNAL_SERVER_ERROR,
+                HttpStatus.INTERNAL_SERVER_ERROR,
                 response.getMessage(),
                 (Exception) response.getData()
         ));

@@ -38,11 +38,11 @@ public final class HTTPResponseErrorFormatter {
 
     /**
      * Simple function to convert camel case String to snake case
+     *
      * @param str: String to convert
      * @return converted String
      */
-    public static String camelToSnake(String str)
-    {
+    public static String camelToSnake(String str) {
         StringBuilder result = new StringBuilder();
 
         char c = str.charAt(0);
@@ -55,8 +55,7 @@ public final class HTTPResponseErrorFormatter {
             if (Character.isUpperCase(ch)) {
                 result.append('_');
                 result.append(Character.toLowerCase(ch));
-            }
-            else result.append(ch);
+            } else result.append(ch);
         }
         return result.toString();
     }

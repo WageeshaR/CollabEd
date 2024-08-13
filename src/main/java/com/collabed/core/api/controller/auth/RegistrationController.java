@@ -37,8 +37,9 @@ public class RegistrationController {
 
     /**
      * Endpoint to enter new students into the system
+     *
      * @param student user entity to be saved as a student
-     * @param errors jakarta validation errors
+     * @param errors  jakarta validation errors
      * @return ResponseEntity<?> object
      */
     @PostMapping("/student")
@@ -68,8 +69,9 @@ public class RegistrationController {
 
     /**
      * Endpoint to enter new facilitators into the system
+     *
      * @param facilitator user entity to be saved as a facilitator
-     * @param errors jakarta validation errors
+     * @param errors      jakarta validation errors
      * @return ResponseEntity<?> object
      */
     @PostMapping("/facilitator")
@@ -99,7 +101,8 @@ public class RegistrationController {
 
     /**
      * Endpoint to enter new admins into the system
-     * @param admin user entity to be saved as a admin
+     *
+     * @param admin  user entity to be saved as a admin
      * @param errors jakarta validation errors
      * @return ResponseEntity<?> object
      */
@@ -131,8 +134,9 @@ public class RegistrationController {
 
     /**
      * Endpoint to enter new institutions into the system
+     *
      * @param institution Institution entity to be saved
-     * @param errors jakarta validation errors
+     * @param errors      jakarta validation errors
      * @return ResponseEntity<?> object
      */
     @PostMapping("/institution")

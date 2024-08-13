@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface ThreadRepository extends MongoRepository<Thread, String> {}
+public interface ThreadRepository extends MongoRepository<Thread, String> {
+}

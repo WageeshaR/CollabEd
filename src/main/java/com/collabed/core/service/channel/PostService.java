@@ -47,8 +47,7 @@ public class PostService {
                 summarisedPosts = summarisePosts(
                         postRepository.findAllByAuthorAndChannelId(user, channelId, pageable).getContent()
                 );
-            }
-            else {
+            } else {
                 summarisedPosts = summarisePosts(
                         postRepository.findAllByChannelId(channelId, pageable).getContent()
                 );

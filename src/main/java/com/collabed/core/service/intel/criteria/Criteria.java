@@ -43,6 +43,7 @@ public class Criteria {
         private CriteriaTarget input;
         private CriteriaTarget subject;
         private CriteriaTarget output;
+
         CriteriaBuilder(CriteriaScope scope) {
             this.scope = scope;
         }

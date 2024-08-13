@@ -39,7 +39,7 @@ public class InstitutionService {
 
             log.info("Institution saved successfully");
             return CEServiceResponse.success().data(savedInstitution);
-        } catch (RuntimeException e){
+        } catch (RuntimeException e) {
             log.error("Error saving institution: " + e);
             return CEServiceResponse.error().data(e);
         }

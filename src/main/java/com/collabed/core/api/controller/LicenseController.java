@@ -29,6 +29,7 @@ import static com.collabed.core.util.SessionUtil.generateSessionKey;
 @AllArgsConstructor
 public class LicenseController {
     private final LicenseService licenseService;
+
     @GetMapping("/get-key")
     public ResponseEntity<?> getKey() {
         return ResponseEntity.ok().header(

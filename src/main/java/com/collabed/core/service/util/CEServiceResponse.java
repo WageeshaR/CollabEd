@@ -13,6 +13,7 @@ public class CEServiceResponse {
     private boolean error;
     private String message;
     private Object data;
+
     public CEServiceResponse(boolean success, boolean error, String message, Object data) {
         this.success = success;
         this.error = error;
@@ -44,6 +45,7 @@ public class CEServiceResponse {
 
     public interface Builder {
         CEServiceResponse data(Object data);
+
         CEServiceResponse build();
     }
 
@@ -57,6 +59,7 @@ public class CEServiceResponse {
             this.error = error;
             this.message = message;
         }
+
         @Override
         public CEServiceResponse data(Object data) {
             return new CEServiceResponse(this.success, this.error, this.message, data);

@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface UserGroupRepository extends MongoRepository<UserGroup, String> {}
+public interface UserGroupRepository extends MongoRepository<UserGroup, String> {
+}

@@ -39,7 +39,7 @@ public class Thread {
     public void addMember(User user) {
         if (this.members == null)
             this.members = new ArrayList<>();
-        
+
         try {
             this.members.add(user);
         } catch (Exception e) {
