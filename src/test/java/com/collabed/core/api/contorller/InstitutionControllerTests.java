@@ -52,11 +52,14 @@ class InstitutionControllerTests {
     @WithMockUser(authorities = {"ROLE_ADMIN"})
     void allTest(int num) throws Exception {
         List<Institution> institutions = new ArrayList<>();
+
         for (int i=0; i< num; i++)
             institutions.add(Mockito.mock(Institution.class));
+
         Mockito.when(institutionService.getAll()).thenReturn(
                 CEServiceResponse.success().data(institutions)
         );
+
         mockMvc.perform(MockMvcRequestBuilders
                     .get("/institutions")
                     .accept(MediaType.APPLICATION_JSON))
