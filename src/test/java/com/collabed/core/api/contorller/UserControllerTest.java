@@ -34,7 +34,7 @@ import static com.collabed.core.util.HttpRequestResponseUtils.countMatcher;
 
 @Import(SecurityConfig.class)
 @WebMvcTest(UserController.class)
-public class UserControllerTest {
+class UserControllerTest {
     @MockBean
     private UserService userService;
     @MockBean
@@ -45,7 +45,7 @@ public class UserControllerTest {
     // users
     @Test
     @WithMockUser(username = "testuser", authorities = {"ROLE_STUDENT", "ROLE_FACILITATOR"})
-    public void unauthenticatedAccessTest() throws Exception {
+    void unauthenticatedAccessTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                     .get("/users")
                     .accept(MediaType.APPLICATION_JSON))
@@ -55,38 +55,33 @@ public class UserControllerTest {
     @ParameterizedTest
     @ValueSource(ints = {3, 20, 100})
     @WithMockUser(username = "testuser", authorities = {"ROLE_ADMIN"})
-    public void getAllUsersAdminTest(int numUsers) throws Exception {
-        List<User> users = new ArrayList<>();
-        for (int i=0; i<numUsers; i++)
-            users.add(Mockito.mock(User.class));
-        Mockito.when(userService.getAll()).thenReturn(users);
-        mockMvc.perform(MockMvcRequestBuilders
-                        .get("/users")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$").value(countMatcher(numUsers)));
+    void getAllUsersAdminTest(int numUsers) throws Exception {
+        getUsersWithAuthority(numUsers);
     }
 
     @ParameterizedTest
     @ValueSource(ints = {3, 20, 100})
     @WithMockUser(username = "testuser", authorities = {"ROLE_SUPER_ADMIN"})
-    public void getAllUsersSuperAdminTest(int numUsers) throws Exception {
+    void getAllUsersSuperAdminTest(int numUsers) throws Exception {
+        getUsersWithAuthority(numUsers);
+    }
+
+    void getUsersWithAuthority(int numUsers) throws Exception {
         List<User> users = new ArrayList<>();
         for (int i=0; i<numUsers; i++)
             users.add(Mockito.mock(User.class));
         Mockito.when(userService.getAll()).thenReturn(users);
         mockMvc.perform(MockMvcRequestBuilders
-                        .get("/users")
-                        .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray())
-                .andExpect(jsonPath("$").value(countMatcher(numUsers)));
+                .get("/users")
+                .accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$").isArray())
+            .andExpect(jsonPath("$").value(countMatcher(numUsers)));
     }
 
     @Test
     @WithMockUser(username = "testuser", authorities = {"ROLE_STUDENT", "ROLE_FACILITATOR"})
-    public void getAllAdminsUnauthorisedTest() throws Exception {
+    void getAllAdminsUnauthorisedTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/users/admins")
                         .accept(MediaType.APPLICATION_JSON))
@@ -96,7 +91,7 @@ public class UserControllerTest {
     @ParameterizedTest
     @ValueSource(ints = {3, 20, 100})
     @WithMockUser(username = "testuser", authorities = {"ROLE_ADMIN"})
-    public void getAllAdminsAdminTest(int numUsers) throws Exception {
+    void getAllAdminsAdminTest(int numUsers) throws Exception {
         List<User> users = new ArrayList<>();
         for (int i=0; i<numUsers; i++)
             users.add(Mockito.mock(User.class));
@@ -112,7 +107,7 @@ public class UserControllerTest {
     @ParameterizedTest
     @ValueSource(ints = {3, 20, 100})
     @WithMockUser(username = "testuser", authorities = {"ROLE_SUPER_ADMIN"})
-    public void getAllAdminsSuperAdminTest(int numUsers) throws Exception {
+    void getAllAdminsSuperAdminTest(int numUsers) throws Exception {
         List<User> users = new ArrayList<>();
         for (int i=0; i<numUsers; i++)
             users.add(Mockito.mock(User.class));
@@ -127,7 +122,7 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(username = "testuser", authorities = {"ROLE_STUDENT"})
-    public void getAllStudentsUnauthorisedTest() throws Exception {
+    void getAllStudentsUnauthorisedTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/users/students")
                         .accept(MediaType.APPLICATION_JSON))
@@ -137,7 +132,7 @@ public class UserControllerTest {
     @ParameterizedTest
     @ValueSource(ints = {3, 20, 100})
     @WithMockUser(username = "testuser", authorities = {"ROLE_FACILITATOR"})
-    public void getAllStudentsFacilitatorTest(int numUsers) throws Exception {
+    void getAllStudentsFacilitatorTest(int numUsers) throws Exception {
         List<User> users = new ArrayList<>();
         for (int i=0; i<numUsers; i++)
             users.add(Mockito.mock(User.class));
@@ -153,7 +148,7 @@ public class UserControllerTest {
     @ParameterizedTest
     @ValueSource(ints = {3, 20, 100})
     @WithMockUser(username = "testuser", authorities = {"ROLE_ADMIN"})
-    public void getAllStudentsAdminTest(int numUsers) throws Exception {
+    void getAllStudentsAdminTest(int numUsers) throws Exception {
         List<User> users = new ArrayList<>();
         for (int i=0; i<numUsers; i++)
             users.add(Mockito.mock(User.class));
@@ -169,7 +164,7 @@ public class UserControllerTest {
     @ParameterizedTest
     @ValueSource(ints = {3, 20, 100})
     @WithMockUser(username = "testuser", authorities = {"ROLE_SUPER_ADMIN"})
-    public void getAllStudentsSuperAdminTest(int numUsers) throws Exception {
+    void getAllStudentsSuperAdminTest(int numUsers) throws Exception {
         List<User> users = new ArrayList<>();
         for (int i=0; i<numUsers; i++)
             users.add(Mockito.mock(User.class));
@@ -184,7 +179,7 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(username = "testuser", authorities = {"ROLE_STUDENT", "ROLE_FACILITATOR"})
-    public void getAllFacilitatorsUnauthorisedTest() throws Exception {
+    void getAllFacilitatorsUnauthorisedTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                         .get("/users/facilitators")
                         .accept(MediaType.APPLICATION_JSON))
@@ -194,7 +189,7 @@ public class UserControllerTest {
     @ParameterizedTest
     @ValueSource(ints = {3, 20, 100})
     @WithMockUser(username = "testuser", authorities = {"ROLE_ADMIN"})
-    public void getAllFacilitatorsAdminTest(int numUsers) throws Exception {
+    void getAllFacilitatorsAdminTest(int numUsers) throws Exception {
         List<User> users = new ArrayList<>();
         for (int i=0; i<numUsers; i++)
             users.add(Mockito.mock(User.class));
@@ -210,7 +205,7 @@ public class UserControllerTest {
     @ParameterizedTest
     @ValueSource(ints = {3, 20, 100})
     @WithMockUser(username = "testuser", authorities = {"ROLE_SUPER_ADMIN"})
-    public void getAllFacilitatorsSuperAdminTest(int numUsers) throws Exception {
+    void getAllFacilitatorsSuperAdminTest(int numUsers) throws Exception {
         List<User> users = new ArrayList<>();
         for (int i=0; i<numUsers; i++)
             users.add(Mockito.mock(User.class));
@@ -225,7 +220,7 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(authorities = {"ROLE_ADMIN"})
-    public void deleteUserTest() throws Exception {
+    void deleteUserTest() throws Exception {
         Mockito.when(userService.deleteUser(Mockito.anyString())).thenReturn(CEServiceResponse.success().build());
         mockMvc.perform(MockMvcRequestBuilders
                     .patch("/users/delete/{id}", new ObjectId().toHexString())
@@ -236,7 +231,7 @@ public class UserControllerTest {
     // groups
     @Test
     @WithMockUser
-    public void createUserGroupTest() throws Exception {
+    void createUserGroupTest() throws Exception {
         UserGroup group = new UserGroup();
         group.setName("testgroup");
         group.setRole("ROLE_STUDENT");
@@ -254,7 +249,7 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser
-    public void addUserToGroup() throws Exception {
+    void addUserToGroup() throws Exception {
         String userId = new ObjectId().toHexString();
         String groupId = new ObjectId().toHexString();
         User user = new User();
@@ -279,7 +274,7 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser
-    public void getGroupDetailsTest() throws Exception {
+    void getGroupDetailsTest() throws Exception {
         String id = new ObjectId().toHexString();
         UserGroup group = new UserGroup();
         group.setId(id);
