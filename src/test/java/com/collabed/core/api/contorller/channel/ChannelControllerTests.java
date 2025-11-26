@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ChannelController.class)
 @Import(SecurityConfig.class)
-public class ChannelControllerTests {
+class ChannelControllerTests {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -47,7 +47,7 @@ public class ChannelControllerTests {
 
     @Test
     @WithMockUser
-    public void createChannelTest() throws Exception {
+    void createChannelTest() throws Exception {
         Channel channel = new Channel();
         channel.setName("My Channel");
         channel.setTopic(Mockito.mock(Topic.class));
@@ -65,7 +65,7 @@ public class ChannelControllerTests {
 
     @Test
     @WithMockUser
-    public void createChannelInvalidDataTest() throws Exception {
+    void createChannelInvalidDataTest() throws Exception {
         Channel channel = Mockito.mock(Channel.class);
         mockMvc.perform(MockMvcRequestBuilders
                     .post("/channels")
@@ -81,7 +81,7 @@ public class ChannelControllerTests {
     @ParameterizedTest
     @ValueSource(ints = {1,5,20})
     @WithMockUser
-    public void getAllChannelsTest(int num) throws Exception {
+    void getAllChannelsTest(int num) throws Exception {
         List<Channel> channels = new ArrayList<>();
         for (int i=0; i<num; i++)
             channels.add(Mockito.mock(Channel.class));
@@ -97,7 +97,7 @@ public class ChannelControllerTests {
 
     @Test
     @WithMockUser
-    public void getAllChannelsErrorTest() throws Exception {
+    void getAllChannelsErrorTest() throws Exception {
         Mockito.when(channelService.getAllChannels()).thenReturn(
                 CEServiceResponse.error().data(new RuntimeException())
         );
@@ -111,7 +111,7 @@ public class ChannelControllerTests {
 
     @Test
     @WithMockUser
-    public void filterByIdTest() throws Exception {
+    void filterByIdTest() throws Exception {
         Channel channel = Mockito.mock(Channel.class);
         Mockito.when(channelService.findChannelById("myid")).thenReturn(
                 CEServiceResponse.success().data(channel)
@@ -127,7 +127,7 @@ public class ChannelControllerTests {
 
     @Test
     @WithMockUser
-    public void filterByIdErrorTest() throws Exception {
+    void filterByIdErrorTest() throws Exception {
         Mockito.when(channelService.findChannelById("myid1")).thenReturn(
                 CEServiceResponse.error().data(new CEServiceError(""))
         );
@@ -151,7 +151,7 @@ public class ChannelControllerTests {
 
     @Test
     @WithMockUser
-    public void filterByaNameTest() throws Exception {
+    void filterByaNameTest() throws Exception {
         Channel channel = Mockito.mock(Channel.class);
         Mockito.when(channelService.findChannelByName("myname")).thenReturn(
                 CEServiceResponse.success().data(channel)
@@ -166,7 +166,7 @@ public class ChannelControllerTests {
 
     @Test
     @WithMockUser
-    public void filterByNameErrorTest() throws Exception {
+    void filterByNameErrorTest() throws Exception {
         Mockito.when(channelService.findChannelByName("myname1")).thenReturn(
                 CEServiceResponse.error().data(new CEServiceError(""))
         );
@@ -191,7 +191,7 @@ public class ChannelControllerTests {
     @ParameterizedTest
     @ValueSource(ints = {1,5,20})
     @WithMockUser
-    public void filterByTopicTest(int num) throws Exception {
+    void filterByTopicTest(int num) throws Exception {
         List<Channel> channels = new ArrayList<>();
         for (int i=0; i<num; i++)
             channels.add(Mockito.mock(Channel.class));
@@ -208,7 +208,7 @@ public class ChannelControllerTests {
 
     @Test
     @WithMockUser
-    public void filterByTopicErrorTest() throws Exception {
+    void filterByTopicErrorTest() throws Exception {
         Mockito.when(channelService.getAllChannelsByTopic("mytopic")).thenReturn(
                 CEServiceResponse.error().data(new CEServiceError(""))
         );
@@ -222,7 +222,7 @@ public class ChannelControllerTests {
 
     @Test
     @WithMockUser
-    public void deleteChannelTest() throws Exception {
+    void deleteChannelTest() throws Exception {
         Mockito.when(channelService.deleteChannel("myrandomchannelid")).thenReturn(CEServiceResponse.success().build());
         Channel channel = new Channel();
         channel.setId("myrandomchannelid");
@@ -237,7 +237,7 @@ public class ChannelControllerTests {
 
     @Test
     @WithMockUser
-    public void deleteChannelErrorTest() throws Exception {
+    void deleteChannelErrorTest() throws Exception {
         Mockito.when(channelService.deleteChannel("myrandomchannelid")).thenReturn(CEServiceResponse.error(
                 String.format(CEUserErrorMessage.ENTITY_NOT_EXIST, "channel created by " + "username")
         ).build());
@@ -258,7 +258,7 @@ public class ChannelControllerTests {
 
     @Test
     @WithMockUser
-    public void getAllTopicsTest() throws Exception {
+    void getAllTopicsTest() throws Exception {
         Mockito.when(channelService.topics()).thenReturn(CEServiceResponse.success().build());
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -269,7 +269,7 @@ public class ChannelControllerTests {
 
     @Test
     @WithMockUser
-    public void getAllTopicsErrorTest() throws Exception {
+    void getAllTopicsErrorTest() throws Exception {
         Mockito.when(channelService.topics()).thenReturn(CEServiceResponse.error(
                 String.format(CEInternalErrorMessage.SERVICE_QUERY_FAILED, "topic")
         ).build());
@@ -282,7 +282,7 @@ public class ChannelControllerTests {
 
     @Test
     @WithMockUser
-    public void getCuratedChannelsTest() throws Exception {
+    void getCuratedChannelsTest() throws Exception {
         Mockito.when(channelService.curatedUserChannels()).thenReturn(CEServiceResponse.success().data(List.of(Mockito.mock(Channel.class))));
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -294,7 +294,7 @@ public class ChannelControllerTests {
 
     @Test
     @WithMockUser
-    public void getCuratedChannelsErrorTest() throws Exception {
+    void getCuratedChannelsErrorTest() throws Exception {
         Mockito.when(channelService.curatedUserChannels()).thenReturn(CEServiceResponse.error(
                 String.format(CEInternalErrorMessage.SERVICE_OPERATION_FAILED, "Intel", "fetch curated list of channels")
         ).build());
