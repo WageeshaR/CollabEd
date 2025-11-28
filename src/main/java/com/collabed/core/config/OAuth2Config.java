@@ -19,6 +19,7 @@ import java.io.IOException;
 public class OAuth2Config extends SavedRequestAwareAuthenticationSuccessHandler {
     @Value("${client.host}")
     private String clientHost;
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws ServletException, IOException {
         this.setAlwaysUseDefaultTargetUrl(true);

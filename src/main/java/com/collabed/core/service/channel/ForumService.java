@@ -91,7 +91,7 @@ public class ForumService {
         }
     }
 
-public CEServiceResponse addUserToThread(String threadId, String userId) {
+    public CEServiceResponse addUserToThread(String threadId, String userId) {
         return CEServiceResponse.success().build();
     }
 }

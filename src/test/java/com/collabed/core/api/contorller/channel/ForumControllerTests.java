@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(ForumController.class)
 @Import(SecurityConfig.class)
-public class ForumControllerTests {
+class ForumControllerTests {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -46,7 +46,7 @@ public class ForumControllerTests {
 
     @Test
     @WithMockUser
-    public void createForumTest() throws Exception {
+    void createForumTest() throws Exception {
         Forum forum = new Forum();
         forum.setChannel(Mockito.mock(Channel.class));
 
@@ -62,7 +62,7 @@ public class ForumControllerTests {
 
     @Test
     @WithMockUser
-    public void createForumErrorTest() throws Exception {
+    void createForumErrorTest() throws Exception {
         Forum forum = new Forum();
         forum.setChannel(Mockito.mock(Channel.class));
 
@@ -80,7 +80,7 @@ public class ForumControllerTests {
 
     @Test
     @WithMockUser
-    public void createThreadTest() throws Exception {
+    void createThreadTest() throws Exception {
         Thread thread = new Thread();
         thread.setId(new ObjectId().toHexString());
         thread.setForum(Mockito.mock(Forum.class));
@@ -101,7 +101,7 @@ public class ForumControllerTests {
 
     @Test
     @WithMockUser
-    public void resolveThreadTest() throws Exception {
+    void resolveThreadTest() throws Exception {
 
         Mockito.when(forumService.resolveThread(Mockito.anyString())).thenReturn(CEServiceResponse.success().build());
 
@@ -113,7 +113,7 @@ public class ForumControllerTests {
 
     @Test
     @WithMockUser
-    public void resolveThreadErrorTest() throws Exception {
+    void resolveThreadErrorTest() throws Exception {
 
         Mockito.when(forumService.resolveThread(Mockito.anyString())).thenReturn(CEServiceResponse.error().build());
 
@@ -126,7 +126,7 @@ public class ForumControllerTests {
 
     @Test
     @WithMockUser
-    public void addParticipantsToThreadTest() throws Exception {
+    void addParticipantsToThreadTest() throws Exception {
         User user = new User();
         user.setId(new ObjectId().toHexString());
 
@@ -151,7 +151,7 @@ public class ForumControllerTests {
 
     @Test
     @WithMockUser
-    public void addParticipantNoThreadErrorTest() throws Exception {
+    void addParticipantNoThreadErrorTest() throws Exception {
 
         Map<String, String> requestMap = new HashMap<>();
         requestMap.put("user", new ObjectId().toHexString());
@@ -168,7 +168,7 @@ public class ForumControllerTests {
 
     @Test
     @WithMockUser
-    public void addParticipantNoUserErrorTest() throws Exception {
+    void addParticipantNoUserErrorTest() throws Exception {
 
         Map<String, String> requestMap = new HashMap<>();
         requestMap.put("thread", new ObjectId().toHexString());
@@ -185,7 +185,7 @@ public class ForumControllerTests {
 
     @Test
     @WithMockUser
-    public void addParticipantsToThreadErrorTest() throws Exception {
+    void addParticipantsToThreadErrorTest() throws Exception {
 
         Mockito.when(forumService.addUserToThread(Mockito.anyString(), Mockito.anyString()))
             .thenReturn(CEServiceResponse.error().data(new RuntimeException()));

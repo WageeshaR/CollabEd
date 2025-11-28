@@ -45,7 +45,8 @@ public class DBSeederConfig {
         try (InputStream inputStream = countriesResource.getInputStream()) {
             List<Country> countries = objectMapper.readValue(inputStream, countryCollectionType);
             countryRepository.saveAll(countries);
-        } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException ignored) {}
+        } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException ignored) {
+        }
     }
 
     @PostConstruct
@@ -58,7 +59,8 @@ public class DBSeederConfig {
         try (InputStream inputStream = licenseModelsResource.getInputStream()) {
             List<LicenseModel> licenseModels = objectMapper.readValue(inputStream, licenseModelsCollectionType);
             licenseRepository.saveAll(licenseModels);
-        } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException ignored) {}
+        } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException ignored) {
+        }
     }
 
     @PostConstruct
@@ -70,6 +72,7 @@ public class DBSeederConfig {
         try (InputStream inputStream = topicsResource.getInputStream()) {
             List<Topic> topics = objectMapper.readValue(inputStream, topicsCollectionType);
             topicRepository.saveAll(topics);
-        } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException ignored) {}
+        } catch (DuplicateKeyException | com.mongodb.DuplicateKeyException ignored) {
+        }
     }
 }

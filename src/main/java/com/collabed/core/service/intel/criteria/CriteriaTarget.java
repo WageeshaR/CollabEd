@@ -14,6 +14,7 @@ import java.util.List;
 public class CriteriaTarget {
     private final TargetType targetType;
     private List<Object> targets;
+
     public CriteriaTarget(TargetType targetType) {
         this.targetType = targetType;
         this.targets = new ArrayList<>();

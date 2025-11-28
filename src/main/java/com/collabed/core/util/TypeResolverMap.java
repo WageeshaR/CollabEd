@@ -14,6 +14,7 @@ public class TypeResolverMap {
     public static class RepositoryTypeResolver {
         public static final String INSTITUTION_REPOSITORY = "InstitutionRepository";
         public static Map<String, Class<?>> classNameMap = new HashMap<>();
+
         static {
             classNameMap.put(INSTITUTION_REPOSITORY, InstitutionRepository.class);
         }

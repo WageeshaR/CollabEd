@@ -28,16 +28,16 @@ public class LoginController {
     public ResponseEntity<?> login(@RequestBody User request) {
         try {
             var authenticate = authenticationManager.authenticate(
-                            new UsernamePasswordAuthenticationToken(
-                                    request.getUsername(), request.getPassword()
-                            ));
+                    new UsernamePasswordAuthenticationToken(
+                            request.getUsername(), request.getPassword()
+                    ));
 
             var user = (User) authenticate.getPrincipal();
 
             return ResponseEntity.ok().header(
-                            HttpHeaders.AUTHORIZATION,
-                            jwtTokenUtil.generateToken(user)
-                    ).body("Successfully authenticated");
+                    HttpHeaders.AUTHORIZATION,
+                    jwtTokenUtil.generateToken(user)
+            ).body("Successfully authenticated");
 
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();

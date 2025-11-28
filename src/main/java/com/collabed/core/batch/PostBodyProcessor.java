@@ -35,8 +35,7 @@ public class PostBodyProcessor implements ItemProcessor<Post, IntelTextContent> 
             String richText = content.getContent();
             Document rtfDoc = Jsoup.parse(richText);
             plainText = DocProcessor.getPlainText(rtfDoc);
-        }
-        else {
+        } else {
             plainText = content.getContent();
         }
 

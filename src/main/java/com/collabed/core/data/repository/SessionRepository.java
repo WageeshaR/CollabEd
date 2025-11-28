@@ -8,4 +8,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * @since 1.0
  */
 
-public interface SessionRepository extends MongoRepository<Session, String> {}
+public interface SessionRepository extends MongoRepository<Session, String> {
+}

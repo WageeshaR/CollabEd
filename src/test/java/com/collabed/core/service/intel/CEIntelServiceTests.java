@@ -9,10 +9,11 @@ import com.collabed.core.internal.SimpleIntelGateway;
 import com.collabed.core.service.intel.criteria.Criteria;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mapping.MappingException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.test.context.ContextConfiguration;
@@ -22,21 +23,18 @@ import java.util.List;
 import java.util.Random;
 
 import static com.collabed.core.service.util.SecurityUtil.withAuthentication;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 @ContextConfiguration(classes = {GatewayBeanConfig.class, CEIntelService.class})
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class CEIntelServiceTests {
-    @MockBean
+    @Mock
     private SimpleIntelGateway intelGateway;
-    @MockBean
+    @Mock
     private MongoTemplate mongoTemplate;
-    private final CEIntelService intelService;
-
-    @Autowired
-    public CEIntelServiceTests(CEIntelService intelService) {
-        this.intelService = intelService;
-    }
+    @InjectMocks
+    private CEIntelService intelService;
 
     @Test
     public void setupGatewayTest() {

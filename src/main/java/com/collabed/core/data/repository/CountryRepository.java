@@ -8,4 +8,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
  * @since 1.0
  */
 
-public interface CountryRepository extends MongoRepository<Country, String> {}
+public interface CountryRepository extends MongoRepository<Country, String> {
+}

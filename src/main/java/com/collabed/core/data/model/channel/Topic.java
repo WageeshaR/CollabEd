@@ -15,11 +15,12 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "topic")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public record Topic(
-    @Id
-    String id,
-    String key,
-    String parentKey,
-    @Indexed(unique = true)
-    String name,
-    int layer
-) {}
+        @Id
+        String id,
+        String key,
+        String parentKey,
+        @Indexed(unique = true)
+        String name,
+        int layer
+) {
+}

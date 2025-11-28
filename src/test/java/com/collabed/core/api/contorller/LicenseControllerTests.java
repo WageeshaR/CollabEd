@@ -31,7 +31,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = LicenseController.class)
 @Import(SecurityConfig.class)
-public class LicenseControllerTests {
+class LicenseControllerTests {
+
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -44,7 +45,7 @@ public class LicenseControllerTests {
 
     @Test
     @WithMockUser
-    public void initSessionTest() throws Exception {
+    void initSessionTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                     .get("/license/get-key")
                     .accept(MediaType.APPLICATION_JSON))
@@ -56,7 +57,7 @@ public class LicenseControllerTests {
 
     @Test
     @WithMockUser
-    public void getAllOptionsTest() throws Exception {
+    void getAllOptionsTest() throws Exception {
         List<LicenseOption> options = new ArrayList<>();
         Stack<LicenseType> stack = new Stack<>();
         stack.push(LicenseType.INDIVIDUAL);
@@ -85,7 +86,7 @@ public class LicenseControllerTests {
 
     @Test
     @WithMockUser
-    public void selectOptionTest() throws Exception {
+    void selectOptionTest() throws Exception {
         LicenseOption option = new LicenseOption();
         option.setId("0");
         option.setModel(Mockito.mock(LicenseModel.class));
@@ -101,7 +102,7 @@ public class LicenseControllerTests {
 
     @Test
     @WithMockUser
-    public void selectOptionErrorTest() throws Exception {
+    void selectOptionErrorTest() throws Exception {
         LicenseOption option = new LicenseOption();
         option.setId("0");
         option.setModel(Mockito.mock(LicenseModel.class));

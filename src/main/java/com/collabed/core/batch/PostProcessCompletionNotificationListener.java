@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 public class PostProcessCompletionNotificationListener implements JobExecutionListener {
     @Override
     public void afterJob(JobExecution jobExecution) {
-        if(jobExecution.getStatus() == BatchStatus.COMPLETED) {
+        if (jobExecution.getStatus() == BatchStatus.COMPLETED) {
             log.info("Post processing job completed successfully!");
         }
     }

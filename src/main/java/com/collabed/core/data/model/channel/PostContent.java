@@ -3,6 +3,7 @@ package com.collabed.core.data.model.channel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
 import java.util.Map;
 
 /**

@@ -52,9 +52,9 @@ public class PostController {
 
         return response.isSuccess() ?
                 ResponseEntity.status(HttpStatus.CREATED).body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
-                        HttpStatus.INTERNAL_SERVER_ERROR,
-                        response.getMessage(),
-                        (Exception) response.getData()
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                response.getMessage(),
+                (Exception) response.getData()
         ));
     }
 
@@ -64,9 +64,9 @@ public class PostController {
 
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
-                        HttpStatus.INTERNAL_SERVER_ERROR,
-                        response.getMessage(),
-                        (Exception) response.getData()
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                response.getMessage(),
+                (Exception) response.getData()
         ));
     }
 
@@ -77,9 +77,9 @@ public class PostController {
 
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
-                        HttpStatus.INTERNAL_SERVER_ERROR,
-                        response.getMessage(),
-                        (Exception) response.getData()
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                response.getMessage(),
+                (Exception) response.getData()
         ));
     }
 
@@ -96,9 +96,9 @@ public class PostController {
 
         return response.isSuccess() ?
                 ResponseEntity.status(HttpStatus.CREATED).body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
-                        HttpStatus.INTERNAL_SERVER_ERROR,
-                        response.getMessage(),
-                        (Exception) response.getData()
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                response.getMessage(),
+                (Exception) response.getData()
         ));
     }
 }

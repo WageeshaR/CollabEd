@@ -11,4 +11,5 @@ import java.util.UUID;
  */
 
 @Repository
-public interface IntelTextContentRepository extends CassandraRepository<IntelTextContent, UUID> {}
+public interface IntelTextContentRepository extends CassandraRepository<IntelTextContent, UUID> {
+}

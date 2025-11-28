@@ -85,6 +85,7 @@ public class User extends AuditMetadata implements UserDetails {
         super();
         this.roles = new ArrayList<>();
     }
+
     public User(String username, String role) {
         this.username = username;
         this.roles = new ArrayList<>();
@@ -98,6 +99,7 @@ public class User extends AuditMetadata implements UserDetails {
             throw new UnsupportedOperationException();
         }
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles;

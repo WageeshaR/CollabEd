@@ -32,7 +32,7 @@ public class LicenseService {
         try {
             List<LicenseModel> models = licenseRepository.findAll();
 
-            for (int i=0; i<models.size(); i++) {
+            for (int i = 0; i < models.size(); i++) {
                 var option = new LicenseOption();
                 option.setId(Integer.toString(i));
                 option.setModel(models.get(i));

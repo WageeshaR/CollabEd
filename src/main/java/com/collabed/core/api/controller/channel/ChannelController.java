@@ -49,10 +49,10 @@ public class ChannelController {
                 ResponseEntity.ok().body(response.getData()) :
 
                 ResponseEntity.internalServerError().body(new ApiError(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    response.getMessage(),
-                    (Exception) response.getData()
-        ));
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        response.getMessage(),
+                        (Exception) response.getData()
+                ));
     }
 
     @PutMapping("/change_visibility")
@@ -67,11 +67,11 @@ public class ChannelController {
 
         return response.isSuccess() ?
                 ResponseEntity.ok().build() : ResponseEntity.internalServerError().body(
-                        new ApiError(
-                                HttpStatus.INTERNAL_SERVER_ERROR,
-                                response.getMessage(),
-                                (Exception) response.getData()
-                        )
+                new ApiError(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        response.getMessage(),
+                        (Exception) response.getData()
+                )
         );
     }
 
@@ -81,9 +81,9 @@ public class ChannelController {
 
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(new ApiError(
-                    HttpStatus.INTERNAL_SERVER_ERROR,
-                    response.getMessage(),
-                    (Exception) response.getData()
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        response.getMessage(),
+                        (Exception) response.getData()
                 )
         );
     }
@@ -136,11 +136,11 @@ public class ChannelController {
 
         return response.isSuccess() ?
                 ResponseEntity.ok().body(response.getData()) : ResponseEntity.internalServerError().body(
-                        new ApiError(
-                                HttpStatus.INTERNAL_SERVER_ERROR,
-                                response.getMessage(),
-                                (Exception) response.getData()
-                        )
+                new ApiError(
+                        HttpStatus.INTERNAL_SERVER_ERROR,
+                        response.getMessage(),
+                        (Exception) response.getData()
+                )
         );
     }
 

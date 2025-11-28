@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 
 @Repository
-public interface TopicRepository extends MongoRepository<Topic, String> {}
+public interface TopicRepository extends MongoRepository<Topic, String> {
+}

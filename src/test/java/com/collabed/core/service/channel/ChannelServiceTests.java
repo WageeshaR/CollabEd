@@ -14,9 +14,13 @@ import com.mongodb.MongoQueryException;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DuplicateKeyException;
 
 import java.util.*;
@@ -24,19 +28,16 @@ import java.util.*;
 import static com.collabed.core.service.util.SecurityUtil.withAuthentication;
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 public class ChannelServiceTests {
+    @InjectMocks
     private ChannelService channelService;
+    @Mock
     private ChannelRepository channelRepository;
+    @Mock
     private TopicRepository topicRepository;
+    @Mock
     private CEIntelService intelService;
-
-    @BeforeEach
-    public void setup() {
-        channelRepository = Mockito.mock(ChannelRepository.class);
-        topicRepository = Mockito.mock(TopicRepository.class);
-        intelService = Mockito.mock(CEIntelService.class);
-        channelService = new ChannelService(channelRepository, topicRepository, intelService);
-    }
 
     @Test
     public void createChannelTest() {
@@ -80,9 +81,8 @@ public class ChannelServiceTests {
 
     @Test
     public void findChannelByIdErrorTest() {
-        String id1 = new ObjectId().toHexString();
-        Mockito.when(channelRepository.findById(id1)).thenReturn(Optional.of(Mockito.mock(Channel.class)));
-        CEServiceResponse response = channelService.findChannelById(Mockito.anyString());
+        Mockito.when(channelRepository.findById(Mockito.anyString())).thenThrow(NoSuchElementException.class);
+        CEServiceResponse response = channelService.findChannelById(new ObjectId().toHexString());
         assertTrue(response.isError());
         assertEquals(
                 response.getMessage(),
@@ -103,9 +103,8 @@ public class ChannelServiceTests {
 
     @Test
     public void findChannelByNameErrorTest() {
-        String id1 = new ObjectId().toHexString();
-        Mockito.when(channelRepository.findByName(id1)).thenReturn(Optional.of(Mockito.mock(Channel.class)));
-        CEServiceResponse response = channelService.findChannelByName(Mockito.anyString());
+        Mockito.when(channelRepository.findByName(Mockito.anyString())).thenThrow(NoSuchElementException.class);
+        CEServiceResponse response = channelService.findChannelByName("testChannelName");
         assertTrue(response.isError());
         assertEquals(
                 response.getMessage(),
@@ -163,7 +162,8 @@ public class ChannelServiceTests {
 
     @Test
     public void deleteChannelTest() {
-        User user = Mockito.mock(User.class);
+        User user = new User();
+        user.setUsername("username");
         Mockito.when(withAuthentication().getPrincipal()).thenReturn(user);
 
         Mockito.doNothing().when(channelRepository).updateAndSoftDelete("myrandomid", "username");

@@ -90,9 +90,9 @@ public class ForumController {
         if (response.isSuccess())
             return ResponseEntity.ok().body(response.getData());
         return ResponseEntity.internalServerError().body(new ApiError(
-            HttpStatus.INTERNAL_SERVER_ERROR,
-            response.getMessage(),
-            (Exception) response.getData()
+                HttpStatus.INTERNAL_SERVER_ERROR,
+                response.getMessage(),
+                (Exception) response.getData()
         ));
     }
 }

@@ -47,14 +47,14 @@ public class PostService {
                 summarisedPosts = summarisePosts(
                         postRepository.findAllByAuthorAndChannelId(user, channelId, pageable).getContent()
                 );
-            }
-            else {
+            } else {
                 summarisedPosts = summarisePosts(
                         postRepository.findAllByChannelId(channelId, pageable).getContent()
                 );
             }
 
             return CEServiceResponse.success().data(summarisedPosts);
+
         } catch (NoSuchElementException e) {
             log.error(LoggingMessage.Error.NO_SUCH_ELEMENT + e);
             return CEServiceResponse.error(String.format(CEUserErrorMessage.NO_MATCHING_ELEMENTS_FOUND, "posts")).data(e);

@@ -9,24 +9,25 @@ import com.collabed.core.service.util.CEServiceResponse;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith(MockitoExtension.class)
 public class ForumServiceTests {
+    @Mock
     private MongoTemplate mongoTemplate;
+    @Mock
     private ThreadRepository threadRepository;
+    @InjectMocks
     private ForumService forumService;
-
-    @BeforeEach
-    public void setup() {
-        mongoTemplate = Mockito.mock(MongoTemplate.class);
-        threadRepository = Mockito.mock(ThreadRepository.class);
-        forumService = new ForumService(mongoTemplate, threadRepository);
-    }
 
     @Test
     public void saveForumTest() {

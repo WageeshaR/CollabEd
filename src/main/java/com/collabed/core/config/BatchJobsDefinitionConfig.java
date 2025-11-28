@@ -121,8 +121,7 @@ public class BatchJobsDefinitionConfig {
             PlatformTransactionManager dataSourceTransactionManager,
             MongoItemReader<Post> mongoItemReader,
             PostBodyProcessor postBodyProcessor,
-            ItemWriter<IntelTextContent> textContentItemWriter)
-    {
+            ItemWriter<IntelTextContent> textContentItemWriter) {
         return new StepBuilder("postProcessStep", jobRepository)
                 .<Post, IntelTextContent>chunk(10, dataSourceTransactionManager)
                 .reader(mongoItemReader)
@@ -133,8 +132,7 @@ public class BatchJobsDefinitionConfig {
     }
 
     @Bean
-    public Job postProcessJob(JobRepository repository, Step step, PostProcessCompletionNotificationListener listener)
-    {
+    public Job postProcessJob(JobRepository repository, Step step, PostProcessCompletionNotificationListener listener) {
         return new JobBuilder("postProcessJob", repository)
                 .listener(listener)
                 .start(step)
