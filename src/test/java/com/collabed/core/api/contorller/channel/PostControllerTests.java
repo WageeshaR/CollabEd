@@ -1,8 +1,11 @@
 package com.collabed.core.api.contorller.channel;
 
 
+import static com.collabed.core.util.HttpRequestResponseUtils.isApiError;
+import static com.collabed.core.util.HttpRequestResponseUtils.mapToJson;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.collabed.core.api.controller.channel.PostController;
-import com.collabed.core.api.util.HTTPResponseErrorFormatter;
 import com.collabed.core.api.util.JwtTokenUtil;
 import com.collabed.core.config.SecurityConfig;
 import com.collabed.core.data.model.channel.Channel;
@@ -15,6 +18,8 @@ import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.service.UserService;
 import com.collabed.core.service.channel.PostService;
 import com.collabed.core.service.util.CEServiceResponse;
+import java.util.List;
+import java.util.Optional;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -23,23 +28,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.parameters.P;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-
-import static com.collabed.core.util.HttpRequestResponseUtils.isApiError;
-import static com.collabed.core.util.HttpRequestResponseUtils.mapToJson;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(PostController.class)
 @Import(SecurityConfig.class)
-public class PostControllerTests {
+class PostControllerTests {
     @Autowired
     private MockMvc mockMvc;
     @MockBean
@@ -53,7 +49,7 @@ public class PostControllerTests {
 
     @Test
     @WithMockUser
-    public void savePostTest() throws Exception {
+    void savePostTest() throws Exception {
         Channel channel = new Channel();
         channel.setId(new ObjectId().toHexString());
         Post post = new Post();
@@ -75,7 +71,7 @@ public class PostControllerTests {
 
     @Test
     @WithMockUser
-    public void savePostNoChannelIdTest() throws Exception {
+    void savePostNoChannelIdTest() throws Exception {
         Channel channel = new Channel();
         Post post = new Post();
         post.setTitle("Example title");
@@ -95,7 +91,7 @@ public class PostControllerTests {
 
     @Test
     @WithMockUser
-    public void savePostChannelNotFoundTest() throws Exception {
+    void savePostChannelNotFoundTest() throws Exception {
         Channel channel = new Channel();
         channel.setId(new ObjectId().toHexString());
         Post post = new Post();
@@ -118,7 +114,7 @@ public class PostControllerTests {
 
     @Test
     @WithMockUser
-    public void savePostExceptionTest() throws Exception {
+    void savePostExceptionTest() throws Exception {
         Channel channel = new Channel();
         channel.setId(new ObjectId().toHexString());
         Post post = new Post();
@@ -144,7 +140,7 @@ public class PostControllerTests {
 
     @Test
     @WithMockUser
-    public void getPostByIdTest() throws Exception {
+    void getPostByIdTest() throws Exception {
         ObjectId oid = new ObjectId();
         Post post = new Post();
         post.setId(oid.toHexString());
@@ -161,7 +157,7 @@ public class PostControllerTests {
 
     @Test
     @WithMockUser
-    public void getPostByIdErrorTest() throws Exception {
+    void getPostByIdErrorTest() throws Exception {
         Mockito.when(postService.getPostById(Mockito.anyString()))
                 .thenReturn(CEServiceResponse.error().build());
 
@@ -174,7 +170,7 @@ public class PostControllerTests {
 
     @Test
     @WithMockUser
-    public void getAllPostsTest() throws Exception {
+    void getAllPostsTest() throws Exception {
         Mockito.when(postService.getAllPosts(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(
                 CEServiceResponse.success().data(List.of())
         );
@@ -189,7 +185,7 @@ public class PostControllerTests {
 
     @Test
     @WithMockUser
-    public void getAllPostsErrorTest() throws Exception {
+    void getAllPostsErrorTest() throws Exception {
         Mockito.when(postService.getAllPosts(Mockito.anyString(), Mockito.anyBoolean())).thenReturn(
                 CEServiceResponse.error().build()
         );
@@ -204,7 +200,7 @@ public class PostControllerTests {
 
     @Test
     @WithMockUser
-    public void updateReactionTest() throws Exception {
+    void updateReactionTest() throws Exception {
         Reaction reaction = new Reaction();
         reaction.setEmoji("heart_emoji");
         reaction.setPost(Mockito.mock(Post.class));
@@ -222,7 +218,7 @@ public class PostControllerTests {
 
     @Test
     @WithMockUser
-    public void updateReactionInvalidDataTest() throws  Exception {
+    void updateReactionInvalidDataTest() throws  Exception {
         Reaction reaction = Mockito.mock(Reaction.class);
 
         mockMvc.perform(MockMvcRequestBuilders
@@ -238,7 +234,7 @@ public class PostControllerTests {
 
     @Test
     @WithMockUser
-    public void updateReactionErrorTest() throws Exception {
+    void updateReactionErrorTest() throws Exception {
         Reaction reaction = new Reaction();
         reaction.setEmoji("heart_emoji");
         reaction.setPost(Mockito.mock(Post.class));
