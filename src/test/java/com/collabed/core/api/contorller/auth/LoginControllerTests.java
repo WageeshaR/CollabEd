@@ -1,5 +1,8 @@
 package com.collabed.core.api.contorller.auth;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.collabed.core.api.controller.auth.LoginController;
 import com.collabed.core.api.util.JwtTokenUtil;
 import com.collabed.core.config.SecurityConfig;
@@ -7,6 +10,7 @@ import com.collabed.core.data.model.user.User;
 import com.collabed.core.service.UserService;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import java.util.Date;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -25,15 +28,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Date;
-
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 @WebMvcTest(controllers = LoginController.class)
 @Import(SecurityConfig.class)
-public class LoginControllerTests {
+class LoginControllerTests {
     @MockBean
     private AuthenticationManager authenticationManager;
     @MockBean
@@ -47,12 +45,12 @@ public class LoginControllerTests {
     private User user;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         user = new User("testuser", "STUDENT");
     }
 
     @Test
-    public void authenticationTest() throws Exception {
+    void authenticationTest() throws Exception {
         Mockito.when(authenticationManager.authenticate(Mockito.any(UsernamePasswordAuthenticationToken.class)))
                 .thenReturn(authentication);
         Mockito.when(authentication.getPrincipal()).thenReturn(user);
@@ -80,7 +78,7 @@ public class LoginControllerTests {
     }
 
     @Test
-    public void failedAuthenticationTest() throws Exception {
+    void failedAuthenticationTest() throws Exception {
         Mockito.when(authenticationManager.authenticate(Mockito.any(UsernamePasswordAuthenticationToken.class)))
                 .thenThrow(BadCredentialsException.class);
 
