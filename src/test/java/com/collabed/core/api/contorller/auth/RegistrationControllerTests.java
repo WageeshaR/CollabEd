@@ -31,7 +31,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = RegistrationController.class)
 @Import(SecurityConfig.class)
-public class RegistrationControllerTests {
+class RegistrationControllerTests {
     @MockBean
     InstitutionService institutionService;
     @MockBean
@@ -46,7 +46,7 @@ public class RegistrationControllerTests {
     private Institution institution;
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         // setup institution
         institution = new Institution();
         institution.setName("The University of York");
@@ -66,7 +66,7 @@ public class RegistrationControllerTests {
     // users
     @ParameterizedTest
     @ValueSource(strings = {"student", "facilitator", "admin"})
-    public void registerStudentTest(String param) throws Exception {
+    void registerStudentTest(String param) throws Exception {
         String role = "ROLE_" + param.toUpperCase();
         String userString = mapToJson(user);
         User copiedUser = mapFromJson(userString, User.class);
@@ -86,7 +86,7 @@ public class RegistrationControllerTests {
     }
 
     @Test
-    public void registerStudentWithNullUsernameTest() throws Exception {
+    void registerStudentWithNullUsernameTest() throws Exception {
         user.setUsername(null);
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/register/student")
@@ -99,7 +99,7 @@ public class RegistrationControllerTests {
     }
 
     @Test
-    public void registerStudentWithNullPasswordTest() throws Exception {
+    void registerStudentWithNullPasswordTest() throws Exception {
         user.setPassword(null);
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/register/student")
@@ -111,7 +111,7 @@ public class RegistrationControllerTests {
     }
 
     @Test
-    public void registerStudentWithNullEmailTest() throws Exception {
+    void registerStudentWithNullEmailTest() throws Exception {
         user.setEmail(null);
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/register/student")
@@ -123,7 +123,7 @@ public class RegistrationControllerTests {
     }
 
     @Test
-    public void registerStudentWithDuplicateEmailTest() throws Exception {
+    void registerStudentWithDuplicateEmailTest() throws Exception {
         String userString = mapToJson(user);
         User copiedUser = mapFromJson(userString, User.class);
         copiedUser.addRole("ROLE_STUDENT");
@@ -146,7 +146,7 @@ public class RegistrationControllerTests {
     // institutions
     @ParameterizedTest
     @ValueSource(strings = {"The University of York", "The University of Manchester"})
-    public void registerInstitutionTest(String param) throws Exception {
+    void registerInstitutionTest(String param) throws Exception {
         institution.setName(param);
         String institutionString = mapToJson(institution);
         Mockito.when(institutionService.save(Mockito.any(Institution.class))).thenReturn(
@@ -163,7 +163,7 @@ public class RegistrationControllerTests {
     }
 
     @Test
-    public void registerInstitutionWithoutNameTest() throws Exception {
+    void registerInstitutionWithoutNameTest() throws Exception {
         institution.setName(null);
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/register/institution")
@@ -176,7 +176,7 @@ public class RegistrationControllerTests {
     }
 
     @Test
-    public void registerInstitutionWithoutAddressTest() throws Exception {
+    void registerInstitutionWithoutAddressTest() throws Exception {
         Mockito.when(institutionService.save(Mockito.any(Institution.class))).thenReturn(
                 CEServiceResponse.error().data(new CEWebRequestError(""))
         );
@@ -187,6 +187,6 @@ public class RegistrationControllerTests {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().is5xxServerError())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.exception").value(isException()));;
+                .andExpect(MockMvcResultMatchers.jsonPath("$.exception").value(isException()));
     }
 }
