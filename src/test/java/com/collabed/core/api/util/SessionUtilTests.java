@@ -7,11 +7,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class SessionUtilTests {
+class SessionUtilTests {
     @ParameterizedTest
     @NullSource
     @ValueSource(strings = {"", " ", "dsf7243jbhb9i238y4"})
-    public void generateSessionKeyTest(String param) {
+    void generateSessionKeyTest(String param) {
         assertEquals(SessionUtil.generateSessionKey(param).getClass().getName(), String.class.getName());
     }
 }
