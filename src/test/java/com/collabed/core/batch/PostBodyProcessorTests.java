@@ -15,13 +15,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PostBodyProcessorTests {
+class PostBodyProcessorTests {
     @InjectMocks
     private PostBodyProcessor processor;
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    public void processTest(boolean isRtf) {
+    void processTest(boolean isRtf) {
         Post post = new Post();
         post.setId(new ObjectId().toHexString());
 
@@ -31,13 +31,13 @@ public class PostBodyProcessorTests {
 
         post.setContent(content);
 
-        Object returnResult = processor.process(post);
+        IntelTextContent returnResult = processor.process(post);
         assertInstanceOf(IntelTextContent.class, returnResult);
-        assertEquals(((IntelTextContent) returnResult).getContent(), post.getContent().getContent());
+        assertEquals(returnResult.getContent(), post.getContent().getContent());
     }
 
     @Test
-    public void processNullContentTest() {
+    void processNullContentTest() {
         Post post = Mockito.mock(Post.class);
 
         Object returnResult = assertDoesNotThrow(() -> processor.process(post));
