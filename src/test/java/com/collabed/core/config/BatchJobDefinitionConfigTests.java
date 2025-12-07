@@ -1,11 +1,14 @@
 package com.collabed.core.config;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import com.collabed.core.batch.PostBodyProcessor;
 import com.collabed.core.batch.PostProcessCompletionNotificationListener;
 import com.collabed.core.batch.data.IntelTextContent;
 import com.collabed.core.batch.data.IntelTextContentRepository;
 import com.collabed.core.data.model.channel.Post;
-import com.mongodb.client.result.UpdateResult;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,19 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @SpringBootTest
 @ContextConfiguration(classes = BatchJobsDefinitionConfig.class)
-public class BatchJobDefinitionConfigTests {
+class BatchJobDefinitionConfigTests {
     @MockBean
     private MongoTemplate mongoTemplate;
     @MockBean
@@ -55,19 +51,19 @@ public class BatchJobDefinitionConfigTests {
     private Step postProcessStep;
 
     @Test
-    public void mongoPostReaderTest() {
+    void mongoPostReaderTest() {
         assertNotNull(mongoItemReader);
         assertDoesNotThrow(() -> mongoItemReader.afterPropertiesSet());
     }
 
     @Test
-    public void postBodyProcessorTest() {
+    void postBodyProcessorTest() {
         assertNotNull(postBodyProcessor);
         assertInstanceOf(ItemProcessor.class, postBodyProcessor);
     }
 
     @Test
-    public void cassandraPostWriterTest() {
+    void cassandraPostWriterTest() {
         assertNotNull(cassItemWriter);
         assertInstanceOf(RepositoryItemWriter.class, cassItemWriter);
         assertDoesNotThrow(() -> ((RepositoryItemWriter<IntelTextContent>) cassItemWriter).afterPropertiesSet());
@@ -75,7 +71,7 @@ public class BatchJobDefinitionConfigTests {
 
     @ParameterizedTest
     @ValueSource(ints = {1,10,50})
-    public void customisedRepositoryItemWriteClassTest(int count) throws Exception {
+    void customisedRepositoryItemWriteClassTest(int count) throws Exception {
         RepositoryItemWriter<IntelTextContent> writer
                 = (BatchJobsDefinitionConfig.CustomizedRepositoryItemWriter<IntelTextContent>) cassItemWriter;
 
@@ -88,10 +84,11 @@ public class BatchJobDefinitionConfigTests {
         }
 
         writer.write(chunk);
+        assertDoesNotThrow(() -> writer.write(chunk));
     }
 
     @Test
-    public void customisedRepositoryNullPointerErrorTest() {
+    void customisedRepositoryNullPointerErrorTest() {
         RepositoryItemWriter<IntelTextContent> writer
                 = (BatchJobsDefinitionConfig.CustomizedRepositoryItemWriter<IntelTextContent>) cassItemWriter;
 
