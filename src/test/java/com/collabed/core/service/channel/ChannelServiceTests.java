@@ -1,5 +1,10 @@
 package com.collabed.core.service.channel;
 
+import static com.collabed.core.service.util.SecurityUtil.withAuthentication;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.collabed.core.api.controller.channel.VisibilityEnum;
 import com.collabed.core.data.model.channel.Channel;
 import com.collabed.core.data.model.channel.Topic;
@@ -11,8 +16,12 @@ import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.service.intel.CEIntelService;
 import com.collabed.core.service.util.CEServiceResponse;
 import com.mongodb.MongoQueryException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Random;
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,13 +32,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.DuplicateKeyException;
 
-import java.util.*;
-
-import static com.collabed.core.service.util.SecurityUtil.withAuthentication;
-import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(MockitoExtension.class)
-public class ChannelServiceTests {
+class ChannelServiceTests {
     @InjectMocks
     private ChannelService channelService;
     @Mock
@@ -40,7 +44,7 @@ public class ChannelServiceTests {
     private CEIntelService intelService;
 
     @Test
-    public void createChannelTest() {
+    void createChannelTest() {
         Channel channel = Mockito.mock(Channel.class);
         Mockito.when(channelRepository.save(channel)).thenReturn(channel);
         CEServiceResponse response = channelService.saveChannel(channel);
@@ -48,7 +52,7 @@ public class ChannelServiceTests {
     }
 
     @Test
-    public void createChannelDuplicateErrorTest() {
+    void createChannelDuplicateErrorTest() {
         Channel channel1 = Mockito.mock(Channel.class);
         Mockito.when(channelRepository.save(channel1)).thenThrow(DuplicateKeyException.class);
         CEServiceResponse response1 = channelService.saveChannel(channel1);
@@ -69,7 +73,7 @@ public class ChannelServiceTests {
     }
 
     @Test
-    public void findChannelByIdTest() {
+    void findChannelByIdTest() {
         String id = new ObjectId().toHexString();
         Channel channel = new Channel();
         channel.setId(id);
@@ -80,7 +84,7 @@ public class ChannelServiceTests {
     }
 
     @Test
-    public void findChannelByIdErrorTest() {
+    void findChannelByIdErrorTest() {
         Mockito.when(channelRepository.findById(Mockito.anyString())).thenThrow(NoSuchElementException.class);
         CEServiceResponse response = channelService.findChannelById(new ObjectId().toHexString());
         assertTrue(response.isError());
@@ -91,7 +95,7 @@ public class ChannelServiceTests {
     }
 
     @Test
-    public void findChannelByNameTest() {
+    void findChannelByNameTest() {
         String name = new Random().toString();
         Channel channel = new Channel();
         channel.setName(name);
@@ -102,7 +106,7 @@ public class ChannelServiceTests {
     }
 
     @Test
-    public void findChannelByNameErrorTest() {
+    void findChannelByNameErrorTest() {
         Mockito.when(channelRepository.findByName(Mockito.anyString())).thenThrow(NoSuchElementException.class);
         CEServiceResponse response = channelService.findChannelByName("testChannelName");
         assertTrue(response.isError());
@@ -114,7 +118,7 @@ public class ChannelServiceTests {
 
     @ParameterizedTest
     @ValueSource(ints = {1,5,20})
-    public void getAllChannelsTest(int num) {
+    void getAllChannelsTest(int num) {
         List<Channel> channels = new ArrayList<>();
         for (int i=0; i<num; i++) {
             channels.add(Mockito.mock(Channel.class));
@@ -126,7 +130,7 @@ public class ChannelServiceTests {
     }
     
     @Test
-    public void getAllChannelsErrorTest() {
+    void getAllChannelsErrorTest() {
         Mockito.when(channelRepository.findAll()).thenThrow(MongoQueryException.class);
         CEServiceResponse response = channelService.getAllChannels();
         assertTrue(response.isError());
@@ -138,7 +142,7 @@ public class ChannelServiceTests {
 
     @ParameterizedTest
     @ValueSource(ints = {1,5,20})
-    public void getAllChannelsByTopicTest(int num) {
+    void getAllChannelsByTopicTest(int num) {
         List<Channel> channels = new ArrayList<>();
         for (int i=0; i<num; i++) {
             channels.add(Mockito.mock(Channel.class));
@@ -150,7 +154,7 @@ public class ChannelServiceTests {
     }
 
     @Test
-    public void getAllChannelsByTopicErrorTest() {
+    void getAllChannelsByTopicErrorTest() {
         Mockito.when(channelRepository.findAllByTopic(Mockito.anyString())).thenThrow(MongoQueryException.class);
         CEServiceResponse response = channelService.getAllChannelsByTopic("dsfds78&834");
         assertTrue(response.isError());
@@ -161,7 +165,7 @@ public class ChannelServiceTests {
     }
 
     @Test
-    public void deleteChannelTest() {
+    void deleteChannelTest() {
         User user = new User();
         user.setUsername("username");
         Mockito.when(withAuthentication().getPrincipal()).thenReturn(user);
@@ -172,7 +176,7 @@ public class ChannelServiceTests {
     }
 
     @Test
-    public void deleteChannelNoSuchElementErrorTest() {
+    void deleteChannelNoSuchElementErrorTest() {
         User user = new User();
         user.setUsername("username");
         Mockito.when(withAuthentication().getPrincipal()).thenReturn(user);
@@ -184,7 +188,7 @@ public class ChannelServiceTests {
     }
 
     @Test
-    public void changeVisibilityTest() {
+    void changeVisibilityTest() {
         User user = new User();
         user.setUsername("username");
         Mockito.when(withAuthentication().getPrincipal()).thenReturn(user);
@@ -198,7 +202,7 @@ public class ChannelServiceTests {
     }
 
     @Test
-    public void changeVisibilityErrorTest() {
+    void changeVisibilityErrorTest() {
         User user = new User();
         user.setUsername("username");
         Mockito.when(withAuthentication().getPrincipal()).thenReturn(user);
@@ -213,7 +217,7 @@ public class ChannelServiceTests {
 
     @ParameterizedTest
     @ValueSource(ints = {3,10,50})
-    public void topicsTest(int count) {
+    void topicsTest(int count) {
         List<Topic> topics = new ArrayList<>();
         for (int i = 0; i <count ; i++) {
             topics.add(Mockito.mock(Topic.class));
@@ -228,7 +232,7 @@ public class ChannelServiceTests {
     }
 
     @Test
-    public void topicsErrorTest() {
+    void topicsErrorTest() {
         Mockito.when(topicRepository.findAll()).thenThrow(MongoQueryException.class);
 
         CEServiceResponse response = channelService.topics();
@@ -238,7 +242,7 @@ public class ChannelServiceTests {
 
     @ParameterizedTest
     @ValueSource(ints = {3,10,50})
-    public void curatedUserChannelsTest(int count) {
+    void curatedUserChannelsTest(int count) {
         Mockito.when(intelService.setupGateway()).thenReturn(true);
 
         List<Channel> list = new ArrayList<>();
@@ -255,7 +259,7 @@ public class ChannelServiceTests {
     }
 
     @Test
-    public void curatedUserChannelsSetupErrorTest() {
+    void curatedUserChannelsSetupErrorTest() {
         Mockito.when(intelService.setupGateway()).thenReturn(false);
 
         CEServiceResponse response = channelService.curatedUserChannels();
@@ -264,7 +268,7 @@ public class ChannelServiceTests {
     }
 
     @Test
-    public void curatedUserChannelsEmptyResultsErrorTest() {
+    void curatedUserChannelsEmptyResultsErrorTest() {
         Mockito.when(intelService.setupGateway()).thenReturn(true);
         Mockito.doReturn(List.of()).when(intelService).getCuratedListOfType(Channel.class);
 
