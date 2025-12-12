@@ -1,13 +1,17 @@
 package com.collabed.core.service.channel;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.collabed.core.data.model.channel.Forum;
 import com.collabed.core.data.model.channel.Thread;
 import com.collabed.core.data.repository.channel.ThreadRepository;
 import com.collabed.core.runtime.exception.CEInternalErrorMessage;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.service.util.CEServiceResponse;
+import java.util.Optional;
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -16,12 +20,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(MockitoExtension.class)
-public class ForumServiceTests {
+class ForumServiceTests {
     @Mock
     private MongoTemplate mongoTemplate;
     @Mock
@@ -30,7 +30,7 @@ public class ForumServiceTests {
     private ForumService forumService;
 
     @Test
-    public void saveForumTest() {
+    void saveForumTest() {
         Forum forum = new Forum();
         Mockito.when(mongoTemplate.save(Mockito.any(Forum.class))).thenReturn(forum);
 
@@ -39,7 +39,7 @@ public class ForumServiceTests {
     }
 
     @Test
-    public void saveForumErrorTest() {
+    void saveForumErrorTest() {
         Forum forum = new Forum();
         Mockito.when(mongoTemplate.save(Mockito.any(Forum.class))).thenThrow(RuntimeException.class);
 
@@ -48,7 +48,7 @@ public class ForumServiceTests {
     }
 
     @Test
-    public void createThreadTest() {
+    void createThreadTest() {
         Thread thread = new Thread();
         thread.setId(new ObjectId().toHexString());
 
@@ -62,7 +62,7 @@ public class ForumServiceTests {
     }
 
     @Test
-    public void resolveThreadTest() {
+    void resolveThreadTest() {
         String threadId = new ObjectId().toHexString();
 
         Thread resolveThread = new Thread();
@@ -80,7 +80,7 @@ public class ForumServiceTests {
     }
 
     @Test
-    public void resolveNoSuchElementErrorTest() {
+    void resolveNoSuchElementErrorTest() {
 
         String threadId = new ObjectId().toHexString();
 
@@ -91,7 +91,7 @@ public class ForumServiceTests {
     }
 
     @Test
-    public void resolveInternalErrorTest() {
+    void resolveInternalErrorTest() {
         String threadId = new ObjectId().toHexString();
 
         Mockito.when(threadRepository.findById(threadId)).thenReturn(Optional.of(Mockito.mock(Thread.class)));
