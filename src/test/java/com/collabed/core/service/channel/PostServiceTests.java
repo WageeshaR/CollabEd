@@ -1,5 +1,11 @@
 package com.collabed.core.service.channel;
 
+import static com.collabed.core.service.util.SecurityUtil.withAuthentication;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.collabed.core.data.model.channel.Channel;
 import com.collabed.core.data.model.channel.Post;
 import com.collabed.core.data.model.channel.Reaction;
@@ -8,6 +14,12 @@ import com.collabed.core.data.proxy.PostProxy;
 import com.collabed.core.data.repository.channel.PostRepository;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.service.util.CEServiceResponse;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,17 +33,9 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.security.core.parameters.P;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-
-import static com.collabed.core.service.util.SecurityUtil.withAuthentication;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(MockitoExtension.class)
-public class PostServiceTests {
+class PostServiceTests {
     @Mock
     private PostRepository postRepository;
     @Mock
@@ -41,7 +45,7 @@ public class PostServiceTests {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    public void getAllPostsTest(boolean personnel) {
+    void getAllPostsTest(boolean personnel) {
         User user = Mockito.mock(User.class);
         Page<?> postPage = Mockito.mock(Page.class);
 
@@ -61,7 +65,7 @@ public class PostServiceTests {
 
     @ParameterizedTest
     @ValueSource(booleans = {true, false})
-    public void getAllPostsErrorTest(boolean personnel) {
+    void getAllPostsErrorTest(boolean personnel) {
         if (personnel) {
             Mockito.when(withAuthentication().getPrincipal()).thenReturn(Mockito.mock(User.class));
             Mockito.doThrow(NoSuchElementException.class).when(postRepository)
@@ -77,7 +81,7 @@ public class PostServiceTests {
     }
 
     @Test
-    public void getPostByIdTest() {
+    void getPostByIdTest() {
         Post post = new Post();
 
         User author = new User();
@@ -106,7 +110,7 @@ public class PostServiceTests {
     }
 
     @Test
-    public void getPostByIdErrorTest() {
+    void getPostByIdErrorTest() {
         Mockito.when(postRepository.findById(Mockito.anyString())).thenThrow(NoSuchElementException.class);
 
         CEServiceResponse response = postService.getPostById("myrandompostid");
@@ -115,7 +119,7 @@ public class PostServiceTests {
 
     @ParameterizedTest
     @ValueSource(ints = {3,10,50})
-    public void getAllChildrenSummaryTest(int count) {
+    void getAllChildrenSummaryTest(int count) {
         Channel channel = Mockito.mock(Channel.class);
         Post parent = new Post();
         parent.setChannel(channel);
@@ -137,7 +141,7 @@ public class PostServiceTests {
     }
 
     @Test
-    public void getAllChildrenSummaryErrorTest() {
+    void getAllChildrenSummaryErrorTest() {
         Mockito.when(postRepository.findById(Mockito.anyString())).thenThrow(NoSuchElementException.class);
 
         CEServiceResponse response1 = postService.getAllChildrenSummary("myrandompostid");
@@ -145,7 +149,7 @@ public class PostServiceTests {
     }
 
     @Test
-    public void getAllChildrenSummaryError2Test() {
+    void getAllChildrenSummaryError2Test() {
         Mockito.when(postRepository.findById(Mockito.anyString())).thenReturn(Optional.of(Mockito.mock(Post.class)));
         Mockito.when(postRepository.findAllByParentEquals(Mockito.any(Post.class))).thenThrow(NoSuchElementException.class);
 
@@ -154,7 +158,7 @@ public class PostServiceTests {
     }
 
     @Test
-    public void savePostTest() {
+    void savePostTest() {
         Mockito.when(withAuthentication().getPrincipal()).thenReturn(Mockito.mock(User.class));
         Mockito.when(postRepository.save(Mockito.any(Post.class))).thenReturn(Mockito.mock(Post.class));
 
@@ -164,7 +168,7 @@ public class PostServiceTests {
     }
 
     @Test
-    public void savePostErrorTest() {
+    void savePostErrorTest() {
         User author = new User();
         author.setId(new ObjectId().toHexString());
 
@@ -189,7 +193,7 @@ public class PostServiceTests {
     }
 
     @Test
-    public void saveReactionTest() {
+    void saveReactionTest() {
         User author = new User();
         author.setId(new ObjectId().toHexString());
 
@@ -210,7 +214,7 @@ public class PostServiceTests {
     }
 
     @Test
-    public void saveReactionErrorTest() {
+    void saveReactionErrorTest() {
         Mockito.when(withAuthentication().getPrincipal()).thenReturn(Mockito.mock(User.class));
 
         Reaction reaction = Mockito.mock(Reaction.class, Mockito.RETURNS_DEEP_STUBS);
@@ -240,7 +244,7 @@ public class PostServiceTests {
 
     @ParameterizedTest
     @ValueSource(ints = {0,10})
-    public void summarisedPostsTest(int count) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void summarisedPostsTest(int count) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         List<Post> posts = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             Post post = new Post();
@@ -254,7 +258,7 @@ public class PostServiceTests {
     }
 
     @Test
-    public void summarisedPostsErrorTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    void summarisedPostsErrorTest() throws NoSuchMethodException {
         List<Post> posts = new ArrayList<>();
         for (int i = 0; i < 1; i++) {
             // not adding a channel here to posts so checking NullPointerException
