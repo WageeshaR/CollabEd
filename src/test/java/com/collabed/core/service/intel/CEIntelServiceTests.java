@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 @ContextConfiguration(classes = {GatewayBeanConfig.class, CEIntelService.class})
 @ExtendWith(MockitoExtension.class)
-public class CEIntelServiceTests {
+class CEIntelServiceTests {
     @Mock
     private SimpleIntelGateway intelGateway;
     @Mock
@@ -37,7 +37,7 @@ public class CEIntelServiceTests {
     private CEIntelService intelService;
 
     @Test
-    public void setupGatewayTest() {
+    void setupGatewayTest() {
         boolean bool = new Random().nextBoolean();
         Mockito.when(intelGateway.initialise()).thenReturn(bool);
         boolean init = intelService.setupGateway();
@@ -45,7 +45,7 @@ public class CEIntelServiceTests {
     }
 
     @Test
-    public void getCuratedListOfTypeTest() throws URISyntaxException {
+    void getCuratedListOfTypeTest() throws URISyntaxException {
         String oid = new ObjectId().toHexString();
 
         Profile profile = new Profile();
@@ -69,16 +69,16 @@ public class CEIntelServiceTests {
     }
 
     @Test
-    public void getCuratedListOfTypeMongoErrorTest() {
+    void getCuratedListOfTypeMongoErrorTest() {
         Mockito.when(mongoTemplate.getCollectionName(Channel.class)).thenThrow(MappingException.class);
 
-        Object result = intelService.getCuratedListOfType(Channel.class);
+        List<?> result = intelService.getCuratedListOfType(Channel.class);
         assertInstanceOf(List.class, result);
-        assertEquals(((List<?>) result).size(), 0);
+        assertEquals(0, result.size());
     }
 
     @Test
-    public void getCuratedListOfTypeUriSyntaxErrorTest() throws URISyntaxException {
+    void getCuratedListOfTypeUriSyntaxErrorTest() throws URISyntaxException {
         Profile profile = new Profile();
         User user = new User();
         user.setProfile(profile);
@@ -88,8 +88,8 @@ public class CEIntelServiceTests {
 
         Mockito.doThrow(URISyntaxException.class).when(intelGateway).config(Mockito.any(Criteria.class));
 
-        Object result = intelService.getCuratedListOfType(Channel.class);
+        List<?> result = intelService.getCuratedListOfType(Channel.class);
         assertInstanceOf(List.class, result);
-        assertEquals(((List<?>) result).size(), 0);
+        assertEquals(0, result.size());
     }
 }
