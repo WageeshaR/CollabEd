@@ -1,5 +1,8 @@
 package com.collabed.core.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.data.model.location.Address;
 import com.collabed.core.data.repository.AddressRepository;
@@ -7,8 +10,9 @@ import com.collabed.core.data.repository.InstitutionRepository;
 import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.util.CEServiceResponse;
+import java.util.ArrayList;
+import java.util.List;
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,13 +22,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(MockitoExtension.class)
-public class InstitutionServiceTests {
+class InstitutionServiceTests {
     @Mock
     private InstitutionRepository institutionRepository;
     @Mock
@@ -33,7 +32,7 @@ public class InstitutionServiceTests {
     private InstitutionService institutionService;
 
     @Test
-    public void saveTest() {
+    void saveTest() {
         Address address = new Address();
         address.setId(new ObjectId().toHexString());
         Institution institution = new Institution();
@@ -43,12 +42,12 @@ public class InstitutionServiceTests {
         Mockito.when(institutionRepository.save(Mockito.any(Institution.class))).thenReturn(institution);
 
         CEServiceResponse response = institutionService.save(institution);
-        assertEquals(((Institution) response.getData()).getName(), "testinstitution");
+        assertEquals("testinstitution", ((Institution) response.getData()).getName());
         assertEquals(((Institution) response.getData()).getAddress().getId(), address.getId());
     }
 
     @Test
-    public void saveNoAddressTest() {
+    void saveNoAddressTest() {
         Institution institution = Mockito.mock(Institution.class);
         CEServiceResponse response = institutionService.save(institution);
         assertTrue(response.isError());
@@ -60,7 +59,7 @@ public class InstitutionServiceTests {
 
     @ParameterizedTest
     @ValueSource(ints = {1,5,20})
-    public void allTest(int num) {
+    void allTest(int num) {
         List<Institution> institutions = new ArrayList<>();
         for (int i=0; i<num; i++)
             institutions.add(Mockito.mock(Institution.class));
