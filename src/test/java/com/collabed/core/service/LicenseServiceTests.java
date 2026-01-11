@@ -1,5 +1,9 @@
 package com.collabed.core.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.collabed.core.data.model.Session;
 import com.collabed.core.data.model.license.LicenseModel;
 import com.collabed.core.data.model.license.LicenseOption;
@@ -8,7 +12,8 @@ import com.collabed.core.data.repository.SessionRepository;
 import com.collabed.core.runtime.exception.CEInternalErrorMessage;
 import com.collabed.core.service.license.LicenseService;
 import com.collabed.core.service.util.CEServiceResponse;
-import lombok.AllArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,13 +24,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @ExtendWith(MockitoExtension.class)
-public class LicenseServiceTests {
+class LicenseServiceTests {
     @Mock
     private LicenseRepository licenseRepository;
     @Mock
@@ -39,13 +39,13 @@ public class LicenseServiceTests {
     }
 
     @BeforeEach
-    public void setup() {
+    void setup() {
         licenseService = new LicenseService(licenseRepository, sessionRepository);
     }
 
     @ParameterizedTest
     @ValueSource(ints = {3,10})
-    public void getAllOptionsTest(int count) {
+    void getAllOptionsTest(int count) {
         List<LicenseModel> models = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             models.add(Mockito.mock(LicenseModel.class));
@@ -58,14 +58,14 @@ public class LicenseServiceTests {
     }
 
     @Test
-    public void getAllOptionsErrorTest() {
+    void getAllOptionsErrorTest() {
         Mockito.when(licenseRepository.findAll()).thenThrow(RuntimeException.class);
         CEServiceResponse response = licenseService.getAllOptions();
         assertTrue(response.isError());
     }
 
     @Test
-    public void initSessionTest() {
+    void initSessionTest() {
         LicenseOption option = Mockito.mock(LicenseOption.class);
         Mockito.when(option.getModel()).thenReturn(Mockito.mock(LicenseModel.class));
         Mockito.when(sessionRepository.save(Mockito.any(Session.class))).thenReturn(null);
@@ -76,7 +76,7 @@ public class LicenseServiceTests {
     }
 
     @Test
-    public void initSessionErrorTest() {
+    void initSessionErrorTest() {
         Mockito.when(sessionRepository.save(Mockito.any(Session.class))).thenThrow(RuntimeException.class);
 
         CEServiceResponse response = licenseService.initSession(Mockito.mock(LicenseOption.class), "myrandomsessionkey");
