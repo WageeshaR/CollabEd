@@ -1,5 +1,10 @@
 package com.collabed.core.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import com.collabed.core.config.SecurityConfig;
 import com.collabed.core.data.model.institution.Institution;
 import com.collabed.core.data.model.user.User;
@@ -13,8 +18,15 @@ import com.collabed.core.runtime.exception.CEUserErrorMessage;
 import com.collabed.core.runtime.exception.CEWebRequestError;
 import com.collabed.core.service.util.CEServiceResponse;
 import com.collabed.core.service.util.SecurityUtil;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.bson.types.ObjectId;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -25,16 +37,9 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.*;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 @Import(SecurityConfig.class)
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTests {
+class UserServiceTests {
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -55,7 +60,7 @@ public class UserServiceTests {
     }
 
 //    @BeforeEach
-    public void setupUser() {
+    void setupUser() {
         List<User> students = Arrays.asList(new User("student1", "ROLE_STUDENT"), new User("student2", "ROLE_STUDENT"));
         List<User> facilitators = Arrays.asList(new User("fac1", "ROLE_FACILITATOR"), new User("fac2", "ROLE_FACILITATOR"));
         List<User> admins = Arrays.asList(new User("adm1", "ROLE_ADMIN"), new User("adm2", "ROLE_ADMIN"));
@@ -76,14 +81,14 @@ public class UserServiceTests {
     }
 
 //    @BeforeEach
-    public void setupGroup() {
+    void setupGroup() {
         userGroup = new UserGroup();
         userGroup.setName("testUserGroup");
         Mockito.when(userGroupRepository.insert(userGroup)).thenReturn(userGroup);
     }
 
     @Test
-    public void loadUserByUsernameTest() {
+    void loadUserByUsernameTest() {
         Institution mockInstitution = Mockito.mock(Institution.class);
 
         user = new User("testUser", null);
@@ -96,7 +101,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void userServiceGetAllByRoleTest() {
+    void userServiceGetAllByRoleTest() {
         List<User> students = Arrays.asList(new User("student1", "ROLE_STUDENT"), new User("student2", "ROLE_STUDENT"));
 
         Mockito.when(userRepository.findAllByAuthority("ROLE_STUDENT")).thenReturn(
@@ -110,7 +115,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void userServiceGetAllTest() {
+    void userServiceGetAllTest() {
         List<User> students = Arrays.asList(new User("student1", "ROLE_STUDENT"), new User("student2", "ROLE_STUDENT"));
         List<User> facilitators = Arrays.asList(new User("fac1", "ROLE_FACILITATOR"), new User("fac2", "ROLE_FACILITATOR"));
         List<User> admins = Arrays.asList(new User("adm1", "ROLE_ADMIN"), new User("adm2", "ROLE_ADMIN"));
@@ -128,7 +133,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void userServiceSaveUserTest() {
+    void userServiceSaveUserTest() {
         Institution mockInstitution = Mockito.mock(Institution.class);
 
         user = new User("testUser", null);
@@ -143,7 +148,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void userServiceSaveUserWithExistingRoleTest() {
+    void userServiceSaveUserWithExistingRoleTest() {
         Institution mockInstitution = Mockito.mock(Institution.class);
 
         user = new User("testUser", null);
@@ -160,13 +165,13 @@ public class UserServiceTests {
     }
 
     @Test
-    public void deleteUserTest() {
+    void deleteUserTest() {
         Mockito.doNothing().when(userRepository).updateAndSoftDelete(Mockito.anyString());
         userService.deleteUser(new ObjectId().toHexString());
     }
 
     @Test
-    public void deleteUserErrorTest() {
+    void deleteUserErrorTest() {
         Mockito.doThrow(new CEServiceError("")).when(userRepository).updateAndSoftDelete(Mockito.anyString());
 
         CEServiceResponse response = userService.deleteUser(new ObjectId().toHexString());
@@ -175,7 +180,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void createUserProfileTest() {
+    void createUserProfileTest() {
         Institution mockInstitution = Mockito.mock(Institution.class);
 
         user = new User("testUser", null);
@@ -194,7 +199,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void createUserProfileErrorTest() {
+    void createUserProfileErrorTest() {
         Institution mockInstitution = Mockito.mock(Institution.class);
         user = new User("testUser", null);
         user.setInstitution(mockInstitution);
@@ -213,7 +218,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void userServiceSaveUserGroupTest() {
+    void userServiceSaveUserGroupTest() {
         userGroup = new UserGroup();
         userGroup.setName("testUserGroup");
 
@@ -226,7 +231,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void userServiceAddToGroupTest() {
+    void userServiceAddToGroupTest() {
         Institution mockInstitution = Mockito.mock(Institution.class);
         String userId = new ObjectId().toHexString();
         String groupId = new ObjectId().toHexString();
@@ -251,7 +256,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void userServiceAddToGroupNoUserTest() {
+    void userServiceAddToGroupNoUserTest() {
         CEServiceResponse response = userService.addToGroup(new ObjectId().toHexString(), new ObjectId().toHexString());
         assertTrue(response.isError());
         assertEquals(
@@ -261,7 +266,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void userServiceAddToGroupRoleNotMatchedTest() {
+    void userServiceAddToGroupRoleNotMatchedTest() {
         String userId = new ObjectId().toHexString();
         String groupId = new ObjectId().toHexString();
 
@@ -285,7 +290,7 @@ public class UserServiceTests {
     }
 
     @Test
-    public void userServiceLoadGroupByIdTest() {
+    void userServiceLoadGroupByIdTest() {
         String userId = new ObjectId().toHexString();
         String groupId = new ObjectId().toHexString();
 
