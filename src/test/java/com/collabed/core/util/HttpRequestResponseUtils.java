@@ -24,23 +24,22 @@ public class HttpRequestResponseUtils {
     public static Matcher<?> countMatcher(int numUsers) {
         return new Matcher<List<?>>() {
             @Override
-            public void describeTo(Description description) {}
+            public void describeTo(Description description) { /* An implementation isn't needed */ }
             @Override
             public boolean matches(Object o) {
                 return o instanceof List<?> && ((List<?>) o).size() == numUsers;
             }
             @Override
-            public void describeMismatch(Object o, Description description) {}
+            public void describeMismatch(Object o, Description description) { /* An implementation isn't needed */ }
             @Override
-            public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {}
+            public void _dont_implement_Matcher___instead_extend_BaseMatcher_() { /* An implementation isn't needed */ }
         };
     }
 
-    public static Matcher<? super String> sessionKeyValidator(int len) {
+    public static Matcher<? super String> sessionKeyValidator() {
         return new Matcher<>() {
             @Override
-            public void describeTo(Description description) {
-            }
+            public void describeTo(Description description) { /* An implementation isn't needed */ }
 
             @Override
             public boolean matches(Object o) {
@@ -48,20 +47,17 @@ public class HttpRequestResponseUtils {
             }
 
             @Override
-            public void describeMismatch(Object o, Description description) {
-            }
+            public void describeMismatch(Object o, Description description) { /* An implementation isn't needed */ }
 
             @Override
-            public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {
-            }
+            public void _dont_implement_Matcher___instead_extend_BaseMatcher_() { /* An implementation isn't needed */ }
         };
     }
 
     public static Matcher<? super List<LicenseType>> licenseTypesMatcher() {
         return new Matcher<>() {
             @Override
-            public void describeTo(Description description) {
-            }
+            public void describeTo(Description description) { /* An implementation isn't needed */ }
 
             @Override
             public boolean matches(Object o) {
@@ -73,12 +69,10 @@ public class HttpRequestResponseUtils {
             }
 
             @Override
-            public void describeMismatch(Object o, Description description) {
-            }
+            public void describeMismatch(Object o, Description description) { /* An implementation isn't needed */ }
 
             @Override
-            public void _dont_implement_Matcher___instead_extend_BaseMatcher_() {
-            }
+            public void _dont_implement_Matcher___instead_extend_BaseMatcher_() { /* An implementation isn't needed */ }
         };
     }
 

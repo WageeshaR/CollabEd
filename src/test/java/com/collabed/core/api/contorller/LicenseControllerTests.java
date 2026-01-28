@@ -41,7 +41,6 @@ class LicenseControllerTests {
     UserService userService;
     @MockBean
     LicenseService licenseService;
-    private static final int SESSION_KEY_LEN = 14;
 
     @Test
     @WithMockUser
@@ -51,7 +50,7 @@ class LicenseControllerTests {
                     .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.header()
                         .string(CustomHttpHeaders.SESSION_KEY,
-                                sessionKeyValidator(SESSION_KEY_LEN)
+                                sessionKeyValidator()
                 ));
     }
 
